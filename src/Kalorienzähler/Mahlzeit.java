@@ -55,12 +55,13 @@ public class Mahlzeit implements ActionListener {
                         int int_protein = Integer.parseInt(protein);
                         int int_fett = Integer.parseInt(fett);
                         int kalorien = int_kohlenhydrate*4 + int_protein*4 + int_fett*9;
+
+                        System.out.println(kalorien);
+                        //new DBConnect("INSERT INTO mahlzeit (Name, kalorien, carb, protein, fat, ben) VALUES ('" + name +"', '" + kalorien +"'")
                     }
                     catch (Exception E){
                         error_message.setText("Geben sie als Wert Zahlen an!");
                     }
-                    System.out.println();
-                    //new DBConnect("INSERT INTO mahlzeit (Name, kalorien, carb, protein, fat, ben) VALUES ('" + name +"', '" + +"'")
                 }
             }
         }
