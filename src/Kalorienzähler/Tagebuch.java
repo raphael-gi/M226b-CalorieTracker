@@ -12,10 +12,10 @@ public class Tagebuch implements ActionListener {
     private JButton Abendessen;
     private JFrame frame;
 
-    private String name;
+    private String benutzername;
 
-    public Tagebuch(String name){
-        this.name = name;
+    public Tagebuch(String benutzername){
+        this.benutzername = benutzername;
 
         frame = new JFrame("Tagebuch");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,15 +36,18 @@ public class Tagebuch implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == Frühstück){
             frame.dispose();
-            new Mahlzeit_auswahl("Frühstück");
+            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl("Frühstück", this.benutzername);
+            mahl.content();
         }
         if (e.getSource() == Mittagessen){
             frame.dispose();
-            new Mahlzeit_auswahl("Mittagessen");
+            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl("Mittagessen", this.benutzername);
+            mahl.content();
         }
         if (e.getSource() == Abendessen){
             frame.dispose();
-            new Mahlzeit_auswahl("Abendessen");
+            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl("Abendessen", this.benutzername);
+            mahl.content();
         }
     }
 }

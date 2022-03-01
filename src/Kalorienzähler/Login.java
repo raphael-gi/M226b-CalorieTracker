@@ -44,16 +44,17 @@ public class Login implements ActionListener {
                 error_message.setText("Etwas ist schief gelaufen");
             }
 
-            if (log.getResult() == null){
-                System.out.println(log.getResult());
-                error_message.setText("Falsches Passwort oder Benutzername");
-            }
-            else {
-                frame.dispose();
-                new Tagebuch(log.getResult());
-            }
             if (benutzer.isEmpty() || passwort.isEmpty()){
                 error_message.setText("Füllen sie alle Felder aus!");
+            }
+            else {
+                if (log.getResult() == null){
+                    error_message.setText("Falsches Passwort oder Benutzername");
+                }
+                else {
+                    frame.dispose();
+                    new Tagebuch(log.getResult());
+                }
             }
         }
         if (e.getSource()==Registrieren){
