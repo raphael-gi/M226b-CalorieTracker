@@ -10,6 +10,7 @@ public class Tagebuch implements ActionListener {
     private JButton Frühstück;
     private JButton Mittagessen;
     private JButton Abendessen;
+    private JButton Snacks;
     private JFrame frame;
 
     private String benutzername;
@@ -30,6 +31,7 @@ public class Tagebuch implements ActionListener {
         Frühstück.addActionListener(this);
         Mittagessen.addActionListener(this);
         Abendessen.addActionListener(this);
+        Snacks.addActionListener(this);
     }
 
     @Override
@@ -47,6 +49,11 @@ public class Tagebuch implements ActionListener {
         if (e.getSource() == Abendessen){
             frame.dispose();
             Mahlzeit_auswahl mahl = new Mahlzeit_auswahl("Abendessen", this.benutzername);
+            mahl.content();
+        }
+        if (e.getSource() == Snacks){
+            frame.dispose();
+            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl("Snacks", this.benutzername);
             mahl.content();
         }
     }
