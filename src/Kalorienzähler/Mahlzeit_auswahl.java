@@ -1,12 +1,12 @@
 package Kalorienzähler;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Mahlzeit_auswahl implements ActionListener {
@@ -15,12 +15,23 @@ public class Mahlzeit_auswahl implements ActionListener {
     private JLabel mahl;
     private JButton zurück;
     private JComboBox dropname;
-    private JTextField portionen_text;
+    private JTextField portionen;
+    private JLabel anz_kalorien;
+    private JLabel anz_carbs;
+    private JLabel anz_protein;
+    private JLabel anz_fat;
+    private JLabel error_message;
+    private JButton confirm;
+    private JButton plus;
+    private JButton minus;
+    private JButton hinzufügen;
     private JFrame frame;
 
     private String mahlzeit;
     private String benutzername;
     private int userid;
+    private String mahl_auswahl;
+    private float anz_portionen;
 
     public Mahlzeit_auswahl(String mahlzeit, String benutzername){
         this.mahlzeit = mahlzeit;
@@ -38,12 +49,17 @@ public class Mahlzeit_auswahl implements ActionListener {
 
         erstellen.addActionListener(this);
         zurück.addActionListener(this);
+        dropname.addActionListener(this);
+        confirm.addActionListener(this);
+        plus.addActionListener(this);
+        minus.addActionListener(this);
+        hinzufügen.addActionListener(this);
     }
 
     public void content(){
             mahl.setText(this.mahlzeit);
 
-            portionen_text.setText("1");
+            portionen.setText("1");
         try{
             //Verbindung um id zu erhalten
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
@@ -63,15 +79,15 @@ public class Mahlzeit_auswahl implements ActionListener {
             Statement new_statement = new_connection.createStatement();
             ResultSet new_resultSet = new_statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + this.userid + " ORDER BY Name");
             while (new_resultSet.next()){
+                //Namen werden abgerufen
                 String benutzernamen = new_resultSet.getString("Name");
+                //Namen werden in die Dropdown Liste eingetragen
                 dropname.addItem(benutzernamen);
             }
         }
         catch (Exception E){
             System.out.println("verbindung zu Name ist Fehlgeschlagen");
         }
-        Date date = new Date();
-        System.out.printf("%1$tY %1$tm %1$td", date);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -82,6 +98,120 @@ public class Mahlzeit_auswahl implements ActionListener {
         if (e.getSource()==zurück){
             frame.dispose();
             new Tagebuch(this.benutzername);
+        }
+        if (e.getSource()==dropname || e.getSource()==confirm){
+            String mahl_name = String.valueOf(dropname.getSelectedItem());
+
+            error_message.setText("");
+
+            try {
+                Connection new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
+                Statement new_statement = new_connection.createStatement();
+                ResultSet new_resultSet = new_statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
+
+                try {
+                    this.anz_portionen = Float.parseFloat(portionen.getText());
+                }
+                catch (Exception E){
+                    error_message.setText("Geben sie eine Zahl als Portion an!");
+                }
+
+                if (error_message.getText().isEmpty()){
+                    while (new_resultSet.next()){
+                        //Anzahl Kohlenhydrate werden abgerufen
+                        String carb = new_resultSet.getString("carb");
+                        int carb_int = Integer.parseInt(carb);
+                        float carb_float = carb_int * this.anz_portionen;
+                        double carb_double = Math.round(carb_float * 10d) / 10d;
+                        String carb_final = String.valueOf(carb_double);
+                        this.anz_carbs.setText(carb_final);
+                        //Anzahl Protein wird abgerufen
+                        String protein = new_resultSet.getString("protein");
+                        int protein_int = Integer.parseInt(protein);
+                        float protein_float = protein_int * this.anz_portionen;
+                        double protein_double = Math.round(protein_float * 10d) / 10d;
+                        String protein_final = String.valueOf(protein_double);
+                        this.anz_protein.setText(protein_final);
+                        //Anzahl Fett wird abgerufen
+                        String fat = new_resultSet.getString("fat");
+                        int fat_int = Integer.parseInt(fat);
+                        float fat_float = fat_int * this.anz_portionen;
+                        double fat_double = Math.round(fat_float * 10d) / 10d;
+                        String fat_final = String.valueOf(fat_double);
+                        this.anz_fat.setText(fat_final);
+                        //Anzahl Kalorien werden abgerufen
+                        double kalorien_double = (carb_double * 4) + (protein_double * 4) + (fat_double * 9);
+                        long kalorien_long = Math.round(kalorien_double);
+                        String kalorien_final = String.valueOf(kalorien_long);
+                        this.anz_kalorien.setText(kalorien_final);
+                    }
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        if (e.getSource()==plus){
+            error_message.setText("");
+            try {
+                this.anz_portionen = Float.parseFloat(portionen.getText());
+            }
+            catch (Exception E){
+                error_message.setText("Geben sie eine Zahl als Portion an!");
+            }
+            if (error_message.getText().isEmpty()){
+                if (this.anz_portionen < 1){
+                    this.anz_portionen = (float)(this.anz_portionen + 0.1);
+                    this.anz_portionen = (float)(Math.round(this.anz_portionen *10d) / 10d);
+                }
+                else {
+                    this.anz_portionen++;
+                }
+                String str_portionen = String.valueOf(this.anz_portionen);
+                portionen.setText(str_portionen);
+            }
+        }
+        if (e.getSource()==minus){
+            error_message.setText("");
+            try {
+                this.anz_portionen = Float.parseFloat(portionen.getText());
+            }
+            catch (Exception E){
+                error_message.setText("Geben sie eine Zahl als Portion an!");
+            }
+            if (error_message.getText().isEmpty()){
+                if (this.anz_portionen <= 1){
+                    this.anz_portionen = (float)(this.anz_portionen - 0.1);
+                    this.anz_portionen = (float)(Math.round(this.anz_portionen * 10d) / 10d);
+                }
+                else {
+                    this.anz_portionen--;
+                }
+                if (this.anz_portionen >= 0){
+                    String str_portionen = String.valueOf(this.anz_portionen);
+                    portionen.setText(str_portionen);
+                }
+                else {
+                    error_message.setText("Die Portion darf nicht kleiner als 0 sein!");
+                }
+            }
+        }
+        if (e.getSource() == hinzufügen){
+            SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                DBConnect mahl_id = new DBConnect("SELECT id FROM Mahlzeit WHERE Name = '" + this.dropname + "'","id",0);
+                String get_mahl_id = mahl_id.getResult();
+
+                DBConnect ben_id = new DBConnect("SELECT id FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'","id",0);
+                String get_ben_id = ben_id.getResult();
+
+                new DBConnect("INSERT INTO mmm (mahl, kalorien, carb, protein, fat, datum, ben) VALUES (" + get_mahl_id +", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", " + date + ", " + get_ben_id + ")","",1);
+                frame.dispose();
+                new Tagebuch(this.benutzername);
+            }
+            catch (Exception E){
+                System.out.println("ups...");
+            }
+
         }
     }
 }
