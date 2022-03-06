@@ -196,17 +196,36 @@ public class Mahlzeit_auswahl implements ActionListener {
             }
         }
         if (e.getSource() == hinzufügen){
-            SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+            //Aktuelles Datum wird abgerufen
+            Date date = new Date();
+            SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
             try {
-                DBConnect mahl_id = new DBConnect("SELECT id FROM Mahlzeit WHERE Name = '" + this.dropname + "'","id",0);
-                String get_mahl_id = mahl_id.getResult();
+                //Verbindung um id der Mahlzeit zu erhalten
+                int get_mahl_id = 0;
+                Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT id FROM Mahlzeit WHERE Name = '" + dropname.getSelectedItem() + "'");
+                while (resultSet.next()){
+                    get_mahl_id = resultSet.getInt("id");
+                }
 
-                DBConnect ben_id = new DBConnect("SELECT id FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'","id",0);
-                String get_ben_id = ben_id.getResult();
+                //Verbindung um id des Benutzer zu erhalten
+                int get_ben_id = 0;
+                Connection new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
+                Statement new_statement = new_connection.createStatement();
+                ResultSet new_resultSet = new_statement.executeQuery("SELECT id FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'");
+                while (new_resultSet.next()){
+                    get_ben_id = new_resultSet.getInt("id");
+                }
 
-                new DBConnect("INSERT INTO mmm (mahl, kalorien, carb, protein, fat, datum, ben) VALUES (" + get_mahl_id +", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", " + date + ", " + get_ben_id + ")","",1);
+                //Data wird eingefügt
+                Connection new_new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
+                Statement new_new_statement = new_new_connection.createStatement();
+                new_new_statement.execute("INSERT INTO mmm (mahl, kalorien, carb, protein, fat, datum, ben) VALUES (" + get_mahl_id + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date) + "', " + get_ben_id + ")");
+
                 frame.dispose();
-                new Tagebuch(this.benutzername);
+                Tagebuch n = new Tagebuch(this.benutzername);
+                n.content();
             }
             catch (Exception E){
                 System.out.println("ups...");
