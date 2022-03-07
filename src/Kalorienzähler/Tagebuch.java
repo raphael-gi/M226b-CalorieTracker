@@ -2,8 +2,7 @@ package Kalorienzähler;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,6 +15,14 @@ public class Tagebuch implements ActionListener {
     private JButton Abendessen;
     private JButton Snacks;
     private JLabel kalorien_count;
+    private JList fruhstuck_list;
+    DefaultListModel fruhstuck = new DefaultListModel();
+    private JList mittagessen_list;
+    DefaultListModel mittagessen = new DefaultListModel();
+    private JList abendessen_list;
+    DefaultListModel abendessen = new DefaultListModel();
+    private JList snacks_list;
+    DefaultListModel snacks = new DefaultListModel();
     private JFrame frame;
 
     private String benutzername;
@@ -37,9 +44,15 @@ public class Tagebuch implements ActionListener {
         Mittagessen.addActionListener(this);
         Abendessen.addActionListener(this);
         Snacks.addActionListener(this);
+        fruhstuck_list.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e){
+                if (e.getClickCount() == 2){
+                    System.out.println(fruhstuck_list.getSelectedValue());
+                }
+            }
+        });
     }
     public void content(){
-        System.out.println("test");
         java.util.Date date = new Date();
         SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
 
@@ -54,16 +67,65 @@ public class Tagebuch implements ActionListener {
             }
 
             //Verbindung um id des Benutzer zu erhalten
-            //int get_ben_id = 0;
-            Connection new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            Statement new_statement = new_connection.createStatement();
-            ResultSet new_resultSet = new_statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date) + "'");
+            ResultSet new_resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date) + "'");
             ArrayList<Integer> kalories = new ArrayList<>();
             while (new_resultSet.next()){
                 int kalorien = new_resultSet.getInt("kalorien");
                 kalories.add(kalorien);
             }
-            System.out.println(kalories);
+            int anz_kalorien = 0;
+            for (int i = 0; kalories.size() > i; i++){
+                anz_kalorien = anz_kalorien + kalories.get(i);
+            }
+            kalorien_count.setText("Kalorien: " + anz_kalorien);
+
+
+            ResultSet fruh_resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = 1");
+            ArrayList<String> fruh_names = new ArrayList<>();
+            while (fruh_resultSet.next()){
+                String mahl_name = fruh_resultSet.getString("Name");
+                fruh_names.add(mahl_name);
+            }
+            for (int i = 0; fruh_names.size() > i; i++){
+                fruhstuck.addElement(fruh_names.get(i));
+            }
+            fruhstuck_list.setModel(fruhstuck);
+
+
+            ResultSet mit_resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = 2");
+            ArrayList<String> mit_names = new ArrayList<>();
+            while (mit_resultSet.next()){
+                String mahl_name = mit_resultSet.getString("Name");
+                mit_names.add(mahl_name);
+            }
+            for (int i = 0; mit_names.size() > i; i++){
+                mittagessen.addElement(mit_names.get(i));
+            }
+            mittagessen_list.setModel(mittagessen);
+
+
+            ResultSet abend_resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = 3");
+            ArrayList<String> abend_names = new ArrayList<>();
+            while (abend_resultSet.next()){
+                String mahl_name = abend_resultSet.getString("Name");
+                abend_names.add(mahl_name);
+            }
+            for (int i = 0; abend_names.size() > i; i++){
+                abendessen.addElement(abend_names.get(i));
+            }
+            abendessen_list.setModel(abendessen);
+
+
+            ResultSet snack_resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = 4");
+            ArrayList<String> snack_names = new ArrayList<>();
+            while (snack_resultSet.next()){
+                String mahl_name = snack_resultSet.getString("Name");
+                snack_names.add(mahl_name);
+            }
+            for (int i = 0; snack_names.size() > i; i++){
+                snacks.addElement(snack_names.get(i));
+            }
+            snacks_list.setModel(snacks);
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -97,7 +97,8 @@ public class Mahlzeit_auswahl implements ActionListener {
         }
         if (e.getSource()==zurück){
             frame.dispose();
-            new Tagebuch(this.benutzername);
+            Tagebuch n = new Tagebuch(this.benutzername);
+            n.content();
         }
         if (e.getSource()==dropname || e.getSource()==confirm){
             String mahl_name = String.valueOf(dropname.getSelectedItem());
@@ -199,6 +200,21 @@ public class Mahlzeit_auswahl implements ActionListener {
             //Aktuelles Datum wird abgerufen
             Date date = new Date();
             SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
+
+            //Ausgewählte Mahlzeit wird angeschaut
+            int mahl_check = 0;
+            if (this.mahlzeit.equals("Frühstück")){
+                mahl_check = 1;
+            }
+            if (this.mahlzeit.equals("Mittagessen")){
+                mahl_check = 2;
+            }
+            if (this.mahlzeit.equals("Abendessen")){
+                mahl_check = 3;
+            }
+            if (this.mahlzeit.equals("Snacks")){
+                mahl_check = 4;
+            }
             try {
                 //Verbindung um id der Mahlzeit zu erhalten
                 int get_mahl_id = 0;
@@ -221,7 +237,7 @@ public class Mahlzeit_auswahl implements ActionListener {
                 //Data wird eingefügt
                 Connection new_new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
                 Statement new_new_statement = new_new_connection.createStatement();
-                new_new_statement.execute("INSERT INTO mmm (mahl, kalorien, carb, protein, fat, datum, ben) VALUES (" + get_mahl_id + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date) + "', " + get_ben_id + ")");
+                new_new_statement.execute("INSERT INTO mmm (mahl, kalorien, carb, protein, fat, datum, ben, mahlzeit) VALUES (" + get_mahl_id + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date) + "', " + get_ben_id + ", " + mahl_check + ")");
 
                 frame.dispose();
                 Tagebuch n = new Tagebuch(this.benutzername);

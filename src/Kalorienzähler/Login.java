@@ -53,7 +53,8 @@ public class Login implements ActionListener {
                 }
                 else {
                     frame.dispose();
-                    new Tagebuch(log.getResult());
+                    Tagebuch n = new Tagebuch(log.getResult());
+                    n.content();
                 }
             }
         }
