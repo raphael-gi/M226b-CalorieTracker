@@ -36,12 +36,21 @@ public class Tagebuch implements ActionListener {
     private JLabel mit_label;
     private JLabel abend_label;
     private JLabel snack_label;
+    private JLabel fruh_kalorien;
+    private JLabel mit_kalorien;
+    private JLabel abend_kalorien;
+    private JLabel snack_kalorien;
+    private JButton a️Button;
     private JFrame frame;
 
     private Dimension size;
     private Point loc;
 
     private String benutzername;
+    private int anz_fruh_kalorien;
+    private int anz_mit_kalorien;
+    private int anz_abend_kalorien;
+    private int anz_snack_kalorien;
 
     public Tagebuch(Dimension size, Point loc, String benutzername){
         this.benutzername = benutzername;
@@ -72,81 +81,46 @@ public class Tagebuch implements ActionListener {
         Abendessen.addActionListener(this);
         Snacks.addActionListener(this);
 
-        fruh_bearbeiten.addActionListener(this);
-        fruh_delete.addActionListener(this);
-        fruh_bearbeiten.setVisible(false);
-        fruh_delete.setVisible(false);
-        fruhstuck_list.addMouseListener(new MouseAdapter() {
+        save(fruh_bearbeiten, fruh_delete, fruhstuck_list);
+
+        save(mit_bearbeiten, mit_delete, mittagessen_list);
+
+        save(abend_bearbeiten, abend_delete, abendessen_list);
+
+        save(snack_bearbeiten, snack_delete, snacks_list);
+    }
+    public void save(JButton name_edit, JButton name_delete, JList list_name){
+        name_edit.addActionListener(this);
+        name_delete.addActionListener(this);
+        name_edit.setVisible(false);
+        name_delete.setVisible(false);
+        list_name.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e){
                 if (e.getClickCount() == 2){
-                    fruh_bearbeiten.setVisible(true);
-                    fruh_delete.setVisible(true);
+                    name_edit.setVisible(true);
+                    name_delete.setVisible(true);
                 }
                 if (e.getClickCount() == 1){
-                    mittagessen_list.clearSelection();
-                    abendessen_list.clearSelection();
-                    snacks_list.clearSelection();
-
-                    vis();
-                }
-            }
-        });
-
-        mit_bearbeiten.addActionListener(this);
-        mit_delete.addActionListener(this);
-        mit_bearbeiten.setVisible(false);
-        mit_delete.setVisible(false);
-        mittagessen_list.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e){
-                if (e.getClickCount() == 2){
-                    mit_bearbeiten.setVisible(true);
-                    mit_delete.setVisible(true);
-                }
-                if (e.getClickCount() == 1){
-                    fruhstuck_list.clearSelection();
-                    abendessen_list.clearSelection();
-                    snacks_list.clearSelection();
-
-                    vis();
-                }
-            }
-        });
-
-        abend_bearbeiten.addActionListener(this);
-        abend_delete.addActionListener(this);
-        abend_bearbeiten.setVisible(false);
-        abend_delete.setVisible(false);
-        abendessen_list.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e){
-                if (e.getClickCount() == 2){
-                    abend_bearbeiten.setVisible(true);
-                    abend_delete.setVisible(true);
-                }
-                if (e.getClickCount() == 1){
-                    fruhstuck_list.clearSelection();
-                    mittagessen_list.clearSelection();
-                    snacks_list.clearSelection();
-
-                    vis();
-                }
-            }
-        });
-
-        snack_bearbeiten.addActionListener(this);
-        snack_delete.addActionListener(this);
-        snack_bearbeiten.setVisible(false);
-        snack_delete.setVisible(false);
-        snacks_list.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e){
-                if (e.getClickCount() == 2){
-                    snack_bearbeiten.setVisible(true);
-                    snack_delete.setVisible(true);
-                }
-                if (e.getClickCount() == 1){
-                    fruhstuck_list.clearSelection();
-                    mittagessen_list.clearSelection();
-                    abendessen_list.clearSelection();
-
+                    if (list_name.equals(fruhstuck_list)){
+                        mittagessen_list.clearSelection();
+                        abendessen_list.clearSelection();
+                        snacks_list.clearSelection();
+                    }
+                    if (list_name.equals(mittagessen_list)){
+                        fruhstuck_list.clearSelection();
+                        abendessen_list.clearSelection();
+                        snacks_list.clearSelection();
+                    }
+                    if (list_name.equals(abendessen_list)){
+                        fruhstuck_list.clearSelection();
+                        mittagessen_list.clearSelection();
+                        snacks_list.clearSelection();
+                    }
+                    if (list_name.equals(snacks_list)){
+                        fruhstuck_list.clearSelection();
+                        mittagessen_list.clearSelection();
+                        abendessen_list.clearSelection();
+                    }
                     vis();
                 }
             }
@@ -186,7 +160,21 @@ public class Tagebuch implements ActionListener {
             for (int i = 0; kalories.size() > i; i++){
                 anz_kalorien = anz_kalorien + kalories.get(i);
             }
+
             kalorien_count.setText("Kalorien: " + anz_kalorien);
+
+            //Frühstück Kalorien werden angezeigt
+            get_meal_cal(1);
+            fruh_kalorien.setText(String.valueOf(this.anz_fruh_kalorien));
+            //Mittagessen Kalorien werden angezeigt
+            get_meal_cal(2);
+            mit_kalorien.setText(String.valueOf(this.anz_mit_kalorien));
+            //Abendessen Kalorien werden angezeigt
+            get_meal_cal(3);
+            abend_kalorien.setText(String.valueOf(this.anz_abend_kalorien));
+            //Snacks Kalorien werden angezeigt
+            get_meal_cal(4);
+            snack_kalorien.setText(String.valueOf(this.anz_snack_kalorien));
 
 
             get_select(fruhstuck_list, fruhstuck,1);
@@ -196,6 +184,36 @@ public class Tagebuch implements ActionListener {
             get_select(abendessen_list, abendessen,3);
 
             get_select(snacks_list, snacks,4);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void get_meal_cal(int mahlzeit_id){
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
+            Statement statement = connection.createStatement();
+            ResultSet new_resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date) + "' AND mahlzeit = " + mahlzeit_id + "");
+            ArrayList<Integer> kalories = new ArrayList<>();
+            while (new_resultSet.next()){
+                int kalorien = new_resultSet.getInt("kalorien");
+                kalories.add(kalorien);
+            }
+            int anz_kalorien = 0;
+            for (int i = 0; kalories.size() > i; i++){
+                anz_kalorien = anz_kalorien + kalories.get(i);
+            }
+            if (mahlzeit_id == 1){
+                this.anz_fruh_kalorien = anz_kalorien;
+            }
+            if (mahlzeit_id == 2){
+                this.anz_mit_kalorien = anz_kalorien;
+            }
+            if (mahlzeit_id == 3){
+                this.anz_abend_kalorien = anz_kalorien;
+            }
+            if (mahlzeit_id == 4){
+                this.anz_snack_kalorien = anz_kalorien;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -283,7 +301,7 @@ public class Tagebuch implements ActionListener {
         frame.dispose();
         Dimension frame_size = frame.getSize();
         Point frame_loc = frame.getLocation();
-        Bearbeiten n = new Bearbeiten(frame_size, frame_loc, this.benutzername, mahl_name ,port);
+        Bearbeiten n = new Bearbeiten(frame_size, frame_loc, this.benutzername, mahl_name ,port, correct_id);
         n.content();
     }
 
@@ -308,7 +326,6 @@ public class Tagebuch implements ActionListener {
         if (e.getSource() == Snacks){
             on_new_meal("Snacks");
         }
-
         if (e.getSource() == fruh_bearbeiten){
             on_edit(fruhstuck_list, 1);
         }
