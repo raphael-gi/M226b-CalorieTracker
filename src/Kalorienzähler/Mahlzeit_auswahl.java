@@ -261,7 +261,6 @@ public class Mahlzeit_auswahl implements ActionListener {
             catch (Exception E){
                 System.out.println("ups...");
             }
-
         }
     }
 }

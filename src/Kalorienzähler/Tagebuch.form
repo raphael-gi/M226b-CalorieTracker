@@ -108,7 +108,7 @@
           <text value="Mahlzeit Hinzufügen"/>
         </properties>
       </component>
-      <component id="bf0d4" class="javax.swing.JLabel">
+      <component id="bf0d4" class="javax.swing.JLabel" binding="fruh_label">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -124,7 +124,7 @@
           <text value="Mahlzeit Hinzufügen"/>
         </properties>
       </component>
-      <component id="d80f" class="javax.swing.JLabel">
+      <component id="d80f" class="javax.swing.JLabel" binding="mit_label">
         <constraints>
           <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -132,7 +132,7 @@
           <text value="Mittagessen"/>
         </properties>
       </component>
-      <component id="3b32c" class="javax.swing.JLabel">
+      <component id="3b32c" class="javax.swing.JLabel" binding="abend_label">
         <constraints>
           <grid row="13" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -156,7 +156,7 @@
           <text value="Mahlzeit Hinzufügen"/>
         </properties>
       </component>
-      <component id="f07cc" class="javax.swing.JLabel">
+      <component id="f07cc" class="javax.swing.JLabel" binding="snack_label">
         <constraints>
           <grid row="18" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>

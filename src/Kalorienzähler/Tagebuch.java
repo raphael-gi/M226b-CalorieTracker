@@ -31,6 +31,10 @@ public class Tagebuch implements ActionListener {
     private JButton abend_delete;
     private JButton snack_bearbeiten;
     private JButton snack_delete;
+    private JLabel fruh_label;
+    private JLabel mit_label;
+    private JLabel abend_label;
+    private JLabel snack_label;
     DefaultListModel snacks = new DefaultListModel();
     private JFrame frame;
 
@@ -57,6 +61,12 @@ public class Tagebuch implements ActionListener {
 
         frame.setSize(this.size);
         frame.setLocation(loc);
+
+        Font label_font = new Font("Arial", Font.BOLD, 15);
+        fruh_label.setFont(label_font);
+        mit_label.setFont(label_font);
+        abend_label.setFont(label_font);
+        snack_label.setFont(label_font);
 
         Frühstück.addActionListener(this);
         Mittagessen.addActionListener(this);
@@ -153,13 +163,11 @@ public class Tagebuch implements ActionListener {
         snack_bearbeiten.setVisible(false);
         snack_delete.setVisible(false);
     }
-
+    java.util.Date date = new Date();
+    SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
+    int get_ben_id = 0;
     public void content(){
-        java.util.Date date = new Date();
-        SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
-
         //Verbindung um id des Benutzer zu erhalten
-        int get_ben_id = 0;
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
             Statement statement = connection.createStatement();
@@ -182,61 +190,33 @@ public class Tagebuch implements ActionListener {
             kalorien_count.setText("Kalorien: " + anz_kalorien);
 
 
-            ResultSet fruh_resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = 1");
-            ArrayList<String> fruh_names = new ArrayList<>();
-            while (fruh_resultSet.next()){
-                String mahl_name = fruh_resultSet.getString("Name");
-                String id = fruh_resultSet.getString("mmm.id");
-                fruh_names.add(mahl_name);
-            }
-            for (int i = 0; fruh_names.size() > i; i++){
-                fruhstuck.addElement(fruh_names.get(i));
-            }
-            fruhstuck_list.setModel(fruhstuck);
+            get_delete(fruhstuck_list, fruhstuck,1);
 
+            get_delete(mittagessen_list, mittagessen,2);
 
-            ResultSet mit_resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = 2");
-            ArrayList<String> mit_names = new ArrayList<>();
-            while (mit_resultSet.next()){
-                String mahl_name = mit_resultSet.getString("Name");
-                mit_names.add(mahl_name);
-            }
-            for (int i = 0; mit_names.size() > i; i++){
-                mittagessen.addElement(mit_names.get(i));
-            }
-            mittagessen_list.setModel(mittagessen);
+            get_delete(abendessen_list, abendessen,3);
 
-
-            ResultSet abend_resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = 3");
-            ArrayList<String> abend_names = new ArrayList<>();
-            while (abend_resultSet.next()){
-                String mahl_name = abend_resultSet.getString("Name");
-                abend_names.add(mahl_name);
-            }
-            for (int i = 0; abend_names.size() > i; i++){
-                abendessen.addElement(abend_names.get(i));
-            }
-            abendessen_list.setModel(abendessen);
-
-
-            ResultSet snack_resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = 4");
-            ArrayList<String> snack_names = new ArrayList<>();
-            while (snack_resultSet.next()){
-                String mahl_name = snack_resultSet.getString("Name");
-                snack_names.add(mahl_name);
-            }
-            for (int i = 0; snack_names.size() > i; i++){
-                snacks.addElement(snack_names.get(i));
-            }
-            snacks_list.setModel(snacks);
+            get_delete(snacks_list, snacks,4);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+    public void get_delete(JList list_name , DefaultListModel name, int mahlzeit_id) throws SQLException {
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
+        ArrayList<String> names = new ArrayList<>();
+        while (resultSet.next()){
+            String mahl_name = resultSet.getString("Name");
+            names.add(mahl_name);
+        }
+        for (int i = 0; names.size() > i; i++){
+            name.addElement(names.get(i));
+        }
+        list_name.setModel(name);
+    }
     public void on_delete(JList name, int mahlzeit_id){
         String right_name = (String)name.getSelectedValue();
-
-        System.out.println(right_name);
 
         ArrayList same_name = new ArrayList();
         for (int i = 0; name.getModel().getSize() > i; i++){
@@ -302,39 +282,32 @@ public class Tagebuch implements ActionListener {
         }
     }
 
+    public void on_new_meal(String mahlzeit){
+        frame.dispose();
+        Dimension frame_size = frame.getSize();
+        Point frame_loc = frame.getLocation();
+        Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc, mahlzeit, this.benutzername);
+        mahl.content();
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == Frühstück){
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc, "Frühstück", this.benutzername);
-            mahl.content();
+            on_new_meal("Frühstück");
         }
         if (e.getSource() == Mittagessen){
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc,"Mittagessen", this.benutzername);
-            mahl.content();
+            on_new_meal("Mittagessen");
         }
         if (e.getSource() == Abendessen){
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc,"Abendessen", this.benutzername);
-            mahl.content();
+            on_new_meal("Abendessen");
         }
         if (e.getSource() == Snacks){
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc,"Snacks", this.benutzername);
-            mahl.content();
+            on_new_meal("Snacks");
         }
 
         if (e.getSource() == fruh_bearbeiten){
-            System.out.println("hi");
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            new Bearbeiten(frame_size,frame_loc);
         }
         if (e.getSource() == fruh_delete){
             on_delete(fruhstuck_list,1);
@@ -343,10 +316,10 @@ public class Tagebuch implements ActionListener {
             on_delete(mittagessen_list,2);
         }
         if (e.getSource() == abend_delete){
-            on_delete(mittagessen_list,3);
+            on_delete(abendessen_list,3);
         }
         if (e.getSource() == snack_delete){
-            on_delete(mittagessen_list,4);
+            on_delete(snacks_list,4);
         }
     }
 }
