@@ -1,7 +1,11 @@
 package Kalorienzähler;
 
-public class Main {
+import java.awt.*;
+
+public class Main{
     public static void main(String[] args) {
-        new Login();
+        Dimension size = new Dimension(500, 400);
+        Point loc = new Point(700,300);
+        new Login(size, loc);
     }
 }

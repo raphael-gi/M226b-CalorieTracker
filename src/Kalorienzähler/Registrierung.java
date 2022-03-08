@@ -15,16 +15,24 @@ public class Registrierung implements ActionListener {
     private JLabel error_message;
     private JFrame frame;
 
-    public Registrierung(){
+    private Dimension size;
+    private Point loc;
+
+    public Registrierung(Dimension size, Point loc){
         frame = new JFrame("Registrierung");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(500,400));
 
         frame.add(panel1);
 
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        this.size = size;
+        this.loc = loc;
+
+        frame.setSize(this.size);
+        frame.setLocation(loc);
 
         Registrieren.addActionListener(this);
         Login.addActionListener(this);
@@ -57,7 +65,9 @@ public class Registrierung implements ActionListener {
                                 error_message.setText("Benutzername wird bereits verwendet");
                             } else {
                                 frame.dispose();
-                                new Login();
+                                Dimension frame_size = frame.getSize();
+                                Point frame_loc = frame.getLocation();
+                                new Login(frame_size, frame_loc);
                             }
                         }
                         catch (Exception E){
@@ -69,7 +79,9 @@ public class Registrierung implements ActionListener {
         }
         if (e.getSource()==Login) {
             frame.dispose();
-            new Login();
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            new Login(frame_size, frame_loc);
         }
     }
 }

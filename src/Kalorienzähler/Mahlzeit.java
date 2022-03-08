@@ -14,18 +14,23 @@ public class Mahlzeit implements ActionListener {
     private JTextField Protein;
     private JTextField Fett;
     private JLabel error_message;
+    private JButton zuruck;
 
     private String mahlzeit;
     private String benutzername;
 
-    public Mahlzeit(String mahlzeit, String benutzername){
+    private Dimension size;
+    private Point loc;
+
+    public Mahlzeit(Dimension size, Point loc, String mahlzeit, String benutzername){
+        this.size = size;
+        this.loc = loc;
 
         this.mahlzeit = mahlzeit;
         this.benutzername = benutzername;
 
         frame = new JFrame("Mahlzeit Erstellen");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(500,400));
 
         frame.add(panel1);
 
@@ -33,7 +38,11 @@ public class Mahlzeit implements ActionListener {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
+        frame.setSize(this.size);
+        frame.setLocation(this.loc);
+
         Erstellen.addActionListener(this);
+        zuruck.addActionListener(this);
     }
 
     @Override
@@ -74,7 +83,9 @@ public class Mahlzeit implements ActionListener {
                             make_meal.con();
 
                             frame.dispose();
-                            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(this.mahlzeit, this.benutzername);
+                            Dimension frame_size = frame.getSize();
+                            Point frame_loc = frame.getLocation();
+                            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahlzeit, this.benutzername);
                             mahl.content();
                         }
                         catch (Exception E){
@@ -83,6 +94,13 @@ public class Mahlzeit implements ActionListener {
                     }
                 }
             }
+        }
+        if (e.getSource() == zuruck){
+            frame.dispose();
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahlzeit, this.benutzername);
+            n.content();
         }
     }
 }

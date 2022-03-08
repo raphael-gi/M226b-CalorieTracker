@@ -33,7 +33,13 @@ public class Mahlzeit_auswahl implements ActionListener {
     private String mahl_auswahl;
     private float anz_portionen;
 
-    public Mahlzeit_auswahl(String mahlzeit, String benutzername){
+    private Dimension size;
+    private Point loc;
+
+    public Mahlzeit_auswahl(Dimension size, Point loc, String mahlzeit, String benutzername){
+        this.size = size;
+        this.loc = loc;
+
         this.mahlzeit = mahlzeit;
         this.benutzername = benutzername;
 
@@ -46,6 +52,9 @@ public class Mahlzeit_auswahl implements ActionListener {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        frame.setSize(this.size);
+        frame.setLocation(this.loc);
 
         erstellen.addActionListener(this);
         zurück.addActionListener(this);
@@ -93,11 +102,15 @@ public class Mahlzeit_auswahl implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==erstellen){
             frame.dispose();
-            new Mahlzeit(this.mahlzeit, this.benutzername);
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            new Mahlzeit(frame_size, frame_loc, this.mahlzeit, this.benutzername);
         }
         if (e.getSource()==zurück){
             frame.dispose();
-            Tagebuch n = new Tagebuch(this.benutzername);
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
             n.content();
         }
         if (e.getSource()==dropname || e.getSource()==confirm){
@@ -240,7 +253,9 @@ public class Mahlzeit_auswahl implements ActionListener {
                 new_new_statement.execute("INSERT INTO mmm (mahl, kalorien, carb, protein, fat, datum, ben, mahlzeit) VALUES (" + get_mahl_id + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date) + "', " + get_ben_id + ", " + mahl_check + ")");
 
                 frame.dispose();
-                Tagebuch n = new Tagebuch(this.benutzername);
+                Dimension frame_size = frame.getSize();
+                Point frame_loc = frame.getLocation();
+                Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
                 n.content();
             }
             catch (Exception E){

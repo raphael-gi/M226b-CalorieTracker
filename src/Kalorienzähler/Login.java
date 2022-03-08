@@ -14,16 +14,24 @@ public class Login implements ActionListener {
     private JLabel error_message;
     private JFrame frame;
 
-    public Login(){
+    private Dimension size;
+    private Point loc;
+
+    public Login(Dimension size, Point loc){
         frame = new JFrame("Login");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(500,400));
 
         frame.add(panel1);
 
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        this.size = size;
+        this.loc = loc;
+
+        frame.setSize(this.size);
+        frame.setLocation(loc);
 
         Login.addActionListener(this);
         Registrieren.addActionListener(this);
@@ -53,14 +61,18 @@ public class Login implements ActionListener {
                 }
                 else {
                     frame.dispose();
-                    Tagebuch n = new Tagebuch(log.getResult());
+                    Dimension frame_size = frame.getSize();
+                    Point frame_loc = frame.getLocation();
+                    Tagebuch n = new Tagebuch(frame_size, frame_loc, log.getResult());
                     n.content();
                 }
             }
         }
         if (e.getSource()==Registrieren){
             frame.dispose();
-            new Registrierung();
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            new Registrierung(frame_size, frame_loc);
         }
     }
 }
