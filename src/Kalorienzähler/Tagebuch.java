@@ -23,6 +23,7 @@ public class Tagebuch implements ActionListener {
     private JList abendessen_list;
     DefaultListModel abendessen = new DefaultListModel();
     private JList snacks_list;
+    DefaultListModel snacks = new DefaultListModel();
     private JButton fruh_bearbeiten;
     private JButton fruh_delete;
     private JButton mit_bearbeiten;
@@ -35,7 +36,6 @@ public class Tagebuch implements ActionListener {
     private JLabel mit_label;
     private JLabel abend_label;
     private JLabel snack_label;
-    DefaultListModel snacks = new DefaultListModel();
     private JFrame frame;
 
     private Dimension size;
@@ -48,7 +48,6 @@ public class Tagebuch implements ActionListener {
 
         frame = new JFrame("Tagebuch");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(500,400));
 
         frame.add(panel1);
 
@@ -190,18 +189,18 @@ public class Tagebuch implements ActionListener {
             kalorien_count.setText("Kalorien: " + anz_kalorien);
 
 
-            get_delete(fruhstuck_list, fruhstuck,1);
+            get_select(fruhstuck_list, fruhstuck,1);
 
-            get_delete(mittagessen_list, mittagessen,2);
+            get_select(mittagessen_list, mittagessen,2);
 
-            get_delete(abendessen_list, abendessen,3);
+            get_select(abendessen_list, abendessen,3);
 
-            get_delete(snacks_list, snacks,4);
+            get_select(snacks_list, snacks,4);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    public void get_delete(JList list_name , DefaultListModel name, int mahlzeit_id) throws SQLException {
+    public void get_select(JList list_name , DefaultListModel name, int mahlzeit_id) throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
@@ -215,7 +214,8 @@ public class Tagebuch implements ActionListener {
         }
         list_name.setModel(name);
     }
-    public void on_delete(JList name, int mahlzeit_id){
+    int correct_id = 0;
+    public void on_button(JList name, int mahlzeit_id){
         String right_name = (String)name.getSelectedValue();
 
         ArrayList same_name = new ArrayList();
@@ -225,61 +225,66 @@ public class Tagebuch implements ActionListener {
                 same_name.add(cont);
             }
         }
-
-        if (same_name.size() == 1){
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
+            Statement statement = connection.createStatement();
             DBConnect fruh_select = new DBConnect("SELECT id FROM mahlzeit WHERE Name = '" + right_name + "'", "id", 0);
             fruh_select.con();
-            String mahl_id = fruh_select.getResult();
-            DBConnect fruh_delete = new DBConnect("DELETE FROM mmm WHERE mahl = " + mahl_id + " AND mahlzeit = " + mahlzeit_id + "", "id", 1);
-            fruh_delete.con();
 
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
-            n.content();
-        }
-        else {
-            try {
-                Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-                Statement statement = connection.createStatement();
-                DBConnect fruh_select = new DBConnect("SELECT id FROM mahlzeit WHERE Name = '" + right_name + "'", "id", 0);
-                fruh_select.con();
-
-                ResultSet fruh_select_mult = statement.executeQuery("SELECT id FROM mmm WHERE mahl = '" + fruh_select.getResult() + "' AND mahlzeit = " + mahlzeit_id + "");
-                ArrayList also_same_id = new ArrayList();
-                while (fruh_select_mult.next()){
-                    int mahl_id = fruh_select_mult.getInt("id");
-                    also_same_id.add(mahl_id);
-                }
-                name.getSelectedIndex();
-                ArrayList indexes = new ArrayList();
-                for (int i = 0; name.getModel().getSize() > i; i++){
-                    Object cont = name.getModel().getElementAt(i);
-                    if (right_name.equals(cont)){
-                        indexes.add(i);
-                    }
-                }
-                int right_id = 0;
-                for (int i = 0; indexes.size() > i; i++){
-                    int list_index = (int)indexes.get(i);
-                    if (name.getSelectedIndex() == list_index){
-                        right_id = i;
-                    }
-                }
-                int correct_id = (int)also_same_id.get(right_id);
-                DBConnect fruh_delete = new DBConnect("DELETE FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", " ", 1);
-                fruh_delete.con();
-
-                frame.dispose();
-                Dimension frame_size = frame.getSize();
-                Point frame_loc = frame.getLocation();
-                Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
-                n.content();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+            ResultSet fruh_select_mult = statement.executeQuery("SELECT id FROM mmm WHERE mahl = '" + fruh_select.getResult() + "' AND mahlzeit = " + mahlzeit_id + "");
+            ArrayList also_same_id = new ArrayList();
+            while (fruh_select_mult.next()){
+                int mahl_id = fruh_select_mult.getInt("id");
+                also_same_id.add(mahl_id);
             }
+            name.getSelectedIndex();
+            ArrayList indexes = new ArrayList();
+            for (int i = 0; name.getModel().getSize() > i; i++){
+                Object cont = name.getModel().getElementAt(i);
+                if (right_name.equals(cont)){
+                    indexes.add(i);
+                }
+            }
+            int right_id = 0;
+            for (int i = 0; indexes.size() > i; i++){
+                int list_index = (int)indexes.get(i);
+                if (name.getSelectedIndex() == list_index){
+                    right_id = i;
+                }
+            }
+            correct_id = (int)also_same_id.get(right_id);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
+    }
+    public void on_delete(JList name, int mahlzeit_id){
+        on_button(name,mahlzeit_id);
+        DBConnect delete = new DBConnect("DELETE FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", " ", 1);
+        delete.con();
+
+        frame.dispose();
+        Dimension frame_size = frame.getSize();
+        Point frame_loc = frame.getLocation();
+        Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
+        n.content();
+    }
+    public void on_edit(JList name, int mahlzeit_id){
+        on_button(name, mahlzeit_id);
+        DBConnect get_mahl = new DBConnect("SELECT mahl FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", "mahl", 0);
+        get_mahl.con();
+        String mahl = get_mahl.getResult();
+        DBConnect get_name = new DBConnect("SELECT Name FROM mahlzeit WHERE id = " + mahl + "", "Name", 0);
+        get_name.con();
+        String mahl_name = get_name.getResult();
+        DBConnect get_port = new DBConnect("SELECT port FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", "port", 0);
+        get_port.con();
+        String port = get_port.getResult();
+
+        frame.dispose();
+        Dimension frame_size = frame.getSize();
+        Point frame_loc = frame.getLocation();
+        Bearbeiten n = new Bearbeiten(frame_size, frame_loc, this.benutzername, mahl_name ,port);
+        n.content();
     }
 
     public void on_new_meal(String mahlzeit){
@@ -305,18 +310,25 @@ public class Tagebuch implements ActionListener {
         }
 
         if (e.getSource() == fruh_bearbeiten){
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            new Bearbeiten(frame_size,frame_loc);
+            on_edit(fruhstuck_list, 1);
         }
         if (e.getSource() == fruh_delete){
             on_delete(fruhstuck_list,1);
         }
+        if (e.getSource() == mit_bearbeiten){
+            on_edit(mittagessen_list, 2);
+        }
         if (e.getSource() == mit_delete){
             on_delete(mittagessen_list,2);
         }
+        if (e.getSource() == abend_bearbeiten){
+            on_edit(abendessen_list, 3);
+        }
         if (e.getSource() == abend_delete){
             on_delete(abendessen_list,3);
+        }
+        if (e.getSource() == snack_bearbeiten){
+            on_edit(snacks_list, 4);
         }
         if (e.getSource() == snack_delete){
             on_delete(snacks_list,4);
