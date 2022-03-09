@@ -63,7 +63,11 @@ public class Mahlzeit implements ActionListener {
                     error_message.setText("Der Name ist zu lange!");
                 }
                 else {
-                    DBConnect check_name = new DBConnect("SELECT Name FROM mahlzeit WHERE Name = '" + name + "'", "Name", 0);
+                    DBConnect check_id = new DBConnect("SELECT id FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "id", 0);
+                    check_id.con();
+                    String id = check_id.getResult();
+
+                    DBConnect check_name = new DBConnect("SELECT Name FROM mahlzeit WHERE Name = '" + name + "' AND ben = " + id + "", "Name", 0);
                     check_name.con();
                     if (check_name.getResult() != null){
                         error_message.setText("Mahlzeit exestiert bereits. Wählen sie einen anderen Namen!");

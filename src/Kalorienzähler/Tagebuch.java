@@ -40,7 +40,7 @@ public class Tagebuch implements ActionListener {
     private JLabel mit_kalorien;
     private JLabel abend_kalorien;
     private JLabel snack_kalorien;
-    private JButton a️Button;
+    private JButton einstellungen;
     private JFrame frame;
 
     private Dimension size;
@@ -80,6 +80,7 @@ public class Tagebuch implements ActionListener {
         Mittagessen.addActionListener(this);
         Abendessen.addActionListener(this);
         Snacks.addActionListener(this);
+        einstellungen.addActionListener(this);
 
         save(fruh_bearbeiten, fruh_delete, fruhstuck_list);
 
@@ -121,20 +122,17 @@ public class Tagebuch implements ActionListener {
                         mittagessen_list.clearSelection();
                         abendessen_list.clearSelection();
                     }
-                    vis();
+                    fruh_bearbeiten.setVisible(false);
+                    fruh_delete.setVisible(false);
+                    mit_bearbeiten.setVisible(false);
+                    mit_delete.setVisible(false);
+                    abend_bearbeiten.setVisible(false);
+                    abend_delete.setVisible(false);
+                    snack_bearbeiten.setVisible(false);
+                    snack_delete.setVisible(false);
                 }
             }
         });
-    }
-    public void vis(){
-        fruh_bearbeiten.setVisible(false);
-        fruh_delete.setVisible(false);
-        mit_bearbeiten.setVisible(false);
-        mit_delete.setVisible(false);
-        abend_bearbeiten.setVisible(false);
-        abend_delete.setVisible(false);
-        snack_bearbeiten.setVisible(false);
-        snack_delete.setVisible(false);
     }
     java.util.Date date = new Date();
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
@@ -349,6 +347,13 @@ public class Tagebuch implements ActionListener {
         }
         if (e.getSource() == snack_delete){
             on_delete(snacks_list,4);
+        }
+        if (e.getSource() == einstellungen){
+            frame.dispose();
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.benutzername);
+            n.content();
         }
     }
 }
