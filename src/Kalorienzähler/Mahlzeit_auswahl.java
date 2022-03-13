@@ -1,6 +1,8 @@
 package Kalorienzähler;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,23 +17,22 @@ public class Mahlzeit_auswahl implements ActionListener {
     private JLabel mahl;
     private JButton zurück;
     private JComboBox dropname;
-    private JTextField portionen;
     private JLabel anz_kalorien;
     private JLabel anz_carbs;
     private JLabel anz_protein;
     private JLabel anz_fat;
     private JLabel error_message;
     private JButton confirm;
-    private JButton plus;
-    private JButton minus;
     private JButton hinzufügen;
+    private JSpinner portion;
+    private JButton hidden;
     private JFrame frame;
 
     private String mahlzeit;
     private String benutzername;
     private int userid;
     private String mahl_auswahl;
-    private float anz_portionen;
+    private double anz_portionen;
 
     private Dimension size;
     private Point loc;
@@ -56,19 +57,28 @@ public class Mahlzeit_auswahl implements ActionListener {
         frame.setSize(this.size);
         frame.setLocation(this.loc);
 
+        hidden.setVisible(false);
+
         erstellen.addActionListener(this);
         zurück.addActionListener(this);
         dropname.addActionListener(this);
         confirm.addActionListener(this);
-        plus.addActionListener(this);
-        minus.addActionListener(this);
         hinzufügen.addActionListener(this);
+        hidden.addActionListener(this);
+        SpinnerNumberModel model = new SpinnerNumberModel(1, 0.0, 100000.0, 1);
+        portion.setModel(model);
+        portion.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                anz_portionen = (double) portion.getValue();
+                hidden.doClick();
+            }
+        });
     }
 
     public void content(){
             mahl.setText(this.mahlzeit);
 
-            portionen.setText("1");
         try{
             //Verbindung um id zu erhalten
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
@@ -98,6 +108,14 @@ public class Mahlzeit_auswahl implements ActionListener {
             System.out.println("verbindung zu Name ist Fehlgeschlagen");
         }
     }
+    public void set_data(ResultSet result, String what, JLabel name) throws SQLException {
+        String mahl = result.getString(what);
+        int mahl_int = Integer.parseInt(mahl);
+        double mahl_double = mahl_int * this.anz_portionen;
+        double mahl_round = Math.round(mahl_double * 10d) / 10d;
+        String mahl_final = String.valueOf(mahl_round);
+        name.setText(mahl_final);
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==erstellen){
@@ -113,7 +131,7 @@ public class Mahlzeit_auswahl implements ActionListener {
             Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
             n.content();
         }
-        if (e.getSource()==dropname || e.getSource()==confirm){
+        if (e.getSource()==dropname || e.getSource()==confirm || e.getSource() == hidden){
             String mahl_name = String.valueOf(dropname.getSelectedItem());
 
             error_message.setText("");
@@ -123,37 +141,18 @@ public class Mahlzeit_auswahl implements ActionListener {
                 Statement new_statement = new_connection.createStatement();
                 ResultSet new_resultSet = new_statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
 
-                try {
-                    this.anz_portionen = Float.parseFloat(portionen.getText());
-                }
-                catch (Exception E){
-                    error_message.setText("Geben sie eine Zahl als Portion an!");
-                }
-
                 if (error_message.getText().isEmpty()){
                     while (new_resultSet.next()){
                         //Anzahl Kohlenhydrate werden abgerufen
-                        String carb = new_resultSet.getString("carb");
-                        int carb_int = Integer.parseInt(carb);
-                        float carb_float = carb_int * this.anz_portionen;
-                        double carb_double = Math.round(carb_float * 10d) / 10d;
-                        String carb_final = String.valueOf(carb_double);
-                        this.anz_carbs.setText(carb_final);
+                        set_data(new_resultSet, "carb", this.anz_carbs);
                         //Anzahl Protein wird abgerufen
-                        String protein = new_resultSet.getString("protein");
-                        int protein_int = Integer.parseInt(protein);
-                        float protein_float = protein_int * this.anz_portionen;
-                        double protein_double = Math.round(protein_float * 10d) / 10d;
-                        String protein_final = String.valueOf(protein_double);
-                        this.anz_protein.setText(protein_final);
+                        set_data(new_resultSet, "protein", this.anz_protein);
                         //Anzahl Fett wird abgerufen
-                        String fat = new_resultSet.getString("fat");
-                        int fat_int = Integer.parseInt(fat);
-                        float fat_float = fat_int * this.anz_portionen;
-                        double fat_double = Math.round(fat_float * 10d) / 10d;
-                        String fat_final = String.valueOf(fat_double);
-                        this.anz_fat.setText(fat_final);
+                        set_data(new_resultSet, "fat", this.anz_fat);
                         //Anzahl Kalorien werden abgerufen
+                        double carb_double = Double.parseDouble(this.anz_carbs.getText());
+                        double protein_double = Double.parseDouble(this.anz_protein.getText());
+                        double fat_double = Double.parseDouble(this.anz_fat.getText());
                         double kalorien_double = (carb_double * 4) + (protein_double * 4) + (fat_double * 9);
                         long kalorien_long = Math.round(kalorien_double);
                         String kalorien_final = String.valueOf(kalorien_long);
@@ -164,50 +163,8 @@ public class Mahlzeit_auswahl implements ActionListener {
                 ex.printStackTrace();
             }
         }
-        if (e.getSource()==plus){
-            error_message.setText("");
-            try {
-                this.anz_portionen = Float.parseFloat(portionen.getText());
-            }
-            catch (Exception E){
-                error_message.setText("Geben sie eine Zahl als Portion an!");
-            }
-            if (error_message.getText().isEmpty()){
-                if (this.anz_portionen < 1){
-                    this.anz_portionen = (float)(this.anz_portionen + 0.1);
-                    this.anz_portionen = (float)(Math.round(this.anz_portionen *10d) / 10d);
-                }
-                else {
-                    this.anz_portionen++;
-                }
-                String str_portionen = String.valueOf(this.anz_portionen);
-                portionen.setText(str_portionen);
-            }
-        }
-        if (e.getSource()==minus){
-            error_message.setText("");
-            try {
-                this.anz_portionen = Float.parseFloat(portionen.getText());
-            }
-            catch (Exception E){
-                error_message.setText("Geben sie eine Zahl als Portion an!");
-            }
-            if (error_message.getText().isEmpty()){
-                if (this.anz_portionen <= 1){
-                    this.anz_portionen = (float)(this.anz_portionen - 0.1);
-                    this.anz_portionen = (float)(Math.round(this.anz_portionen * 10d) / 10d);
-                }
-                else {
-                    this.anz_portionen--;
-                }
-                if (this.anz_portionen >= 0){
-                    String str_portionen = String.valueOf(this.anz_portionen);
-                    portionen.setText(str_portionen);
-                }
-                else {
-                    error_message.setText("Die Portion darf nicht kleiner als 0 sein!");
-                }
-            }
+        if (e.getSource() == portion){
+            System.out.println("hi");
         }
         if (e.getSource() == hinzufügen){
             //Aktuelles Datum wird abgerufen
@@ -250,7 +207,7 @@ public class Mahlzeit_auswahl implements ActionListener {
                 //Data wird eingefügt
                 Connection new_new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
                 Statement new_new_statement = new_new_connection.createStatement();
-                new_new_statement.execute("INSERT INTO mmm (mahl, port, kalorien, carb, protein, fat, datum, ben, mahlzeit) VALUES (" + get_mahl_id + ", " + portionen.getText() + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date) + "', " + get_ben_id + ", " + mahl_check + ")");
+                new_new_statement.execute("INSERT INTO mmm (mahl, port, kalorien, carb, protein, fat, datum, ben, mahlzeit) VALUES (" + get_mahl_id + ", " + this.anz_portionen + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date) + "', " + get_ben_id + ", " + mahl_check + ")");
 
                 frame.dispose();
                 Dimension frame_size = frame.getSize();

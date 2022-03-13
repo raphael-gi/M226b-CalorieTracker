@@ -13,6 +13,10 @@ public class Registrierung implements ActionListener {
     private JButton Login;
     private JButton Registrieren;
     private JLabel error_message;
+    private JRadioButton mann;
+    private JRadioButton weib;
+    SpinnerNumberModel model = new SpinnerNumberModel(30, 0, 150, 1);
+    private JSpinner alter;
     private JFrame frame;
 
     private Dimension size;
@@ -34,16 +38,28 @@ public class Registrierung implements ActionListener {
         frame.setSize(this.size);
         frame.setLocation(loc);
 
+        alter.setModel(model);
+
         Registrieren.addActionListener(this);
         Login.addActionListener(this);
+        mann.addActionListener(this);
+        weib.addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource()==Registrieren) {
+        if (e.getSource() == Registrieren) {
             String benutzer = Benutzer.getText();
             String passwort = Passwort.getText();
             String passwort_best = Passwort_Best.getText();
+            int alter = (int)this.alter.getValue();
+            int gender = 0;
+            if (mann.isSelected()){
+                gender = 1;
+            }
+            else {
+                gender = 2;
+            }
 
             error_message.setText("");
             if (benutzer.isEmpty() || passwort.isEmpty() || passwort_best.isEmpty()){
@@ -55,33 +71,49 @@ public class Registrierung implements ActionListener {
                 }
                 else {
                     if (passwort.length() < 8){
-                        error_message.setText("Passwort zu kurz");
+                        error_message.setText("Passwort zu kurz!");
                     }
                     else {
-                        RegistrierungSQL reg = new RegistrierungSQL(benutzer,passwort);
-                        try {
-                            reg.connect();
-                            if (reg.getResult().equals("being_used")) {
-                                error_message.setText("Benutzername wird bereits verwendet");
-                            } else {
-                                frame.dispose();
-                                Dimension frame_size = frame.getSize();
-                                Point frame_loc = frame.getLocation();
-                                new Login(frame_size, frame_loc);
-                            }
+                        if (alter < 0 || alter > 150){
+                            error_message.setText("Geben sie ihr richtiges Alter an!");
                         }
-                        catch (Exception E){
-                            error_message.setText("Etwas ist schief gelaufen");
+                        else {
+                            if (!mann.isSelected() && !weib.isSelected()){
+                                error_message.setText("Wählen eines der Gender aus!");
+                            }
+                            else {
+                                RegistrierungSQL reg = new RegistrierungSQL(benutzer,passwort, gender, alter);
+                                try {
+                                    reg.connect();
+                                    if (reg.getResult().equals("being_used")) {
+                                        error_message.setText("Benutzername wird bereits verwendet");
+                                    } else {
+                                        frame.dispose();
+                                        Dimension frame_size = frame.getSize();
+                                        Point frame_loc = frame.getLocation();
+                                        new Login(frame_size, frame_loc);
+                                    }
+                                }
+                                catch (Exception E){
+                                    error_message.setText("Etwas ist schief gelaufen");
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-        if (e.getSource()==Login) {
+        if (e.getSource() == Login) {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
             new Login(frame_size, frame_loc);
+        }
+        if (e.getSource() == mann){
+            weib.setSelected(false);
+        }
+        if (e.getSource() == weib){
+            mann.setSelected(false);
         }
     }
 }

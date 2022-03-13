@@ -1,6 +1,11 @@
 package Kalorienzähler;
 
+import org.jdatepicker.JDatePicker;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.text.html.HTML;
 import java.awt.*;
 import java.awt.event.*;
@@ -43,6 +48,7 @@ public class Tagebuch implements ActionListener {
     private JButton einstellungen;
     private JFrame frame;
 
+
     private Dimension size;
     private Point loc;
 
@@ -51,6 +57,8 @@ public class Tagebuch implements ActionListener {
     private int anz_mit_kalorien;
     private int anz_abend_kalorien;
     private int anz_snack_kalorien;
+
+    private boolean darkmode;
 
     public Tagebuch(Dimension size, Point loc, String benutzername){
         this.benutzername = benutzername;
@@ -70,11 +78,31 @@ public class Tagebuch implements ActionListener {
         frame.setSize(this.size);
         frame.setLocation(loc);
 
+        DBConnect darkcon = new DBConnect("SELECT dark FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "dark", 0);
+        darkcon.con();
+        int numb = Integer.parseInt(darkcon.getResult());
+        if (numb == 0){
+            this.darkmode = false;
+        }
+        else {
+            this.darkmode = true;
+
+            panel1.setBackground(Color.DARK_GRAY);
+
+            kalorien_count.setForeground(Color.WHITE);
+
+            darkmode(fruhstuck_list, Frühstück, fruh_label, fruh_kalorien);
+            darkmode(mittagessen_list, Mittagessen, mit_label, mit_kalorien);
+            darkmode(abendessen_list, Abendessen, abend_label, abend_kalorien);
+            darkmode(snacks_list, Snacks, snack_label, snack_kalorien);
+        }
+
         Font label_font = new Font("Arial", Font.BOLD, 15);
         fruh_label.setFont(label_font);
         mit_label.setFont(label_font);
         abend_label.setFont(label_font);
         snack_label.setFont(label_font);
+        kalorien_count.setFont(label_font);
 
         Frühstück.addActionListener(this);
         Mittagessen.addActionListener(this);
@@ -89,6 +117,20 @@ public class Tagebuch implements ActionListener {
         save(abend_bearbeiten, abend_delete, abendessen_list);
 
         save(snack_bearbeiten, snack_delete, snacks_list);
+    }
+    public void darkmode(JList list_name, JButton button_name, JLabel label_name, JLabel label_cal_name){
+        label_name.setForeground(Color.WHITE);
+
+        label_cal_name.setForeground(Color.WHITE);
+
+        list_name.setForeground(Color.WHITE);
+        list_name.setBackground(Color.GRAY);
+
+        LineBorder border_darkmode = new LineBorder(Color.WHITE, 2);
+        button_name.setBackground(Color.WHITE);
+        button_name.setBackground(Color.GRAY);
+        button_name.setBorderPainted(true);
+        button_name.setBorder(border_darkmode);
     }
     public void save(JButton name_edit, JButton name_delete, JList list_name){
         name_edit.addActionListener(this);

@@ -211,6 +211,8 @@ public class Bearbeiten implements ActionListener {
             float protein = Float.parseFloat(anz_protein.getText());
             float fat = Float.parseFloat(anz_fat.getText());
 
+            System.out.println(kalorien);
+
             DBConnect get_ben = new DBConnect("SELECT id FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "id", 0);
             get_ben.con();
             String ben_id = get_ben.getResult();
@@ -218,6 +220,7 @@ public class Bearbeiten implements ActionListener {
             DBConnect get_mahl = new DBConnect("SELECT id FROM mahlzeit WHERE Name = '" + drop_selected + "' AND ben = " + ben_id + "", "id", 0);
             get_mahl.con();
             String mahl = get_mahl.getResult();
+            System.out.println(this.mmm_id);
 
             DBConnect update = new DBConnect("UPDATE mmm SET mahl = " + mahl + ", port = " + portion + ", kalorien = " + kalorien + ", carb = " + carb + ", protein = " + protein + ", fat = " + fat + " WHERE id = " + this.mmm_id + "", " ", 1);
             update.con();
