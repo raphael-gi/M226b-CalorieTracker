@@ -8,10 +8,11 @@ import javax.swing.text.html.HTML;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 
 public class Einstellungen implements ActionListener {
-    private JLabel benutzername;
     private JPanel panel1;
+    private JLabel benutzername;
     private JButton dark;
     private JLabel darkmode_label;
     private JLabel benutzername_label;
@@ -22,6 +23,10 @@ public class Einstellungen implements ActionListener {
     private JButton bestaetigen;
     private JLabel error_message;
     private JButton logout;
+    private JLabel gender;
+    private JLabel age;
+    private JLabel age_label;
+    private JLabel gender_label;
 
     private JFrame frame;
 
@@ -29,6 +34,9 @@ public class Einstellungen implements ActionListener {
     private Point loc;
     private String name;
     private boolean darkmode;
+
+    private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout};
+    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label};
 
     public Einstellungen(Dimension size, Point loc, String name){
         this.size = size;
@@ -77,12 +85,56 @@ public class Einstellungen implements ActionListener {
     public void content(){
         benutzername.setText(this.name);
 
+        DBConnect get_gender = new DBConnect("SELECT gender FROM benutzer WHERE Benutzername = '" + this.name + "'", "gender", 0);
+        get_gender.con();
+        int gender = Integer.parseInt(get_gender.getResult());
+        if (gender == 0){
+            this.gender.setText("Weiblich");
+        }
+        else {
+            this.gender.setText("Männlich");
+        }
+
+        DBConnect get_age = new DBConnect("SELECT age FROM benutzer WHERE Benutzername = '" + this.name + "'", "age", 0);
+        get_age.con();
+        String age = get_age.getResult();
+        this.age.setText(age);
+
         if (!this.darkmode){
             dark.setText("Aus");
         }
         else {
             dark.setText("An");
+            passwort_feld.setBackground(Color.lightGray);
 
+            Darkmode n = new Darkmode(name, all_buttons, all_labels);
+            all_buttons = n.getAll_buttons();
+            all_labels = n.getAll_labels();
+
+            logout.addMouseListener(new MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    logout.setForeground(Color.CYAN);
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    logout.setForeground(Color.CYAN);
+                }
+            });
+            loeschen.addMouseListener(new MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    loeschen.setForeground(Color.RED);
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    loeschen.setForeground(Color.RED);
+                }
+            });
+            bestaetigen.addMouseListener(new MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    bestaetigen.setForeground(Color.RED);
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    bestaetigen.setForeground(Color.RED);
+                }
+            });
         }
     }
 

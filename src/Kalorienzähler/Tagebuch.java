@@ -58,6 +58,10 @@ public class Tagebuch implements ActionListener {
     private int anz_abend_kalorien;
     private int anz_snack_kalorien;
 
+    private JButton[] all_buttons = {Frühstück, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen};
+    private JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien};
+    private JList[] all_lists = {fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
+
     private boolean darkmode;
 
     public Tagebuch(Dimension size, Point loc, String benutzername){
@@ -78,23 +82,20 @@ public class Tagebuch implements ActionListener {
         frame.setSize(this.size);
         frame.setLocation(loc);
 
-        DBConnect darkcon = new DBConnect("SELECT dark FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "dark", 0);
-        darkcon.con();
-        int numb = Integer.parseInt(darkcon.getResult());
-        if (numb == 0){
-            this.darkmode = false;
-        }
-        else {
-            this.darkmode = true;
+        Darkmode check = new Darkmode(benutzername, all_buttons, all_labels);
+        darkmode = check.isDark();
+        if (darkmode){
 
             panel1.setBackground(Color.DARK_GRAY);
 
-            kalorien_count.setForeground(Color.WHITE);
-
-            darkmode(fruhstuck_list, Frühstück, fruh_label, fruh_kalorien);
-            darkmode(mittagessen_list, Mittagessen, mit_label, mit_kalorien);
-            darkmode(abendessen_list, Abendessen, abend_label, abend_kalorien);
-            darkmode(snacks_list, Snacks, snack_label, snack_kalorien);
+            for (int li = 0; this.all_lists.length > li; li++){
+                JList list = this.all_lists[li];
+                list.setForeground(Color.white);
+                list.setBackground(Color.gray);
+            }
+            Darkmode n = new Darkmode(benutzername, all_buttons, all_labels);
+            all_buttons = n.getAll_buttons();
+            all_labels = n.getAll_labels();
         }
 
         Font label_font = new Font("Arial", Font.BOLD, 15);
@@ -118,27 +119,6 @@ public class Tagebuch implements ActionListener {
 
         save(snack_bearbeiten, snack_delete, snacks_list);
     }
-    public void darkmode(JList list_name, JButton button_name, JLabel label_name, JLabel label_cal_name){
-        label_name.setForeground(Color.WHITE);
-
-        label_cal_name.setForeground(Color.WHITE);
-
-        list_name.setForeground(Color.WHITE);
-        list_name.setBackground(Color.GRAY);
-
-        LineBorder border_darkmode = new LineBorder(Color.WHITE, 0);
-        button_name.setBackground(Color.GRAY);
-        button_name.setBorderPainted(true);
-        button_name.setBorder(border_darkmode);
-        button_name.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button_name.setBackground(Color.LIGHT_GRAY);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button_name.setBackground(Color.GRAY);
-            }
-        });
-    }
     public void save(JButton name_edit, JButton name_delete, JList list_name){
         name_edit.addActionListener(this);
         name_delete.addActionListener(this);
@@ -146,7 +126,7 @@ public class Tagebuch implements ActionListener {
         name_delete.setVisible(false);
         list_name.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e){
-                if (e.getClickCount() == 2){
+                if (e.getClickCount() == 2 && !list_name.isSelectionEmpty()){
                     name_edit.setVisible(true);
                     name_delete.setVisible(true);
                 }
@@ -244,7 +224,6 @@ public class Tagebuch implements ActionListener {
             while (new_resultSet.next()){
                 int kalorien = new_resultSet.getInt("kalorien");
                 kalories.add(kalorien);
-                System.out.println(kalorien);
             }
             int anz_kalorien = 0;
             for (int i = 0; kalories.size() > i; i++){

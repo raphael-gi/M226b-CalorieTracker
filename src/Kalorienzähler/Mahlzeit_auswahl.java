@@ -31,11 +31,12 @@ public class Mahlzeit_auswahl implements ActionListener {
     private String mahlzeit;
     private String benutzername;
     private int userid;
-    private String mahl_auswahl;
     private double anz_portionen;
 
     private Dimension size;
     private Point loc;
+
+    private boolean dark;
 
     public Mahlzeit_auswahl(Dimension size, Point loc, String mahlzeit, String benutzername){
         this.size = size;
@@ -75,9 +76,26 @@ public class Mahlzeit_auswahl implements ActionListener {
             }
         });
     }
+    public void set_data(String what, JLabel name) throws SQLException {
+        String mahl_name = String.valueOf(dropname.getSelectedItem());
+        try {
+            DBConnect get_mahl = new DBConnect("SELECT * FROM mahlzeit WHERE Name = '" + mahl_name + "'", what, 0);
+            get_mahl.con();
+            String mahl = get_mahl.getResult();
+            int mahl_int = Integer.parseInt(mahl);
+            double mahl_double = mahl_int * this.anz_portionen;
+            double mahl_round = Math.round(mahl_double * 10d) / 10d;
+            String mahl_final = String.valueOf(mahl_round);
+            name.setText(mahl_final);
 
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
     public void content(){
-            mahl.setText(this.mahlzeit);
+        mahl.setText(this.mahlzeit);
+        this.anz_portionen = (double)portion.getValue();
 
         try{
             //Verbindung um id zu erhalten
@@ -107,31 +125,19 @@ public class Mahlzeit_auswahl implements ActionListener {
         catch (Exception E){
             System.out.println("verbindung zu Name ist Fehlgeschlagen");
         }
-        //Anzahl Kohlenhydrate werden abgerufen
-        set_data(new_resultSet, "carb", this.anz_carbs);
-        //Anzahl Protein wird abgerufen
-        set_data(new_resultSet, "protein", this.anz_protein);
-        //Anzahl Fett wird abgerufen
-        set_data(new_resultSet, "fat", this.anz_fat);
-
-    }
-    public void set_data(ResultSet result, String what, JLabel name) throws SQLException {
-        String mahl_name = String.valueOf(dropname.getSelectedItem());
         try {
-            Connection new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            Statement new_statement = new_connection.createStatement();
-            ResultSet new_resultSet = new_statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
+            //Anzahl Kohlenhydrate werden abgerufen
+            set_data("carb", this.anz_carbs);
+            //Anzahl Protein wird abgerufen
+            set_data("protein", this.anz_protein);
+            //Anzahl Fett wird abgerufen
+            set_data("fat", this.anz_fat);
         }
         catch (SQLException ex){
-            ex.printStackTrace();
+            System.out.println("content fail");
         }
-        String mahl = result.getString(what);
-        int mahl_int = Integer.parseInt(mahl);
-        double mahl_double = mahl_int * this.anz_portionen;
-        double mahl_round = Math.round(mahl_double * 10d) / 10d;
-        String mahl_final = String.valueOf(mahl_round);
-        name.setText(mahl_final);
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==erstellen){
@@ -151,6 +157,7 @@ public class Mahlzeit_auswahl implements ActionListener {
             String mahl_name = String.valueOf(dropname.getSelectedItem());
 
             error_message.setText("");
+            this.anz_portionen = (double)portion.getValue();
 
             try {
                 Connection new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
@@ -160,11 +167,11 @@ public class Mahlzeit_auswahl implements ActionListener {
                 if (error_message.getText().isEmpty()){
                     while (new_resultSet.next()){
                         //Anzahl Kohlenhydrate werden abgerufen
-                        set_data(new_resultSet, "carb", this.anz_carbs);
+                        set_data("carb", this.anz_carbs);
                         //Anzahl Protein wird abgerufen
-                        set_data(new_resultSet, "protein", this.anz_protein);
+                        set_data("protein", this.anz_protein);
                         //Anzahl Fett wird abgerufen
-                        set_data(new_resultSet, "fat", this.anz_fat);
+                        set_data("fat", this.anz_fat);
                         //Anzahl Kalorien werden abgerufen
                         double carb_double = Double.parseDouble(this.anz_carbs.getText());
                         double protein_double = Double.parseDouble(this.anz_protein.getText());
