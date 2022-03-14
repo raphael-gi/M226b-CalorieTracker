@@ -126,11 +126,18 @@ public class Tagebuch implements ActionListener {
         list_name.setForeground(Color.WHITE);
         list_name.setBackground(Color.GRAY);
 
-        LineBorder border_darkmode = new LineBorder(Color.WHITE, 2);
-        button_name.setBackground(Color.WHITE);
+        LineBorder border_darkmode = new LineBorder(Color.WHITE, 0);
         button_name.setBackground(Color.GRAY);
         button_name.setBorderPainted(true);
         button_name.setBorder(border_darkmode);
+        button_name.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_name.setBackground(Color.LIGHT_GRAY);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button_name.setBackground(Color.GRAY);
+            }
+        });
     }
     public void save(JButton name_edit, JButton name_delete, JList list_name){
         name_edit.addActionListener(this);
@@ -237,11 +244,13 @@ public class Tagebuch implements ActionListener {
             while (new_resultSet.next()){
                 int kalorien = new_resultSet.getInt("kalorien");
                 kalories.add(kalorien);
+                System.out.println(kalorien);
             }
             int anz_kalorien = 0;
             for (int i = 0; kalories.size() > i; i++){
                 anz_kalorien = anz_kalorien + kalories.get(i);
             }
+
             if (mahlzeit_id == 1){
                 this.anz_fruh_kalorien = anz_kalorien;
             }

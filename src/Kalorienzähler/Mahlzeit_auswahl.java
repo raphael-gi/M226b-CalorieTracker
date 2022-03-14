@@ -107,8 +107,24 @@ public class Mahlzeit_auswahl implements ActionListener {
         catch (Exception E){
             System.out.println("verbindung zu Name ist Fehlgeschlagen");
         }
+        //Anzahl Kohlenhydrate werden abgerufen
+        set_data(new_resultSet, "carb", this.anz_carbs);
+        //Anzahl Protein wird abgerufen
+        set_data(new_resultSet, "protein", this.anz_protein);
+        //Anzahl Fett wird abgerufen
+        set_data(new_resultSet, "fat", this.anz_fat);
+
     }
     public void set_data(ResultSet result, String what, JLabel name) throws SQLException {
+        String mahl_name = String.valueOf(dropname.getSelectedItem());
+        try {
+            Connection new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
+            Statement new_statement = new_connection.createStatement();
+            ResultSet new_resultSet = new_statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
+        }
+        catch (SQLException ex){
+            ex.printStackTrace();
+        }
         String mahl = result.getString(what);
         int mahl_int = Integer.parseInt(mahl);
         double mahl_double = mahl_int * this.anz_portionen;
