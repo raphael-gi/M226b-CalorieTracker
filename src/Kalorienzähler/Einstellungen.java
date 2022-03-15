@@ -27,6 +27,9 @@ public class Einstellungen implements ActionListener {
     private JLabel age;
     private JLabel age_label;
     private JLabel gender_label;
+    private JButton ändernButton;
+    private JButton ändernButton1;
+    private JButton ändernButton2;
 
     private JFrame frame;
 
@@ -61,21 +64,6 @@ public class Einstellungen implements ActionListener {
 
         error_message.setText("");
 
-        DBConnect darkcon = new DBConnect("SELECT dark FROM benutzer WHERE Benutzername = '" + this.name + "'", "dark", 0);
-        darkcon.con();
-        int numb = Integer.parseInt(darkcon.getResult());
-        if (numb == 0){
-            this.darkmode = false;
-        }
-        else {
-            this.darkmode = true;
-
-            panel1.setBackground(Color.DARK_GRAY);
-            benutzername.setForeground(Color.WHITE);
-            darkmode_label.setForeground(Color.WHITE);
-            benutzername_label.setForeground(Color.WHITE);
-        }
-
         dark.addActionListener(this);
         zuruck.addActionListener(this);
         loeschen.addActionListener(this);
@@ -100,14 +88,18 @@ public class Einstellungen implements ActionListener {
         String age = get_age.getResult();
         this.age.setText(age);
 
+        Darkmode n = new Darkmode(name, all_buttons, all_labels);
+        this.darkmode = n.isDark();
         if (!this.darkmode){
             dark.setText("Aus");
         }
         else {
             dark.setText("An");
+
+            panel1.setBackground(Color.DARK_GRAY);
+
             passwort_feld.setBackground(Color.lightGray);
 
-            Darkmode n = new Darkmode(name, all_buttons, all_labels);
             all_buttons = n.getAll_buttons();
             all_labels = n.getAll_labels();
 

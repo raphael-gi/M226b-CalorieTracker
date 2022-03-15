@@ -84,8 +84,7 @@ public class Tagebuch implements ActionListener {
 
         Darkmode check = new Darkmode(benutzername, all_buttons, all_labels);
         darkmode = check.isDark();
-        if (darkmode){
-
+        if (this.darkmode == true){
             panel1.setBackground(Color.DARK_GRAY);
 
             for (int li = 0; this.all_lists.length > li; li++){
