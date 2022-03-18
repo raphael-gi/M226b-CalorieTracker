@@ -25,6 +25,13 @@ public class Mahlzeit_auswahl implements ActionListener {
     private JButton hinzufugen;
     private JSpinner portion;
     private JButton hidden;
+    private JButton bearbeiten;
+    private JLabel kalorien_label;
+    private JLabel carb_label;
+    private JLabel protein_label;
+    private JLabel fat_label;
+    private JLabel mahlzeit_label;
+    private JLabel portionen_label;
     private JFrame frame;
 
     private String mahlzeit;
@@ -36,6 +43,9 @@ public class Mahlzeit_auswahl implements ActionListener {
     private Point loc;
 
     private boolean dark;
+
+    private JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten};
+    private JLabel[] all_labels = {mahl, anz_kalorien, anz_carbs, anz_protein, anz_fat, kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
 
     public Mahlzeit_auswahl(Dimension size, Point loc, String mahlzeit, String benutzername){
         this.size = size;
@@ -65,6 +75,7 @@ public class Mahlzeit_auswahl implements ActionListener {
         confirm.addActionListener(this);
         hinzufugen.addActionListener(this);
         hidden.addActionListener(this);
+        bearbeiten.addActionListener(this);
         SpinnerNumberModel model = new SpinnerNumberModel(1, 0.0, 100000.0, 1);
         portion.setModel(model);
         portion.addChangeListener(new ChangeListener() {
@@ -93,6 +104,13 @@ public class Mahlzeit_auswahl implements ActionListener {
         }
     }
     public void content(){
+        Darkmode n = new Darkmode(this.benutzername, all_buttons, all_labels);
+        if (n.isDark()){
+            panel1.setBackground(Color.DARK_GRAY);
+            all_buttons = n.getAll_buttons();
+            all_labels = n.getAll_labels();
+        }
+
         mahl.setText(this.mahlzeit);
         this.anz_portionen = (double)portion.getValue();
 
@@ -240,6 +258,23 @@ public class Mahlzeit_auswahl implements ActionListener {
             catch (Exception E){
                 System.out.println("ups...");
             }
+        }
+        if (e.getSource() == bearbeiten){
+            frame.dispose();
+            String mahl_name = (String) dropname.getSelectedItem();
+            DBConnect get_carb = new DBConnect("SELECT carb FROM mahlzeit WHERE Name = '" + mahl_name + "'", "carb", 0);
+            get_carb.con();
+            System.out.println(get_carb.getResult());
+            int carb_int = Integer.parseInt(get_carb.getResult());
+            DBConnect get_protein = new DBConnect("SELECT protein FROM mahlzeit WHERE Name = '" + mahl_name + "'", "protein", 0);
+            get_protein.con();
+            int protein_int = Integer.parseInt(get_protein.getResult());
+            DBConnect get_fat = new DBConnect("SELECT fat FROM mahlzeit WHERE Name = '" + mahl_name + "'", "fat", 0);
+            get_fat.con();
+            int fat_int = Integer.parseInt(get_fat.getResult());
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            new Mahlzeit_Bearbeiten(frame_size, frame_loc, this.benutzername, mahl_name, carb_int, protein_int, fat_int);
         }
     }
 }

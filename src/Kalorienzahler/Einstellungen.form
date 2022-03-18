@@ -205,7 +205,7 @@
           <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="a2713" class="javax.swing.JButton" binding="ändernButton" default-binding="true">
+      <component id="a2713" class="javax.swing.JButton" binding="name_andern_button">
         <constraints>
           <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -213,7 +213,7 @@
           <text value="Ändern"/>
         </properties>
       </component>
-      <component id="a431" class="javax.swing.JButton" binding="ändernButton1" default-binding="true">
+      <component id="a431" class="javax.swing.JButton" binding="gender_andern_button">
         <constraints>
           <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -221,7 +221,7 @@
           <text value="Ändern"/>
         </properties>
       </component>
-      <component id="4c09b" class="javax.swing.JButton" binding="ändernButton2" default-binding="true">
+      <component id="4c09b" class="javax.swing.JButton" binding="age_andern_button">
         <constraints>
           <grid row="7" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

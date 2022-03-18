@@ -23,9 +23,9 @@ public class Einstellungen implements ActionListener {
     private JLabel age;
     private JLabel age_label;
     private JLabel gender_label;
-    private JButton ändernButton;
-    private JButton ändernButton1;
-    private JButton ändernButton2;
+    private JButton name_andern_button;
+    private JButton gender_andern_button;
+    private JButton age_andern_button;
 
     private JFrame frame;
 
