@@ -47,7 +47,10 @@ public class Tagebuch implements ActionListener {
     private JLabel snack_kalorien;
     private JButton einstellungen;
     private JFrame frame;
-
+    private int gender;
+    private int groesse;
+    private int gewicht;
+    private int alter;
 
     private Dimension size;
     private Point loc;
@@ -57,6 +60,8 @@ public class Tagebuch implements ActionListener {
     private int anz_mit_kalorien;
     private int anz_abend_kalorien;
     private int anz_snack_kalorien;
+    private double formel;
+    private double rest;
 
     private JButton[] all_buttons = {Frühstück, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen};
     private JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien};
@@ -166,6 +171,14 @@ public class Tagebuch implements ActionListener {
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
     int get_ben_id = 0;
     public void content(){
+        DBConnect gend = new DBConnect("SELECT gender FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "gender",0);
+        gender= Integer.parseInt(gend.getResult());
+        if(gender == 1){
+            formel =  (66.47 + (13.7 * gewicht) + (5 * groesse) - (6.8 * alter));
+        }else{
+            formel =  (655.1 + (9.6 * gewicht) + (1.8 * groesse) - (4.7 * alter));
+        }
+        //Verbi
         //Verbindung um id des Benutzer zu erhalten
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
@@ -186,8 +199,8 @@ public class Tagebuch implements ActionListener {
             for (int i = 0; kalories.size() > i; i++){
                 anz_kalorien = anz_kalorien + kalories.get(i);
             }
-
-            kalorien_count.setText("Kalorien: " + anz_kalorien);
+            rest = formel - anz_kalorien;
+            kalorien_count.setText("Benötigte Kalorien: "+ formel +" Konsumierte Kalorien: " + anz_kalorien + " Verbleibende Kalorien: "+ rest );
 
             //Frühstück Kalorien werden angezeigt
             get_meal_cal(1);
