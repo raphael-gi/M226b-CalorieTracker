@@ -1,4 +1,4 @@
-package Kalorienzähler;
+package Kalorienzahler;
 
 import javax.swing.*;
 import java.awt.*;

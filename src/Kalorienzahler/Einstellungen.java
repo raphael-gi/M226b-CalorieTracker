@@ -1,10 +1,6 @@
-package Kalorienzähler;
-
-import com.mysql.cj.log.Log;
-import org.jdatepicker.JDatePicker;
+package Kalorienzahler;
 
 import javax.swing.*;
-import javax.swing.text.html.HTML;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
