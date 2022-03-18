@@ -1,4 +1,4 @@
-package Kalorienzähler;
+package Kalorienzahler;
 
 public class RegistrierungSQL {
     private String name;

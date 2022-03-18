@@ -1,12 +1,6 @@
-package Kalorienzähler;
-
-import org.jdatepicker.JDatePicker;
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
+package Kalorienzahler;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
-import javax.swing.text.html.HTML;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
@@ -16,7 +10,7 @@ import java.util.Date;
 
 public class Tagebuch implements ActionListener {
     private JPanel panel1;
-    private JButton Frühstück;
+    private JButton Fruhstuck;
     private JButton Mittagessen;
     private JButton Abendessen;
     private JButton Snacks;
@@ -58,7 +52,7 @@ public class Tagebuch implements ActionListener {
     private int anz_abend_kalorien;
     private int anz_snack_kalorien;
 
-    private JButton[] all_buttons = {Frühstück, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen};
+    private JButton[] all_buttons = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen};
     private JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien};
     private JList[] all_lists = {fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
 
@@ -104,7 +98,7 @@ public class Tagebuch implements ActionListener {
         snack_label.setFont(label_font);
         kalorien_count.setFont(label_font);
 
-        Frühstück.addActionListener(this);
+        Fruhstuck.addActionListener(this);
         Mittagessen.addActionListener(this);
         Abendessen.addActionListener(this);
         Snacks.addActionListener(this);
@@ -341,7 +335,7 @@ public class Tagebuch implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == Frühstück){
+        if (e.getSource() == Fruhstuck){
             on_new_meal("Frühstück");
         }
         if (e.getSource() == Mittagessen){

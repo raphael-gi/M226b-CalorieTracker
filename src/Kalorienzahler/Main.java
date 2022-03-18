@@ -1,4 +1,4 @@
-package Kalorienzähler;
+package Kalorienzahler;
 
 import java.awt.*;
 
@@ -7,6 +7,5 @@ public class Main{
         Dimension size = new Dimension(900, 700);
         Point loc = new Point(500,200);
         new Login(size, loc);
-        System.out.println("test");
     }
 }

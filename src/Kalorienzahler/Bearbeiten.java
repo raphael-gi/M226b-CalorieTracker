@@ -1,4 +1,4 @@
-package Kalorienzähler;
+package Kalorienzahler;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -18,7 +18,7 @@ public class Bearbeiten implements ActionListener {
     private JLabel anz_protein;
     private JLabel anz_fat;
     private JLabel error_message;
-    private JButton zurück;
+    private JButton zuruck;
     private JButton hidden;
     private JSpinner portionen;
     private JFrame frame;
@@ -57,11 +57,11 @@ public class Bearbeiten implements ActionListener {
 
         hidden.setVisible(false);
 
-        zurück.addActionListener(this);
+        zuruck.addActionListener(this);
         dropname.addActionListener(this);
         confirm.addActionListener(this);
         bearbeiten.addActionListener(this);
-        zurück.addActionListener(this);
+        zuruck.addActionListener(this);
         hidden.addActionListener(this);
         SpinnerNumberModel model = new SpinnerNumberModel(1, 0.0, 100000.0, 1);
         portionen.setModel(model);
@@ -125,7 +125,7 @@ public class Bearbeiten implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == zurück){
+        if (e.getSource() == zuruck){
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();

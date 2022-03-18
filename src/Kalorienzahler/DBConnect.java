@@ -1,4 +1,4 @@
-package Kalorienzähler;
+package Kalorienzahler;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,4 +1,4 @@
-package Kalorienzähler;
+package Kalorienzahler;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -15,7 +14,7 @@ public class Mahlzeit_auswahl implements ActionListener {
     private JButton erstellen;
     private JPanel panel1;
     private JLabel mahl;
-    private JButton zurück;
+    private JButton zuruck;
     private JComboBox dropname;
     private JLabel anz_kalorien;
     private JLabel anz_carbs;
@@ -23,7 +22,7 @@ public class Mahlzeit_auswahl implements ActionListener {
     private JLabel anz_fat;
     private JLabel error_message;
     private JButton confirm;
-    private JButton hinzufügen;
+    private JButton hinzufugen;
     private JSpinner portion;
     private JButton hidden;
     private JFrame frame;
@@ -61,10 +60,10 @@ public class Mahlzeit_auswahl implements ActionListener {
         hidden.setVisible(false);
 
         erstellen.addActionListener(this);
-        zurück.addActionListener(this);
+        zuruck.addActionListener(this);
         dropname.addActionListener(this);
         confirm.addActionListener(this);
-        hinzufügen.addActionListener(this);
+        hinzufugen.addActionListener(this);
         hidden.addActionListener(this);
         SpinnerNumberModel model = new SpinnerNumberModel(1, 0.0, 100000.0, 1);
         portion.setModel(model);
@@ -146,7 +145,7 @@ public class Mahlzeit_auswahl implements ActionListener {
             Point frame_loc = frame.getLocation();
             new Mahlzeit(frame_size, frame_loc, this.mahlzeit, this.benutzername);
         }
-        if (e.getSource()==zurück){
+        if (e.getSource()== zuruck){
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
@@ -189,7 +188,7 @@ public class Mahlzeit_auswahl implements ActionListener {
         if (e.getSource() == portion){
             System.out.println("hi");
         }
-        if (e.getSource() == hinzufügen){
+        if (e.getSource() == hinzufugen){
             //Aktuelles Datum wird abgerufen
             Date date = new Date();
             SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
