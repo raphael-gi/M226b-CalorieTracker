@@ -178,7 +178,6 @@ public class Tagebuch implements ActionListener {
         }else{
             formel =  (655.1 + (9.6 * gewicht) + (1.8 * groesse) - (4.7 * alter));
         }
-
         //Verbindung um id des Benutzer zu erhalten
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
