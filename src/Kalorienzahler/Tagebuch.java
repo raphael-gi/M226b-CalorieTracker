@@ -40,10 +40,17 @@ public class Tagebuch implements ActionListener {
     private JLabel abend_kalorien;
     private JLabel snack_kalorien;
     private JButton einstellungen;
+    private JLabel kalorien_anz;
+    private JLabel kalorien_ziel_label;
+    private JLabel kons_kalorien_label;
+    private JLabel verb_kalorien_label;
+    private JLabel verb_kalorien;
+    private JLabel minus;
+    private JLabel gleich;
     private JFrame frame;
     private int gender;
-    private int groesse;
-    private int gewicht;
+    private double groesse;
+    private double gewicht;
     private int alter;
 
     private Dimension size;
@@ -58,7 +65,7 @@ public class Tagebuch implements ActionListener {
     private double rest;
 
     private JButton[] all_buttons = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen};
-    private JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien};
+    private JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label, kalorien_anz, verb_kalorien, minus, gleich};
     private JList[] all_lists = {fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
 
     private boolean darkmode;
@@ -83,7 +90,7 @@ public class Tagebuch implements ActionListener {
 
         Darkmode check = new Darkmode(benutzername, all_buttons, all_labels);
         darkmode = check.isDark();
-        if (this.darkmode == true){
+        if (this.darkmode){
             panel1.setBackground(Color.DARK_GRAY);
 
             for (int li = 0; this.all_lists.length > li; li++){
@@ -102,6 +109,10 @@ public class Tagebuch implements ActionListener {
         abend_label.setFont(label_font);
         snack_label.setFont(label_font);
         kalorien_count.setFont(label_font);
+        kalorien_anz.setFont(label_font);
+        verb_kalorien.setFont(label_font);
+        minus.setFont(label_font);
+        gleich.setFont(label_font);
 
         Fruhstuck.addActionListener(this);
         Mittagessen.addActionListener(this);
@@ -165,12 +176,19 @@ public class Tagebuch implements ActionListener {
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
     int get_ben_id = 0;
     public void content(){
-        DBConnect gend = new DBConnect("SELECT gender FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "gender",0);
-        gender= Integer.parseInt(gend.getResult());
-        if(gender == 1){
-            formel =  (66.47 + (13.7 * gewicht) + (5 * groesse) - (6.8 * alter));
+        DBConnect gender = new DBConnect("SELECT gender FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "gender",0);
+        this.gender = Integer.parseInt(gender.getResult());
+        DBConnect alter = new DBConnect("SELECT age FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "age", 0);
+        this.alter = Integer.parseInt(alter.getResult());
+        DBConnect gewicht = new DBConnect("SELECT gewicht FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "gewicht", 0);
+        this.gewicht = Double.parseDouble(gewicht.getResult());
+        DBConnect groesse = new DBConnect("SELECT groesse FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "groesse", 0);
+        this.groesse = Double.parseDouble(groesse.getResult());
+
+        if(this.gender == 1){
+            formel =  (66.47 + (13.7 * this.gewicht) + (5 * this.groesse) - (6.8 * this.alter));
         }else{
-            formel =  (655.1 + (9.6 * gewicht) + (1.8 * groesse) - (4.7 * alter));
+            formel =  (655.1 + (9.6 * this.gewicht) + (1.8 * this.groesse) - (4.7 * this.alter));
         }
         //Verbindung um id des Benutzer zu erhalten
         try {
@@ -193,7 +211,11 @@ public class Tagebuch implements ActionListener {
                 anz_kalorien = anz_kalorien + kalories.get(i);
             }
             rest = formel - anz_kalorien;
-            kalorien_count.setText("Benötigte Kalorien: "+ formel +" Konsumierte Kalorien: " + anz_kalorien + " Verbleibende Kalorien: "+ rest );
+
+            kalorien_count.setText(String.valueOf(formel));
+            kalorien_anz.setText(String.valueOf(anz_kalorien));
+            int rest_round = (int) (Math.round(rest * 10d) / 10d);
+            verb_kalorien.setText(String.valueOf(rest_round));
 
             //Frühstück Kalorien werden angezeigt
             get_meal_cal(1);
@@ -280,7 +302,6 @@ public class Tagebuch implements ActionListener {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
             Statement statement = connection.createStatement();
             DBConnect fruh_select = new DBConnect("SELECT id FROM mahlzeit WHERE Name = '" + right_name + "'", "id", 0);
-            fruh_select.con();
 
             ResultSet fruh_select_mult = statement.executeQuery("SELECT id FROM mmm WHERE mahl = '" + fruh_select.getResult() + "' AND mahlzeit = " + mahlzeit_id + "");
             ArrayList also_same_id = new ArrayList();
@@ -311,7 +332,6 @@ public class Tagebuch implements ActionListener {
     public void on_delete(JList name, int mahlzeit_id){
         on_button(name,mahlzeit_id);
         DBConnect delete = new DBConnect("DELETE FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", " ", 1);
-        delete.con();
 
         frame.dispose();
         Dimension frame_size = frame.getSize();
@@ -322,13 +342,13 @@ public class Tagebuch implements ActionListener {
     public void on_edit(JList name, int mahlzeit_id){
         on_button(name, mahlzeit_id);
         DBConnect get_mahl = new DBConnect("SELECT mahl FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", "mahl", 0);
-        get_mahl.con();
+
         String mahl = get_mahl.getResult();
         DBConnect get_name = new DBConnect("SELECT Name FROM mahlzeit WHERE id = " + mahl + "", "Name", 0);
-        get_name.con();
+
         String mahl_name = get_name.getResult();
         DBConnect get_port = new DBConnect("SELECT port FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", "port", 0);
-        get_port.con();
+
         String port = get_port.getResult();
 
         frame.dispose();

@@ -1,16 +1,21 @@
 package Kalorienzahler;
 
 public class RegistrierungSQL {
-    private String name;
-    private String passwort;
-    private int gender;
-    private int alter;
+    private final String name;
+    private final String passwort;
+    private final int gender;
+    private final int alter;
+    private final double gewicht;
+    private final double groesse;
     private String result;
-    RegistrierungSQL(String name, String passwort, int gender, int alter){
+
+    RegistrierungSQL(String name, String passwort, int gender, int alter, double gewicht, double groesse){
         this.name = name;
         this.passwort = passwort;
         this.gender = gender;
         this.alter = alter;
+        this.gewicht = gewicht;
+        this.groesse = groesse;
     }
 
     public String getResult() {
@@ -24,7 +29,7 @@ public class RegistrierungSQL {
             this.result = "being_used";
         }
         else{
-            DBConnect registrierung = new DBConnect("INSERT INTO benutzer (Benutzername, Passwort, gender, age) VALUES ('" + this.name + "', '" + this.passwort + "', " + gender + ", " + alter + ")","Benutzername",1);
+            DBConnect registrierung = new DBConnect("INSERT INTO benutzer (Benutzername, Passwort, gender, age, gewicht, groesse) VALUES ('" + this.name + "', '" + this.passwort + "', " + gender + ", " + alter + ", " + gewicht + ", " + groesse + ")","Benutzername",1);
             System.out.println(this.name);
             System.out.println(this.passwort);
             registrierung.con();

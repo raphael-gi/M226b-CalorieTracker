@@ -26,6 +26,18 @@ public class Einstellungen implements ActionListener {
     private JButton name_andern_button;
     private JButton gender_andern_button;
     private JButton age_andern_button;
+    private JPasswordField name_andern_passwort;
+    private JTextField name_andern_input;
+    private JLabel name_andern_pas_label;
+    private JButton name_andern_pas_best;
+    private JButton name_andern_best;
+    private JLabel name_andern_label;
+    private JLabel gender_andern_pas_label;
+    private JPasswordField gender_andern_passwort;
+    private JButton gender_andern_pas_best;
+    private JLabel age_andern_pas_label;
+    private JPasswordField age_andern_passwort;
+    private JButton age_andern_pas_best;
 
     private JFrame frame;
 
@@ -34,8 +46,8 @@ public class Einstellungen implements ActionListener {
     private String name;
     private boolean darkmode;
 
-    private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout};
-    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label};
+    private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, name_andern_pas_best, name_andern_best};
+    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, name_andern_pas_label, name_andern_label};
 
     public Einstellungen(Dimension size, Point loc, String name){
         this.size = size;
@@ -60,11 +72,29 @@ public class Einstellungen implements ActionListener {
 
         error_message.setText("");
 
+        name_andern_pas_best.setVisible(false);
+
+        vis(name_andern_pas_label, name_andern_passwort, name_andern_label, name_andern_input, name_andern_pas_best, name_andern_best);
+
         dark.addActionListener(this);
         zuruck.addActionListener(this);
         loeschen.addActionListener(this);
         bestaetigen.addActionListener(this);
         logout.addActionListener(this);
+        name_andern_button.addActionListener(this);
+        gender_andern_button.addActionListener(this);
+        age_andern_button.addActionListener(this);
+    }
+    public void vis(JLabel pas_label, JPasswordField pas_input, JLabel label, JTextField input, JButton pas_best, JButton best){
+        pas_label.setVisible(false);
+        pas_input.setVisible(false);
+        label.setVisible(false);
+        input.setVisible(false);
+        pas_best.setVisible(false);
+        best.setVisible(false);
+    }
+    public void andern(JButton andern_button){
+
     }
     public void content(){
         benutzername.setText(this.name);

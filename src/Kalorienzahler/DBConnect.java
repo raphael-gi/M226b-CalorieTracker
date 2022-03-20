@@ -15,6 +15,7 @@ public class DBConnect {
         this.sql_statement = sql_statement;
         this.sql_get = sql_get;
         this.check = check;
+        con();
     }
 
     public String getResult() {

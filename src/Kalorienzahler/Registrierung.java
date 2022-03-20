@@ -15,8 +15,12 @@ public class Registrierung implements ActionListener {
     private JLabel error_message;
     private JRadioButton mann;
     private JRadioButton weib;
-    SpinnerNumberModel model = new SpinnerNumberModel(30, 0, 150, 1);
+    SpinnerNumberModel alter_model = new SpinnerNumberModel(30, 0, 150, 1);
     private JSpinner alter;
+    SpinnerNumberModel gewicht_model = new SpinnerNumberModel(75, 0.00, 1000.00, 1);
+    private JSpinner gewicht;
+    SpinnerNumberModel groesse_model = new SpinnerNumberModel(80, 0.00, 1000.00, 1);
+    private JSpinner groesse;
     private JFrame frame;
 
     private Dimension size;
@@ -38,7 +42,9 @@ public class Registrierung implements ActionListener {
         frame.setSize(this.size);
         frame.setLocation(loc);
 
-        alter.setModel(model);
+        alter.setModel(alter_model);
+        gewicht.setModel(gewicht_model);
+        groesse.setModel(groesse_model);
 
         Registrieren.addActionListener(this);
         Login.addActionListener(this);
@@ -60,6 +66,8 @@ public class Registrierung implements ActionListener {
             else {
                 gender = 2;
             }
+            double gewicht = (double) this.gewicht.getValue();
+            double groesse = (double) this.groesse.getValue();
 
             error_message.setText("");
             if (benutzer.isEmpty() || passwort.isEmpty() || passwort_best.isEmpty()){
@@ -82,7 +90,8 @@ public class Registrierung implements ActionListener {
                                 error_message.setText("Wählen eines der Gender aus!");
                             }
                             else {
-                                RegistrierungSQL reg = new RegistrierungSQL(benutzer,passwort, gender, alter);
+                                System.out.println("test");
+                                RegistrierungSQL reg = new RegistrierungSQL(benutzer,passwort, gender, alter, gewicht, groesse);
                                 try {
                                     reg.connect();
                                     if (reg.getResult().equals("being_used")) {
