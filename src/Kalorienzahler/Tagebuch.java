@@ -210,9 +210,10 @@ public class Tagebuch implements ActionListener {
             for (int i = 0; kalories.size() > i; i++){
                 anz_kalorien = anz_kalorien + kalories.get(i);
             }
+            int formel_gerund = (int) Math.round(formel);
             rest = formel - anz_kalorien;
 
-            kalorien_count.setText(String.valueOf(formel));
+            kalorien_count.setText(String.valueOf(formel_gerund));
             kalorien_anz.setText(String.valueOf(anz_kalorien));
             int rest_round = (int) (Math.round(rest * 10d) / 10d);
             verb_kalorien.setText(String.valueOf(rest_round));

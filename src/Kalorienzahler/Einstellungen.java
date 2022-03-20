@@ -26,18 +26,20 @@ public class Einstellungen implements ActionListener {
     private JButton name_andern_button;
     private JButton gender_andern_button;
     private JButton age_andern_button;
-    private JPasswordField name_andern_passwort;
-    private JTextField name_andern_input;
-    private JLabel name_andern_pas_label;
-    private JButton name_andern_pas_best;
-    private JButton name_andern_best;
-    private JLabel name_andern_label;
-    private JLabel gender_andern_pas_label;
-    private JPasswordField gender_andern_passwort;
-    private JButton gender_andern_pas_best;
-    private JLabel age_andern_pas_label;
-    private JPasswordField age_andern_passwort;
-    private JButton age_andern_pas_best;
+    private JTextField new_name;
+    private JButton new_name_best;
+    private JLabel new_name_label;
+    SpinnerNumberModel alter_model = new SpinnerNumberModel(30, 0, 150, 1);
+    private JSpinner new_alter;
+    private JLabel new_alter_label;
+    private JButton new_alter_best;
+    private JLabel groesse;
+    private JLabel groesse_label;
+    private JButton groesse_andern_button;
+    private JLabel new_groesse_label;
+    private JButton new_groesse_best;
+    SpinnerNumberModel groesse_model = new SpinnerNumberModel(80, 0.00, 1000.00, 1);
+    private JSpinner new_groesse;
 
     private JFrame frame;
 
@@ -46,8 +48,12 @@ public class Einstellungen implements ActionListener {
     private String name;
     private boolean darkmode;
 
-    private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, name_andern_pas_best, name_andern_best};
-    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, name_andern_pas_label, name_andern_label};
+    private int new_name_check;
+    private int new_age_check;
+    private int new_groesse_check;
+
+    private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best};
+    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label};
 
     public Einstellungen(Dimension size, Point loc, String name){
         this.size = size;
@@ -66,15 +72,24 @@ public class Einstellungen implements ActionListener {
         frame.setSize(this.size);
         frame.setLocation(loc);
 
+        new_alter.setModel(alter_model);
+        new_groesse.setModel(groesse_model);
+
         pass_eingeben.setVisible(false);
         passwort_feld.setVisible(false);
         bestaetigen.setVisible(false);
 
+        new_name_label.setVisible(false);
+        new_name.setVisible(false);
+        new_name_best.setVisible(false);
+        new_alter_label.setVisible(false);
+        new_alter.setVisible(false);
+        new_alter_best.setVisible(false);
+        new_groesse_label.setVisible(false);
+        new_groesse.setVisible(false);
+        new_groesse_best.setVisible(false);
+
         error_message.setText("");
-
-        name_andern_pas_best.setVisible(false);
-
-        vis(name_andern_pas_label, name_andern_passwort, name_andern_label, name_andern_input, name_andern_pas_best, name_andern_best);
 
         dark.addActionListener(this);
         zuruck.addActionListener(this);
@@ -84,25 +99,19 @@ public class Einstellungen implements ActionListener {
         name_andern_button.addActionListener(this);
         gender_andern_button.addActionListener(this);
         age_andern_button.addActionListener(this);
+        groesse_andern_button.addActionListener(this);
+        new_name_best.addActionListener(this);
+        new_alter_best.addActionListener(this);
+        new_groesse_best.addActionListener(this);
     }
-    public void vis(JLabel pas_label, JPasswordField pas_input, JLabel label, JTextField input, JButton pas_best, JButton best){
-        pas_label.setVisible(false);
-        pas_input.setVisible(false);
-        label.setVisible(false);
-        input.setVisible(false);
-        pas_best.setVisible(false);
-        best.setVisible(false);
-    }
-    public void andern(JButton andern_button){
 
-    }
     public void content(){
         benutzername.setText(this.name);
 
         DBConnect get_gender = new DBConnect("SELECT gender FROM benutzer WHERE Benutzername = '" + this.name + "'", "gender", 0);
         get_gender.con();
         int gender = Integer.parseInt(get_gender.getResult());
-        if (gender == 0){
+        if (gender == 1){
             this.gender.setText("Weiblich");
         }
         else {
@@ -110,9 +119,12 @@ public class Einstellungen implements ActionListener {
         }
 
         DBConnect get_age = new DBConnect("SELECT age FROM benutzer WHERE Benutzername = '" + this.name + "'", "age", 0);
-        get_age.con();
         String age = get_age.getResult();
         this.age.setText(age);
+
+        DBConnect get_groesse = new DBConnect("SELECT groesse FROM benutzer WHERE Benutzername = '" + this.name + "'", "groesse", 0);
+        String groesse = get_groesse.getResult();
+        this.groesse.setText(groesse);
 
         Darkmode n = new Darkmode(name, all_buttons, all_labels);
         this.darkmode = n.isDark();
@@ -208,6 +220,112 @@ public class Einstellungen implements ActionListener {
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
             new Login(frame_size, frame_loc);
+        }
+        if (e.getSource() == name_andern_button){
+            if (this.new_name_check == 1){
+                new_name_label.setVisible(false);
+                new_name.setVisible(false);
+                new_name_best.setVisible(false);
+                this.new_name_check = 0;
+            }
+            else {
+                new_name_label.setVisible(true);
+                new_name.setVisible(true);
+                new_name_best.setVisible(true);
+                this.new_name_check = 1;
+            }
+        }
+        if (e.getSource() == new_name_best){
+            if (new_name.getText().isEmpty()){
+                error_message.setText("Benutzername darf nicht Leer sein!");
+            }
+            else {
+                DBConnect check = new DBConnect("SELECT Benutzername FROM Benutzer WHERE Benutzername = '" + new_name.getText() + "'", "Benutzername", 0);
+                if (check.getResult() != null){
+                    error_message.setText("Benutzername wird bereits verwendet!");
+                }
+                else {
+                    new DBConnect("UPDATE Benutzer SET Benutzername = '" + new_name.getText() + "' WHERE Benutzername = '" + this.name + "'", " ", 1);
+                    frame.dispose();
+                    Dimension frame_size = frame.getSize();
+                    Point frame_loc = frame.getLocation();
+                    Einstellungen n = new Einstellungen(frame_size, frame_loc, new_name.getText());
+                    n.content();
+                }
+            }
+        }
+        if (e.getSource() == age_andern_button){
+            if (this.new_age_check == 1){
+                new_alter_label.setVisible(false);
+                new_alter.setVisible(false);
+                new_alter_best.setVisible(false);
+                this.new_age_check = 0;
+            }
+            else {
+                int age_value = Integer.parseInt(age.getText());
+                new_alter.setValue(age_value);
+                new_alter_label.setVisible(true);
+                new_alter.setVisible(true);
+                new_alter_best.setVisible(true);
+                this.new_age_check = 1;
+            }
+        }
+        if (e.getSource() == new_alter_best){
+            if (new_alter.getValue() == null){
+                error_message.setText("Alter darf nicht Leer sein!");
+            }
+            else {
+                new DBConnect("UPDATE Benutzer SET age = '" + new_alter.getValue() + "' WHERE Benutzername = '" + this.name + "'", " ", 1);
+                frame.dispose();
+                Dimension frame_size = frame.getSize();
+                Point frame_loc = frame.getLocation();
+                Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name);
+                n.content();
+            }
+        }
+        if (e.getSource() == groesse_andern_button){
+            if (this.new_groesse_check == 1){
+                new_groesse_label.setVisible(false);
+                new_groesse.setVisible(false);
+                new_groesse_best.setVisible(false);
+                this.new_groesse_check = 0;
+            }
+            else {
+                double groesse_value = Double.parseDouble(groesse.getText());
+                new_groesse.setValue(groesse_value);
+                new_groesse_label.setVisible(true);
+                new_groesse.setVisible(true);
+                new_groesse_best.setVisible(true);
+                this.new_groesse_check = 1;
+            }
+        }
+        if (e.getSource() == new_groesse_best){
+            if (new_groesse.getValue() == null){
+                error_message.setText("Grösse darf nicht Leer sein!");
+            }
+            else {
+                new DBConnect("UPDATE Benutzer SET groesse = '" + new_groesse.getValue() + "' WHERE Benutzername = '" + this.name + "'", " ", 1);
+                frame.dispose();
+                Dimension frame_size = frame.getSize();
+                Point frame_loc = frame.getLocation();
+                Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name);
+                n.content();
+            }
+        }
+        if (e.getSource() == gender_andern_button){
+            DBConnect gend = new DBConnect("SELECT gender FROM Benutzer WHERE Benutzername = '" + this.name + "'", "gender", 0);
+            int gender = Integer.parseInt(gend.getResult());
+            if (gender == 1){
+                new DBConnect("UPDATE Benutzer SET gender = " + 2 + " WHERE Benutzername = '" + this.name + "'", " ", 1);
+            }
+            else {
+                new DBConnect("UPDATE Benutzer SET gender = " + 1 + " WHERE Benutzername = '" + this.name + "'", " ", 1);
+            }
+            frame.dispose();
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name);
+            n.content();
         }
     }
 }
