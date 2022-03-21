@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Mahlzeit_Bearbeiten implements ActionListener {
+    private JPanel panel1;
     private JButton bearbeiten;
     private JTextField name_input;
     private JLabel name_label;
@@ -14,7 +15,8 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     private JSpinner protein_input;
     private JSpinner fat_input;
     private JLabel fat_label;
-    private JPanel panel1;
+    private JLabel protein_label;
+    private JButton zuruck;
     private JFrame frame;
 
     private Dimension size;
@@ -25,6 +27,9 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     private int carb;
     private int protein;
     private int fat;
+
+    JButton[] all_buttons = {bearbeiten, zuruck};
+    JLabel[] all_labels = {name_label, carb_label, fat_label, protein_label};
 
     public Mahlzeit_Bearbeiten(Dimension size, Point loc, String benutzername, String mahl_name, int carb, int protein, int fat){
         this.benutzername = benutzername;
@@ -47,13 +52,37 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         frame.setSize(this.size);
         frame.setLocation(loc);
 
-        bearbeiten.addActionListener(this);
+        for (int i = 0; all_buttons.length > i; i++){
+            JButton but = all_buttons[i];
+            but.addActionListener(this);
+        }
+    }
+
+    public void contenttt(){
+        name_input.setText(mahl_name);
+        carb_input.setValue(carb);
+        protein_input.setValue(protein);
+        fat_input.setValue(fat);
+
+        Darkmode n = new Darkmode(this.benutzername, all_buttons, all_labels);
+        if (n.isDark()){
+            panel1.setBackground(Color.DARK_GRAY);
+            all_buttons = n.getAll_buttons();
+            all_labels = n.getAll_labels();
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == bearbeiten){
 
+        }
+        if (e.getSource() == zuruck){
+            frame.dispose();
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl_name, this.benutzername);
+            n.content();
         }
     }
 }

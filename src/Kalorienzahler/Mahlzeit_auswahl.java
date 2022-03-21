@@ -11,8 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Mahlzeit_auswahl implements ActionListener {
-    private JButton erstellen;
     private JPanel panel1;
+    private JButton erstellen;
     private JLabel mahl;
     private JButton zuruck;
     private JComboBox dropname;
@@ -42,9 +42,7 @@ public class Mahlzeit_auswahl implements ActionListener {
     private Dimension size;
     private Point loc;
 
-    private boolean dark;
-
-    private JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten};
+    private JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten, hidden};
     private JLabel[] all_labels = {mahl, anz_kalorien, anz_carbs, anz_protein, anz_fat, kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
 
     public Mahlzeit_auswahl(Dimension size, Point loc, String mahlzeit, String benutzername){
@@ -69,13 +67,11 @@ public class Mahlzeit_auswahl implements ActionListener {
 
         hidden.setVisible(false);
 
-        erstellen.addActionListener(this);
-        zuruck.addActionListener(this);
-        dropname.addActionListener(this);
-        confirm.addActionListener(this);
-        hinzufugen.addActionListener(this);
-        hidden.addActionListener(this);
-        bearbeiten.addActionListener(this);
+        for (int i = 0; all_buttons.length > i; i++){
+            JButton but = all_buttons[i];
+            but.addActionListener(this);
+        }
+
         SpinnerNumberModel model = new SpinnerNumberModel(1, 0.0, 100000.0, 1);
         portion.setModel(model);
         portion.addChangeListener(new ChangeListener() {
@@ -97,7 +93,6 @@ public class Mahlzeit_auswahl implements ActionListener {
             double mahl_round = Math.round(mahl_double * 10d) / 10d;
             String mahl_final = String.valueOf(mahl_round);
             name.setText(mahl_final);
-
         }
         catch (Exception ex){
             ex.printStackTrace();
@@ -149,6 +144,14 @@ public class Mahlzeit_auswahl implements ActionListener {
             set_data("protein", this.anz_protein);
             //Anzahl Fett wird abgerufen
             set_data("fat", this.anz_fat);
+
+            double carb_double = Double.parseDouble(this.anz_carbs.getText());
+            double protein_double = Double.parseDouble(this.anz_protein.getText());
+            double fat_double = Double.parseDouble(this.anz_fat.getText());
+            double kalorien_double = (carb_double * 4) + (protein_double * 4) + (fat_double * 9);
+            long kalorien_long = Math.round(kalorien_double);
+            String kalorien_final = String.valueOf(kalorien_long);
+            this.anz_kalorien.setText(kalorien_final);
         }
         catch (SQLException ex){
             System.out.println("content fail");
@@ -170,7 +173,7 @@ public class Mahlzeit_auswahl implements ActionListener {
             Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
             n.content();
         }
-        if (e.getSource()==dropname || e.getSource()==confirm || e.getSource() == hidden){
+        if (e.getSource()==dropname || e.getSource()==confirm){
             String mahl_name = String.valueOf(dropname.getSelectedItem());
 
             error_message.setText("");
@@ -203,8 +206,22 @@ public class Mahlzeit_auswahl implements ActionListener {
                 ex.printStackTrace();
             }
         }
-        if (e.getSource() == portion){
-            System.out.println("hi");
+        if (e.getSource() == hidden){
+            double carbs = Double.parseDouble(this.anz_carbs.getText());
+            double protein = Double.parseDouble(this.anz_protein.getText());
+            double fat = Double.parseDouble(this.anz_fat.getText());
+            double cals = Double.parseDouble(this.anz_kalorien.getText());
+
+            double port = (double) portion.getValue();
+            double new_carbs = carbs * port;
+            double new_protein = protein * port;
+            double new_fat = fat * port;
+            double new_cals = cals * port;
+
+            this.anz_carbs.setText(String.valueOf(new_carbs));
+            this.anz_protein.setText(String.valueOf(new_protein));
+            this.anz_fat.setText(String.valueOf(new_fat));
+            this.anz_kalorien.setText(String.valueOf(new_cals));
         }
         if (e.getSource() == hinzufugen){
             //Aktuelles Datum wird abgerufen
@@ -256,7 +273,7 @@ public class Mahlzeit_auswahl implements ActionListener {
                 n.content();
             }
             catch (Exception E){
-                System.out.println("ups...");
+                E.printStackTrace();
             }
         }
         if (e.getSource() == bearbeiten){
@@ -264,7 +281,6 @@ public class Mahlzeit_auswahl implements ActionListener {
             String mahl_name = (String) dropname.getSelectedItem();
             DBConnect get_carb = new DBConnect("SELECT carb FROM mahlzeit WHERE Name = '" + mahl_name + "'", "carb", 0);
             get_carb.con();
-            System.out.println(get_carb.getResult());
             int carb_int = Integer.parseInt(get_carb.getResult());
             DBConnect get_protein = new DBConnect("SELECT protein FROM mahlzeit WHERE Name = '" + mahl_name + "'", "protein", 0);
             get_protein.con();
