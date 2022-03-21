@@ -19,7 +19,7 @@ public class Registrierung implements ActionListener {
     private JSpinner alter;
     SpinnerNumberModel gewicht_model = new SpinnerNumberModel(75, 0.00, 1000.00, 1);
     private JSpinner gewicht;
-    SpinnerNumberModel groesse_model = new SpinnerNumberModel(80, 0.00, 1000.00, 1);
+    SpinnerNumberModel groesse_model = new SpinnerNumberModel(180, 0.00, 1000.00, 1);
     private JSpinner groesse;
     private JFrame frame;
 
