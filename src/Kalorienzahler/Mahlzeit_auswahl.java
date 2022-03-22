@@ -39,6 +39,10 @@ public class Mahlzeit_auswahl implements ActionListener {
     private int userid;
     private double anz_portionen;
 
+    private double carb1;
+    private double protein1;
+    private double fat1;
+
     private Dimension size;
     private Point loc;
 
@@ -152,6 +156,9 @@ public class Mahlzeit_auswahl implements ActionListener {
             long kalorien_long = Math.round(kalorien_double);
             String kalorien_final = String.valueOf(kalorien_long);
             this.anz_kalorien.setText(kalorien_final);
+            carb1 = carb_double;
+            protein1 = protein_double;
+            fat1 = fat_double;
         }
         catch (SQLException ex){
             System.out.println("content fail");
@@ -200,6 +207,9 @@ public class Mahlzeit_auswahl implements ActionListener {
                         long kalorien_long = Math.round(kalorien_double);
                         String kalorien_final = String.valueOf(kalorien_long);
                         this.anz_kalorien.setText(kalorien_final);
+                        carb1 = carb_double;
+                        protein1 = protein_double;
+                        fat1 = fat_double;
                     }
                 }
             } catch (SQLException ex) {
@@ -207,21 +217,14 @@ public class Mahlzeit_auswahl implements ActionListener {
             }
         }
         if (e.getSource() == hidden){
-            double carbs = Double.parseDouble(this.anz_carbs.getText());
-            double protein = Double.parseDouble(this.anz_protein.getText());
-            double fat = Double.parseDouble(this.anz_fat.getText());
-            double cals = Double.parseDouble(this.anz_kalorien.getText());
-
             double port = (double) portion.getValue();
-            double new_carbs = carbs * port;
-            double new_protein = protein * port;
-            double new_fat = fat * port;
-            double new_cals = cals * port;
+            double new_carbs = carb1 * port;
+            double new_protein = protein1 * port;
+            double new_fat = fat1 * port;
 
             this.anz_carbs.setText(String.valueOf(new_carbs));
             this.anz_protein.setText(String.valueOf(new_protein));
             this.anz_fat.setText(String.valueOf(new_fat));
-            this.anz_kalorien.setText(String.valueOf(new_cals));
         }
         if (e.getSource() == hinzufugen){
             //Aktuelles Datum wird abgerufen
