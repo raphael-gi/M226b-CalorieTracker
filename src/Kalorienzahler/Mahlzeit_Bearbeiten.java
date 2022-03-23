@@ -59,7 +59,6 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         }
         contenttt();
     }
-
     public void contenttt(){
         name_input.setText(mahl_name);
         carb_input.setValue(carb);

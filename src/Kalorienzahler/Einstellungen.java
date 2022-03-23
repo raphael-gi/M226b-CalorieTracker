@@ -239,6 +239,7 @@ public class Einstellungen implements ActionListener {
             Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name);
             n.content();
         }
+
         if (e.getSource() == zuruck){
             frame.dispose();
             Dimension frame_size = frame.getSize();

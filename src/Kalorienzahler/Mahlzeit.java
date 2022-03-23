@@ -115,6 +115,7 @@ public class Mahlzeit implements ActionListener {
                 }
             }
         }
+
         if (e.getSource() == zuruck){
             frame.dispose();
             Dimension frame_size = frame.getSize();

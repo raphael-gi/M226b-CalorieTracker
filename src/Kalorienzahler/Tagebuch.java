@@ -134,6 +134,7 @@ public class Tagebuch implements ActionListener {
 
         save(snack_bearbeiten, snack_delete, snacks_list);
     }
+
     public void save(JButton name_edit, JButton name_delete, JList list_name){
         name_edit.addActionListener(this);
         name_delete.addActionListener(this);

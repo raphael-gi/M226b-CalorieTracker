@@ -283,6 +283,7 @@ public class Mahlzeit_auswahl implements ActionListener {
                 E.printStackTrace();
             }
         }
+
         if (e.getSource() == bearbeiten){
             frame.dispose();
             String mahl_name = (String) dropname.getSelectedItem();

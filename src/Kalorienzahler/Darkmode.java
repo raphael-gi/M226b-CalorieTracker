@@ -85,5 +85,4 @@ public class Darkmode {
             lab.setForeground(Color.white);
         }
     }
-
 }

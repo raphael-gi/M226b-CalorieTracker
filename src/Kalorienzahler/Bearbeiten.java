@@ -92,7 +92,6 @@ public class Bearbeiten implements ActionListener {
             double mahl_round = Math.round(mahl_double * 10d) / 10d;
             String mahl_final = String.valueOf(mahl_round);
             name.setText(mahl_final);
-
         }
         catch (Exception ex){
             ex.printStackTrace();
