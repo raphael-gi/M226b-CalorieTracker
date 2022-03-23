@@ -27,7 +27,6 @@ public class Login implements ActionListener {
         frame.add(panel1);
 
         frame.pack();
-        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
         this.size = size;
@@ -35,6 +34,7 @@ public class Login implements ActionListener {
 
         frame.setSize(this.size);
         frame.setLocation(loc);
+        frame.setLocationRelativeTo(null);
 
         Login.addActionListener(this);
         Registrieren.addActionListener(this);
