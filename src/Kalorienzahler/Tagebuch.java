@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Tagebuch implements ActionListener {
@@ -47,6 +48,9 @@ public class Tagebuch implements ActionListener {
     private JLabel verb_kalorien;
     private JLabel minus;
     private JLabel gleich;
+    private JLabel datum;
+    private JButton fruher;
+    private JButton spater;
     private JFrame frame;
     private int gender;
     private double groesse;
@@ -64,11 +68,16 @@ public class Tagebuch implements ActionListener {
     private double formel;
     private double rest;
 
-    private JButton[] all_buttons = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen};
-    private JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label, kalorien_anz, verb_kalorien, minus, gleich};
-    private JList[] all_lists = {fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
+    private Date date_select;
+    private java.util.Date date_now = new Date();
+    private Calendar c = Calendar.getInstance();
+
 
     private int sprache = 1;
+
+    private JButton[] all_buttons = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen, fruher, spater};
+    private JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label, kalorien_anz, verb_kalorien, minus, gleich, datum};
+    private JList[] all_lists = {fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
 
     String[] fruh_list = {"Frühstück", "Breakfast"};
 
@@ -93,6 +102,8 @@ public class Tagebuch implements ActionListener {
         frame.setLocation(loc);
 
         fruh_label.setText(fruh_list[this.sprache]);
+
+        date_select = date_now;
 
         Darkmode check = new Darkmode(benutzername, all_buttons, all_labels);
         darkmode = check.isDark();
@@ -120,11 +131,10 @@ public class Tagebuch implements ActionListener {
         minus.setFont(label_font);
         gleich.setFont(label_font);
 
-        Fruhstuck.addActionListener(this);
-        Mittagessen.addActionListener(this);
-        Abendessen.addActionListener(this);
-        Snacks.addActionListener(this);
-        einstellungen.addActionListener(this);
+        for (int i = 0; all_buttons.length > i; i++){
+            JButton but = all_buttons[i];
+            but.addActionListener(this);
+        }
 
         save(fruh_bearbeiten, fruh_delete, fruhstuck_list);
 
@@ -179,10 +189,36 @@ public class Tagebuch implements ActionListener {
             }
         });
     }
-    java.util.Date date = new Date();
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
+    SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyy");
+    public void dat(){
+        c.setTime(date_now);
+        c.add(Calendar.DATE, -1);
+        Date fruh = c.getTime();
+        c.add(Calendar.DATE, 2);
+        Date spat = c.getTime();
+        if (ft.format(date_now).equals(ft.format(date_select))){
+            datum.setText("Heute");
+        }
+        else {
+            datum.setText(format.format(date_select));
+        }
+        if (ft.format(fruh.getTime()).equals(ft.format(date_select))){
+            datum.setText("Gestern");
+        }
+        if (ft.format(spat.getTime()).equals(ft.format(date_select))){
+            datum.setText("Morgen");
+        }
+        c.setTime(date_select);
+    }
     int get_ben_id = 0;
     public void content(){
+        if (date_select == date_now){
+            datum.setText("Heute");
+        }
+        else {
+            datum.setText(format.format(date_now));
+        }
         DBConnect gender = new DBConnect("SELECT gender FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "gender",0);
         this.gender = Integer.parseInt(gender.getResult());
         DBConnect alter = new DBConnect("SELECT age FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "age", 0);
@@ -207,7 +243,7 @@ public class Tagebuch implements ActionListener {
             }
 
             //Verbindung um id des Benutzer zu erhalten
-            ResultSet new_resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date) + "'");
+            ResultSet new_resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date_now) + "'");
             ArrayList<Integer> kalories = new ArrayList<>();
             while (new_resultSet.next()){
                 int kalorien = new_resultSet.getInt("kalorien");
@@ -254,7 +290,7 @@ public class Tagebuch implements ActionListener {
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
             Statement statement = connection.createStatement();
-            ResultSet new_resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date) + "' AND mahlzeit = " + mahlzeit_id + "");
+            ResultSet new_resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date_now) + "' AND mahlzeit = " + mahlzeit_id + "");
             ArrayList<Integer> kalories = new ArrayList<>();
             while (new_resultSet.next()){
                 int kalorien = new_resultSet.getInt("kalorien");
@@ -284,7 +320,7 @@ public class Tagebuch implements ActionListener {
     public void get_select(JList list_name , DefaultListModel name, int mahlzeit_id) throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
         Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date_now) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
         ArrayList<String> names = new ArrayList<>();
         while (resultSet.next()){
             String mahl_name = resultSet.getString("Name");
@@ -417,6 +453,16 @@ public class Tagebuch implements ActionListener {
             Point frame_loc = frame.getLocation();
             Einstellungen n = new Einstellungen(frame_size, frame_loc, this.benutzername);
             n.content();
+        }
+        if (e.getSource() == fruher){
+            c.add(Calendar.DATE, -1);
+            date_select = c.getTime();
+            dat();
+        }
+        if (e.getSource() == spater){
+            c.add(Calendar.DATE, 1);
+            date_select = c.getTime();
+            dat();
         }
     }
 }

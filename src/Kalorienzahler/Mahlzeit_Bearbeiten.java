@@ -132,6 +132,17 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
             Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername);
             n.content();
         }
+        if (e.getSource() == loeschen){
+            DBConnect id = new DBConnect("SELECT id FROM benutzer WHERE Benutzername = '" + benutzername + "'", "id", 0);
+
+            new DBConnect("DELETE FROM mahlzeit WHERE ben = " + id.getResult() + " AND Name = '" + mahl_name + "'", "", 1);
+
+            frame.dispose();
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername);
+            n.content();
+        }
         if (e.getSource() == zuruck){
             frame.dispose();
             Dimension frame_size = frame.getSize();
