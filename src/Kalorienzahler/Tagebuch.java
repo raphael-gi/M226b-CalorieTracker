@@ -113,6 +113,12 @@ public class Tagebuch implements ActionListener {
         frame.setLocation(loc);
 
         fruh_label.setText(fruh_list[this.sprache]);
+        Dimension ein = new Dimension(40,40);
+        einstellungen.setPreferredSize(ein);
+
+        Dimension time = new Dimension(130,30);
+        fruher.setPreferredSize(time);
+        spater.setPreferredSize(time);
 
         Darkmode check = new Darkmode(benutzername, all_buttons, all_labels);
         darkmode = check.isDark();
