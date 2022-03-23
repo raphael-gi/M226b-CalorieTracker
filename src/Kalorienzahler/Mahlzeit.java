@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 public class Mahlzeit implements ActionListener {
     private JFrame frame;
@@ -23,6 +24,8 @@ public class Mahlzeit implements ActionListener {
     private String mahlzeit;
     private String benutzername;
 
+    private Date date_selected;
+
     private Dimension size;
     private Point loc;
 
@@ -30,7 +33,7 @@ public class Mahlzeit implements ActionListener {
     JLabel[] all_labels = {name_label, carb_label, protein_label, fat_label};
     JSpinner[] all_spinners = {carb_input, protein_input, fat_input};
 
-    public Mahlzeit(Dimension size, Point loc, String mahlzeit, String benutzername){
+    public Mahlzeit(Dimension size, Point loc, String mahlzeit, String benutzername, Date datum){
         this.size = size;
         this.loc = loc;
 
@@ -104,7 +107,7 @@ public class Mahlzeit implements ActionListener {
                             frame.dispose();
                             Dimension frame_size = frame.getSize();
                             Point frame_loc = frame.getLocation();
-                            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahlzeit, this.benutzername);
+                            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahlzeit, this.benutzername, date_selected);
                             mahl.content();
                         }
                         catch (Exception E){
@@ -119,7 +122,7 @@ public class Mahlzeit implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahlzeit, this.benutzername);
+            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahlzeit, this.benutzername, date_selected);
             n.content();
         }
     }

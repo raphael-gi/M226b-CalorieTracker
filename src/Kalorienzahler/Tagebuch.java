@@ -83,7 +83,17 @@ public class Tagebuch implements ActionListener {
 
     private boolean darkmode;
 
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet resultSet = null;
+
     public Tagebuch(Dimension size, Point loc, String benutzername){
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
+            statement = connection.createStatement();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         this.benutzername = benutzername;
 
         frame = new JFrame("Tagebuch");
@@ -143,6 +153,7 @@ public class Tagebuch implements ActionListener {
         save(abend_bearbeiten, abend_delete, abendessen_list);
 
         save(snack_bearbeiten, snack_delete, snacks_list);
+        dat();
     }
 
     public void save(JButton name_edit, JButton name_delete, JList list_name){
@@ -190,7 +201,7 @@ public class Tagebuch implements ActionListener {
         });
     }
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
-    SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyy");
+    SimpleDateFormat format = new SimpleDateFormat("EEEE, MMM d");
     public void dat(){
         c.setTime(date_now);
         c.add(Calendar.DATE, -1);
@@ -211,14 +222,21 @@ public class Tagebuch implements ActionListener {
         }
         c.setTime(date_select);
     }
+
+    public void list_content(ArrayList kalories){
+        try {
+            resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date_select) + "'");
+            while (resultSet.next()){
+                int kalorien = resultSet.getInt("kalorien");
+                kalories.add(kalorien);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     int get_ben_id = 0;
     public void content(){
-        if (date_select == date_now){
-            datum.setText("Heute");
-        }
-        else {
-            datum.setText(format.format(date_now));
-        }
         DBConnect gender = new DBConnect("SELECT gender FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "gender",0);
         this.gender = Integer.parseInt(gender.getResult());
         DBConnect alter = new DBConnect("SELECT age FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "age", 0);
@@ -235,20 +253,13 @@ public class Tagebuch implements ActionListener {
         }
         //Verbindung um id des Benutzer zu erhalten
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT id FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'");
+            resultSet = statement.executeQuery("SELECT id FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'");
             while (resultSet.next()){
                 get_ben_id = resultSet.getInt("id");
             }
-
-            //Verbindung um id des Benutzer zu erhalten
-            ResultSet new_resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date_now) + "'");
             ArrayList<Integer> kalories = new ArrayList<>();
-            while (new_resultSet.next()){
-                int kalorien = new_resultSet.getInt("kalorien");
-                kalories.add(kalorien);
-            }
+            list_content(kalories);
+
             int anz_kalorien = 0;
             for (int i = 0; kalories.size() > i; i++){
                 anz_kalorien = anz_kalorien + kalories.get(i);
@@ -286,14 +297,13 @@ public class Tagebuch implements ActionListener {
             e.printStackTrace();
         }
     }
+
     public void get_meal_cal(int mahlzeit_id){
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            Statement statement = connection.createStatement();
-            ResultSet new_resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date_now) + "' AND mahlzeit = " + mahlzeit_id + "");
+            resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date_select) + "' AND mahlzeit = " + mahlzeit_id + "");
             ArrayList<Integer> kalories = new ArrayList<>();
-            while (new_resultSet.next()){
-                int kalorien = new_resultSet.getInt("kalorien");
+            while (resultSet.next()){
+                int kalorien = resultSet.getInt("kalorien");
                 kalories.add(kalorien);
             }
             int anz_kalorien = 0;
@@ -318,9 +328,8 @@ public class Tagebuch implements ActionListener {
         }
     }
     public void get_select(JList list_name , DefaultListModel name, int mahlzeit_id) throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date_now) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
+        name.clear();
+        resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date_select) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
         ArrayList<String> names = new ArrayList<>();
         while (resultSet.next()){
             String mahl_name = resultSet.getString("Name");
@@ -375,7 +384,7 @@ public class Tagebuch implements ActionListener {
     }
     public void on_delete(JList name, int mahlzeit_id){
         on_button(name,mahlzeit_id);
-        DBConnect delete = new DBConnect("DELETE FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", " ", 1);
+        new DBConnect("DELETE FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", " ", 1);
 
         frame.dispose();
         Dimension frame_size = frame.getSize();
@@ -406,7 +415,7 @@ public class Tagebuch implements ActionListener {
         frame.dispose();
         Dimension frame_size = frame.getSize();
         Point frame_loc = frame.getLocation();
-        Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc, mahlzeit, this.benutzername);
+        Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc, mahlzeit, this.benutzername, date_select);
         mahl.content();
     }
     @Override
@@ -458,11 +467,13 @@ public class Tagebuch implements ActionListener {
             c.add(Calendar.DATE, -1);
             date_select = c.getTime();
             dat();
+            content();
         }
         if (e.getSource() == spater){
             c.add(Calendar.DATE, 1);
             date_select = c.getTime();
             dat();
+            content();
         }
     }
 }

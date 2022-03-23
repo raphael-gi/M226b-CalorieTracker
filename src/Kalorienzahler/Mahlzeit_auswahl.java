@@ -46,6 +46,8 @@ public class Mahlzeit_auswahl implements ActionListener {
     private Dimension size;
     private Point loc;
 
+    private Date date_select;
+
     private JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten, hidden};
     private JLabel[] all_labels = {mahl, anz_kalorien, anz_carbs, anz_protein, anz_fat, kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
 
@@ -53,7 +55,7 @@ public class Mahlzeit_auswahl implements ActionListener {
     Statement statement = null;
     ResultSet resultSet = null;
 
-    public Mahlzeit_auswahl(Dimension size, Point loc, String mahlzeit, String benutzername){
+    public Mahlzeit_auswahl(Dimension size, Point loc, String mahlzeit, String benutzername, Date datum){
         //Verbindung wird aufgebaut
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
@@ -61,9 +63,10 @@ public class Mahlzeit_auswahl implements ActionListener {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         this.size = size;
         this.loc = loc;
+
+        this.date_select = datum;
 
         this.mahlzeit = mahlzeit;
         this.benutzername = benutzername;
@@ -193,7 +196,7 @@ public class Mahlzeit_auswahl implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            new Mahlzeit(frame_size, frame_loc, this.mahlzeit, this.benutzername);
+            new Mahlzeit(frame_size, frame_loc, this.mahlzeit, this.benutzername, date_select);
         }
         if (e.getSource()== zuruck){
             frame.dispose();
@@ -305,7 +308,7 @@ public class Mahlzeit_auswahl implements ActionListener {
             int fat_int = (int) fat1;
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            new Mahlzeit_Bearbeiten(frame_size, frame_loc, this.benutzername, mahl.getText(), mahl_name, carb_int, protein_int, fat_int);
+            new Mahlzeit_Bearbeiten(frame_size, frame_loc, this.benutzername, mahl.getText(), mahl_name, carb_int, protein_int, fat_int, date_select);
         }
     }
 }

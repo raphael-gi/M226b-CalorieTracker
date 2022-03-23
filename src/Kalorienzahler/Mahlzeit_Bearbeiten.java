@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.sql.*;
+import java.util.Date;
 
 public class Mahlzeit_Bearbeiten implements ActionListener {
     private JPanel panel1;
@@ -35,6 +36,8 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     private int protein;
     private int fat;
 
+    private Date date_selected;
+
     JButton[] all_buttons = {bearbeiten, zuruck, loeschen};
     JLabel[] all_labels = {name_label, carb_label, fat_label, protein_label,};
 
@@ -42,7 +45,7 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     Statement statement = null;
     ResultSet resultSet = null;
 
-    public Mahlzeit_Bearbeiten(Dimension size, Point loc, String benutzername, String mahl, String mahl_name, int carb, int protein, int fat){
+    public Mahlzeit_Bearbeiten(Dimension size, Point loc, String benutzername, String mahl, String mahl_name, int carb, int protein, int fat, Date datum){
         //Verbindung wird aufgebaut
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
@@ -50,6 +53,7 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        this.date_selected = datum;
         this.benutzername = benutzername;
         this.mahl = mahl;
         this.mahl_name = mahl_name;
@@ -129,7 +133,7 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername);
+            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername, date_selected);
             n.content();
         }
         if (e.getSource() == loeschen){
@@ -140,14 +144,14 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername);
+            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername, date_selected);
             n.content();
         }
         if (e.getSource() == zuruck){
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername);
+            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername, date_selected);
             n.content();
         }
     }
