@@ -75,6 +75,7 @@ public class Mahlzeit_auswahl implements ActionListener {
             JButton but = all_buttons[i];
             but.addActionListener(this);
         }
+        dropname.addActionListener(this);
 
         SpinnerNumberModel model = new SpinnerNumberModel(1, 0.0, 100000.0, 1);
         portion.setModel(model);
@@ -180,7 +181,7 @@ public class Mahlzeit_auswahl implements ActionListener {
             Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
             n.content();
         }
-        if (e.getSource()==dropname || e.getSource()==confirm){
+        if (e.getSource()==dropname){
             String mahl_name = String.valueOf(dropname.getSelectedItem());
 
             error_message.setText("");
@@ -216,15 +217,18 @@ public class Mahlzeit_auswahl implements ActionListener {
                 ex.printStackTrace();
             }
         }
-        if (e.getSource() == hidden){
+        if (e.getSource() == hidden || e.getSource()==confirm){
             double port = (double) portion.getValue();
             double new_carbs = carb1 * port;
             double new_protein = protein1 * port;
             double new_fat = fat1 * port;
+            double doub_cal = (new_carbs * 4) + (new_protein * 4) + (new_fat * 9);
+            int new_cal = (int) Math.round(doub_cal);
 
             this.anz_carbs.setText(String.valueOf(new_carbs));
             this.anz_protein.setText(String.valueOf(new_protein));
             this.anz_fat.setText(String.valueOf(new_fat));
+            this.anz_kalorien.setText(String.valueOf(new_cal));
         }
         if (e.getSource() == hinzufugen){
             //Aktuelles Datum wird abgerufen
@@ -283,17 +287,17 @@ public class Mahlzeit_auswahl implements ActionListener {
             frame.dispose();
             String mahl_name = (String) dropname.getSelectedItem();
             DBConnect get_carb = new DBConnect("SELECT carb FROM mahlzeit WHERE Name = '" + mahl_name + "'", "carb", 0);
-            get_carb.con();
+
             int carb_int = Integer.parseInt(get_carb.getResult());
             DBConnect get_protein = new DBConnect("SELECT protein FROM mahlzeit WHERE Name = '" + mahl_name + "'", "protein", 0);
-            get_protein.con();
+
             int protein_int = Integer.parseInt(get_protein.getResult());
             DBConnect get_fat = new DBConnect("SELECT fat FROM mahlzeit WHERE Name = '" + mahl_name + "'", "fat", 0);
-            get_fat.con();
+
             int fat_int = Integer.parseInt(get_fat.getResult());
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            new Mahlzeit_Bearbeiten(frame_size, frame_loc, this.benutzername, mahl_name, carb_int, protein_int, fat_int);
+            new Mahlzeit_Bearbeiten(frame_size, frame_loc, this.benutzername, mahl.getText(), mahl_name, carb_int, protein_int, fat_int);
         }
     }
 }

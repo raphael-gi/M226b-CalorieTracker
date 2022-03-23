@@ -23,15 +23,16 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     private Point loc;
 
     private String benutzername;
+    private String mahl;
     private String mahl_name;
     private int carb;
     private int protein;
     private int fat;
 
     JButton[] all_buttons = {bearbeiten, zuruck};
-    JLabel[] all_labels = {name_label, carb_label, fat_label, protein_label};
+    JLabel[] all_labels = {name_label, carb_label, fat_label, protein_label,};
 
-    public Mahlzeit_Bearbeiten(Dimension size, Point loc, String benutzername, String mahl_name, int carb, int protein, int fat){
+    public Mahlzeit_Bearbeiten(Dimension size, Point loc, String benutzername, String mahl, String mahl_name, int carb, int protein, int fat){
         this.benutzername = benutzername;
         this.mahl_name = mahl_name;
         this.carb = carb;
@@ -56,6 +57,7 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
             JButton but = all_buttons[i];
             but.addActionListener(this);
         }
+        contenttt();
     }
 
     public void contenttt(){
@@ -75,7 +77,18 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == bearbeiten){
+            String name = name_input.getText();
+            int carb = (int) carb_input.getValue();
+            int protein = (int) protein_input.getValue();
+            int fat = (int) fat_input.getValue();
+            int kalorien = (carb * 4) + (protein * 4) + (fat * 9);
 
+            new DBConnect("UPDATE mahlzeit SET Name = '" + name + "', kalorien = '" + kalorien + "', carb = '" + carb_input.getValue() + "', protein = '" + protein_input.getValue() + "', fat = '" + fat_input.getValue() + "'", " ", 1);
+            frame.dispose();
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl_name, this.benutzername);
+            n.content();
         }
         if (e.getSource() == zuruck){
             frame.dispose();

@@ -21,6 +21,12 @@ public class Bearbeiten implements ActionListener {
     private JButton zuruck;
     private JButton hidden;
     private JSpinner portionen;
+    private JLabel anz_port_label;
+    private JLabel kal_label;
+    private JLabel cal_label;
+    private JLabel protein_label;
+    private JLabel fat_label;
+    private JLabel head_label;
     private JFrame frame;
 
     private Dimension size;
@@ -33,6 +39,9 @@ public class Bearbeiten implements ActionListener {
 
     private int userid;
     private double anz_portionen;
+
+    JButton[] all_buttons = {bearbeiten, confirm, zuruck, hidden};
+    JLabel[] all_labels = {anz_kalorien, anz_carbs, anz_protein, anz_fat, anz_port_label, kal_label, cal_label, protein_label, fat_label, head_label};
 
     public Bearbeiten(Dimension size, Point loc, String benutzername, String mahl_name, String portion, int mmm_id){
         this.benutzername = benutzername;
@@ -57,7 +66,6 @@ public class Bearbeiten implements ActionListener {
 
         hidden.setVisible(false);
 
-        zuruck.addActionListener(this);
         dropname.addActionListener(this);
         confirm.addActionListener(this);
         bearbeiten.addActionListener(this);
@@ -91,6 +99,12 @@ public class Bearbeiten implements ActionListener {
         }
     }
     public void content(){
+        Darkmode n = new Darkmode(this.benutzername, all_buttons, all_labels);
+        if (n.isDark()){
+            panel1.setBackground(Color.DARK_GRAY);
+            all_buttons = n.getAll_buttons();
+            all_labels = n.getAll_labels();
+        }
         double Portion = Double.parseDouble(this.Portion);
         portionen.setValue(Portion);
 

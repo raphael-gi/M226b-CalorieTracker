@@ -68,6 +68,10 @@ public class Tagebuch implements ActionListener {
     private JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label, kalorien_anz, verb_kalorien, minus, gleich};
     private JList[] all_lists = {fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
 
+    private int sprache = 1;
+
+    String[] fruh_list = {"Frühstück", "Breakfast"};
+
     private boolean darkmode;
 
     public Tagebuch(Dimension size, Point loc, String benutzername){
@@ -87,6 +91,8 @@ public class Tagebuch implements ActionListener {
 
         frame.setSize(this.size);
         frame.setLocation(loc);
+
+        fruh_label.setText(fruh_list[this.sprache]);
 
         Darkmode check = new Darkmode(benutzername, all_buttons, all_labels);
         darkmode = check.isDark();

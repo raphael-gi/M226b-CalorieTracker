@@ -10,17 +10,25 @@ public class Mahlzeit implements ActionListener {
     private JPanel panel1;
     private JButton Erstellen;
     private JTextField Name;
-    private JTextField Kohlenhydrate;
-    private JTextField Protein;
-    private JTextField Fett;
     private JLabel error_message;
     private JButton zuruck;
+    private JLabel name_label;
+    private JLabel carb_label;
+    private JLabel protein_label;
+    private JLabel fat_label;
+    private JSpinner carb_input;
+    private JSpinner protein_input;
+    private JSpinner fat_input;
 
     private String mahlzeit;
     private String benutzername;
 
     private Dimension size;
     private Point loc;
+
+    JButton[] all_buttons = {Erstellen, zuruck};
+    JLabel[] all_labels = {name_label, carb_label, protein_label, fat_label};
+    JSpinner[] all_spinners = {carb_input, protein_input, fat_input};
 
     public Mahlzeit(Dimension size, Point loc, String mahlzeit, String benutzername){
         this.size = size;
@@ -43,19 +51,30 @@ public class Mahlzeit implements ActionListener {
 
         Erstellen.addActionListener(this);
         zuruck.addActionListener(this);
+
+        content();
+    }
+
+    public void content(){
+        Darkmode n = new Darkmode(this.benutzername, all_buttons, all_labels);
+        if (n.isDark()){
+            panel1.setBackground(Color.DARK_GRAY);
+            all_buttons = n.getAll_buttons();
+            all_labels = n.getAll_labels();
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==Erstellen){
             String name = Name.getText();
-            String kohlenhydrate = Kohlenhydrate.getText();
-            String protein = Protein.getText();
-            String fett = Fett.getText();
+            int carb = (int) carb_input.getValue();
+            int protein = (int) protein_input.getValue();
+            int fat = (int) fat_input.getValue();
 
             error_message.setText("");
 
-            if (name.isEmpty() || kohlenhydrate.isEmpty() || protein.isEmpty() || fett.isEmpty()){
+            if (name.isEmpty() || carb_input.getValue() == null || protein_input.getValue() == null || fat_input.getValue() == null){
                 error_message.setText("Füllen sie alle Felder aus!");
             }
             else {
@@ -74,16 +93,13 @@ public class Mahlzeit implements ActionListener {
                     }
                     else {
                         try{
-                            int int_kohlenhydrate = Integer.parseInt(kohlenhydrate);
-                            int int_protein = Integer.parseInt(protein);
-                            int int_fett = Integer.parseInt(fett);
-                            int kalorien = int_kohlenhydrate*4 + int_protein*4 + int_fett*9;
+                            int kalorien = carb * 4 + protein * 4 + fat * 9;
 
                             DBConnect get_id = new DBConnect("SELECT id FROM benutzer WHERE Benutzername = '" + this.benutzername + "'","id",0);
                             get_id.con();
                             int userid = Integer.parseInt(get_id.getResult());
 
-                            DBConnect make_meal = new DBConnect("INSERT INTO mahlzeit (Name, kalorien, carb, protein, fat, ben) VALUES ('" + name +"', '" + kalorien +"', '" + int_kohlenhydrate + "', '" + int_protein + "', '" + int_fett + "', '" + userid + "')", "Benutzername", 1);
+                            DBConnect make_meal = new DBConnect("INSERT INTO mahlzeit (Name, kalorien, carb, protein, fat, ben) VALUES ('" + name +"', '" + kalorien +"', '" + carb + "', '" + protein + "', '" + fat + "', '" + userid + "')", "Benutzername", 1);
                             make_meal.con();
 
                             frame.dispose();
