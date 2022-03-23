@@ -8,7 +8,7 @@ public class LoginSQL {
         this.name = name;
         this.passwort = passwort;
     }
-
+    //a
     public String getResult() {
         return result;
     }
