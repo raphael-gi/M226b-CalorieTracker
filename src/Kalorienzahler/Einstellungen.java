@@ -48,6 +48,7 @@ public class Einstellungen implements ActionListener {
     private JLabel gewicht;
     private JLabel new_gewicht_label;
     private JButton new_gewicht_best;
+    private JLabel einstellungen_label;
 
     private JFrame frame;
 
@@ -64,7 +65,7 @@ public class Einstellungen implements ActionListener {
     private int new_gewicht_check;
 
     private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best};
-    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label};
+    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label};
 
     public Einstellungen(Dimension size, Point loc, String name, Date datum){
         this.size = size;
@@ -83,6 +84,9 @@ public class Einstellungen implements ActionListener {
 
         frame.setSize(this.size);
         frame.setLocation(loc);
+
+        Font label_font = new Font("Arial", Font.BOLD, 15);
+        einstellungen_label.setFont(label_font);
 
         new_alter.setModel(alter_model);
         new_groesse.setModel(groesse_model);

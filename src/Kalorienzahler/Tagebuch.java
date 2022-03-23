@@ -118,7 +118,6 @@ public class Tagebuch implements ActionListener {
         darkmode = check.isDark();
         if (this.darkmode){
             panel1.setBackground(Color.DARK_GRAY);
-
             for (int li = 0; this.all_lists.length > li; li++){
                 JList list = this.all_lists[li];
                 list.setForeground(Color.white);
