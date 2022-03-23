@@ -46,6 +46,7 @@ public class Mahlzeit_auswahl implements ActionListener {
     private Dimension size;
     private Point loc;
 
+    SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
     private Date date_select;
 
     private JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten, hidden};
@@ -202,7 +203,7 @@ public class Mahlzeit_auswahl implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
+            Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername, date_select);
             n.content();
         }
         if (e.getSource()==dropname){
@@ -253,10 +254,6 @@ public class Mahlzeit_auswahl implements ActionListener {
             this.anz_kalorien.setText(String.valueOf(new_cal));
         }
         if (e.getSource() == hinzufugen){
-            //Aktuelles Datum wird abgerufen
-            Date date = new Date();
-            SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
-
             //Ausgewählte Mahlzeit wird angeschaut
             int mahl_check = 0;
             if (this.mahlzeit.equals("Frühstück")){
@@ -287,12 +284,12 @@ public class Mahlzeit_auswahl implements ActionListener {
                 }
 
                 //Data wird eingefügt
-                statement.execute("INSERT INTO mmm (mahl, port, kalorien, carb, protein, fat, datum, ben, mahlzeit) VALUES (" + get_mahl_id + ", " + this.anz_portionen + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date) + "', " + get_ben_id + ", " + mahl_check + ")");
+                statement.execute("INSERT INTO mmm (mahl, port, kalorien, carb, protein, fat, datum, ben, mahlzeit) VALUES (" + get_mahl_id + ", " + this.anz_portionen + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date_select) + "', " + get_ben_id + ", " + mahl_check + ")");
 
                 frame.dispose();
                 Dimension frame_size = frame.getSize();
                 Point frame_loc = frame.getLocation();
-                Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
+                Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername, date_select);
                 n.content();
             }
             catch (Exception E){

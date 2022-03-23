@@ -87,7 +87,7 @@ public class Tagebuch implements ActionListener {
     Statement statement = null;
     ResultSet resultSet = null;
 
-    public Tagebuch(Dimension size, Point loc, String benutzername){
+    public Tagebuch(Dimension size, Point loc, String benutzername, Date datum){
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
             statement = connection.createStatement();
@@ -389,7 +389,7 @@ public class Tagebuch implements ActionListener {
         frame.dispose();
         Dimension frame_size = frame.getSize();
         Point frame_loc = frame.getLocation();
-        Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
+        Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername, date_select);
         n.content();
     }
     public void on_edit(JList name, int mahlzeit_id){
@@ -407,7 +407,7 @@ public class Tagebuch implements ActionListener {
         frame.dispose();
         Dimension frame_size = frame.getSize();
         Point frame_loc = frame.getLocation();
-        Bearbeiten n = new Bearbeiten(frame_size, frame_loc, this.benutzername, mahl_name ,port, correct_id);
+        Bearbeiten n = new Bearbeiten(frame_size, frame_loc, this.benutzername, mahl_name ,port, correct_id, date_select);
         n.content();
     }
 
@@ -460,7 +460,7 @@ public class Tagebuch implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.benutzername);
+            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.benutzername, date_select);
             n.content();
         }
         if (e.getSource() == fruher){

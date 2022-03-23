@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import java.util.Date;
 
 public class Einstellungen implements ActionListener {
     private JPanel panel1;
@@ -54,6 +55,7 @@ public class Einstellungen implements ActionListener {
     private Point loc;
     private String name;
     private boolean darkmode;
+    private Date date_select;
 
     private int new_loeschen_check;
     private int new_name_check;
@@ -64,10 +66,11 @@ public class Einstellungen implements ActionListener {
     private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best};
     private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label};
 
-    public Einstellungen(Dimension size, Point loc, String name){
+    public Einstellungen(Dimension size, Point loc, String name, Date datum){
         this.size = size;
         this.loc = loc;
         this.name = name;
+        this.date_select = datum;
 
         frame = new JFrame("Einstellungen");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -219,7 +222,7 @@ public class Einstellungen implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name);
+            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name, date_select);
             n.content();
         }
     }
@@ -236,7 +239,7 @@ public class Einstellungen implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name);
+            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name, date_select);
             n.content();
         }
 
@@ -244,7 +247,7 @@ public class Einstellungen implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Tagebuch n = new Tagebuch(frame_size, frame_loc,this.name);
+            Tagebuch n = new Tagebuch(frame_size, frame_loc,this.name, date_select);
             n.content();
         }
         if (e.getSource() == loeschen){
@@ -313,7 +316,7 @@ public class Einstellungen implements ActionListener {
                     frame.dispose();
                     Dimension frame_size = frame.getSize();
                     Point frame_loc = frame.getLocation();
-                    Einstellungen n = new Einstellungen(frame_size, frame_loc, new_name.getText());
+                    Einstellungen n = new Einstellungen(frame_size, frame_loc, new_name.getText(), date_select);
                     n.content();
                 }
             }
@@ -348,7 +351,7 @@ public class Einstellungen implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name);
+            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name, date_select);
             n.content();
         }
     }

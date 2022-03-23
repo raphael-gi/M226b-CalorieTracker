@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.util.Date;
 
 public class Bearbeiten implements ActionListener {
     private JPanel panel1;
@@ -37,17 +38,20 @@ public class Bearbeiten implements ActionListener {
     private String Portion;
     private int mmm_id;
 
+    private Date date_select;
+
     private int userid;
     private double anz_portionen;
 
     JButton[] all_buttons = {bearbeiten, confirm, zuruck, hidden};
     JLabel[] all_labels = {anz_kalorien, anz_carbs, anz_protein, anz_fat, anz_port_label, kal_label, cal_label, protein_label, fat_label, head_label};
 
-    public Bearbeiten(Dimension size, Point loc, String benutzername, String mahl_name, String portion, int mmm_id){
+    public Bearbeiten(Dimension size, Point loc, String benutzername, String mahl_name, String portion, int mmm_id, Date datum){
         this.benutzername = benutzername;
         this.Portion = portion;
         this.mahl_name = mahl_name;
         this.mmm_id = mmm_id;
+        this.date_select = datum;
 
         frame = new JFrame("Bearbeiten");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -142,7 +146,7 @@ public class Bearbeiten implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
+            Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername, date_select);
             n.content();
         }
         if (e.getSource() == dropname || e.getSource() == confirm || e.getSource() == hidden){
@@ -207,7 +211,7 @@ public class Bearbeiten implements ActionListener {
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
-            Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername);
+            Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername, date_select);
             n.content();
         }
     }

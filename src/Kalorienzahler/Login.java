@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 public class Login implements ActionListener {
     private JPanel panel1;
@@ -13,6 +14,8 @@ public class Login implements ActionListener {
     private JButton Registrieren;
     private JLabel error_message;
     private JFrame frame;
+
+    private java.util.Date date_now = new Date();
 
     private Dimension size;
     private Point loc;
@@ -63,7 +66,7 @@ public class Login implements ActionListener {
                     frame.dispose();
                     Dimension frame_size = frame.getSize();
                     Point frame_loc = frame.getLocation();
-                    Tagebuch n = new Tagebuch(frame_size, frame_loc, log.getResult());
+                    Tagebuch n = new Tagebuch(frame_size, frame_loc, log.getResult(), date_now);
                     n.content();
                 }
             }
