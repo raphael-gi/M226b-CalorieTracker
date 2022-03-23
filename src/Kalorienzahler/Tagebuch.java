@@ -95,6 +95,7 @@ public class Tagebuch implements ActionListener {
             throwables.printStackTrace();
         }
         this.benutzername = benutzername;
+        this.date_select = datum;
 
         frame = new JFrame("Tagebuch");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -112,8 +113,6 @@ public class Tagebuch implements ActionListener {
         frame.setLocation(loc);
 
         fruh_label.setText(fruh_list[this.sprache]);
-
-        date_select = date_now;
 
         Darkmode check = new Darkmode(benutzername, all_buttons, all_labels);
         darkmode = check.isDark();
