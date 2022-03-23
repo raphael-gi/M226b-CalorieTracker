@@ -49,7 +49,19 @@ public class Mahlzeit_auswahl implements ActionListener {
     private JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten, hidden};
     private JLabel[] all_labels = {mahl, anz_kalorien, anz_carbs, anz_protein, anz_fat, kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
 
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet resultSet = null;
+
     public Mahlzeit_auswahl(Dimension size, Point loc, String mahlzeit, String benutzername){
+        //Verbindung wird aufgebaut
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
+            statement = connection.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         this.size = size;
         this.loc = loc;
 
@@ -88,20 +100,27 @@ public class Mahlzeit_auswahl implements ActionListener {
         });
     }
     public void set_data(String what, JLabel name) throws SQLException {
-        String mahl_name = String.valueOf(dropname.getSelectedItem());
-        try {
-            DBConnect get_mahl = new DBConnect("SELECT * FROM mahlzeit WHERE Name = '" + mahl_name + "'", what, 0);
-            get_mahl.con();
-            String mahl = get_mahl.getResult();
-            int mahl_int = Integer.parseInt(mahl);
-            double mahl_double = mahl_int * this.anz_portionen;
-            double mahl_round = Math.round(mahl_double * 10d) / 10d;
-            String mahl_final = String.valueOf(mahl_round);
-            name.setText(mahl_final);
+        if (dropname.getSelectedItem() == null){
+            name.setText("");
+            error_message.setText("Erstellen sie eine Mahlzeit!");
         }
-        catch (Exception ex){
-            ex.printStackTrace();
+        else {
+            String mahl_name = String.valueOf(dropname.getSelectedItem());
+            try {
+                DBConnect get_mahl = new DBConnect("SELECT * FROM mahlzeit WHERE Name = '" + mahl_name + "'", what, 0);
+
+                String mahl = get_mahl.getResult();
+                int mahl_int = Integer.parseInt(mahl);
+                double mahl_double = mahl_int * this.anz_portionen;
+                double mahl_round = Math.round(mahl_double * 10d) / 10d;
+                String mahl_final = String.valueOf(mahl_round);
+                name.setText(mahl_final);
+            }
+            catch (Exception ex){
+                ex.printStackTrace();
+            }
         }
+
     }
     public void content(){
         Darkmode n = new Darkmode(this.benutzername, all_buttons, all_labels);
@@ -116,9 +135,7 @@ public class Mahlzeit_auswahl implements ActionListener {
 
         try{
             //Verbindung um id zu erhalten
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM benutzer WHERE Benutzername = '" + this.benutzername + "'");
+            resultSet = statement.executeQuery("SELECT * FROM benutzer WHERE Benutzername = '" + this.benutzername + "'");
             while (resultSet.next()){
                 int userid = resultSet.getInt("id");
                 this.userid = userid;
@@ -129,13 +146,10 @@ public class Mahlzeit_auswahl implements ActionListener {
         }
         try{
             //Verbindung um Namen zu erhalten
-            Connection new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            Statement new_statement = new_connection.createStatement();
-            ResultSet new_resultSet = new_statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + this.userid + " ORDER BY Name");
-            while (new_resultSet.next()){
-                //Namen werden abgerufen
-                String benutzernamen = new_resultSet.getString("Name");
-                //Namen werden in die Dropdown Liste eingetragen
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + this.userid + " ORDER BY Name");
+            while (resultSet.next()){
+                String benutzernamen = resultSet.getString("Name");
                 dropname.addItem(benutzernamen);
             }
         }
@@ -150,16 +164,23 @@ public class Mahlzeit_auswahl implements ActionListener {
             //Anzahl Fett wird abgerufen
             set_data("fat", this.anz_fat);
 
-            double carb_double = Double.parseDouble(this.anz_carbs.getText());
-            double protein_double = Double.parseDouble(this.anz_protein.getText());
-            double fat_double = Double.parseDouble(this.anz_fat.getText());
-            double kalorien_double = (carb_double * 4) + (protein_double * 4) + (fat_double * 9);
-            long kalorien_long = Math.round(kalorien_double);
-            String kalorien_final = String.valueOf(kalorien_long);
-            this.anz_kalorien.setText(kalorien_final);
-            carb1 = carb_double;
-            protein1 = protein_double;
-            fat1 = fat_double;
+            if (this.anz_carbs.getText().equals("") || this.anz_protein.getText().equals("") || this.anz_fat.getText().equals("")){
+                error_message.setText("Erstellen sie eine Mahlzeit!");
+            }
+            else {
+                double carb_double = Double.parseDouble(this.anz_carbs.getText());
+                double protein_double = Double.parseDouble(this.anz_protein.getText());
+                double fat_double = Double.parseDouble(this.anz_fat.getText());
+                double kalorien_double = (carb_double * 4) + (protein_double * 4) + (fat_double * 9);
+                long kalorien_long = Math.round(kalorien_double);
+
+                String kalorien_final = String.valueOf(kalorien_long);
+                this.anz_kalorien.setText(kalorien_final);
+
+                carb1 = carb_double;
+                protein1 = protein_double;
+                fat1 = fat_double;
+            }
         }
         catch (SQLException ex){
             System.out.println("content fail");
@@ -188,12 +209,10 @@ public class Mahlzeit_auswahl implements ActionListener {
             this.anz_portionen = (double)portion.getValue();
 
             try {
-                Connection new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-                Statement new_statement = new_connection.createStatement();
-                ResultSet new_resultSet = new_statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
+                resultSet = statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
 
                 if (error_message.getText().isEmpty()){
-                    while (new_resultSet.next()){
+                    while (resultSet.next()){
                         //Anzahl Kohlenhydrate werden abgerufen
                         set_data("carb", this.anz_carbs);
                         //Anzahl Protein wird abgerufen
@@ -252,26 +271,20 @@ public class Mahlzeit_auswahl implements ActionListener {
             try {
                 //Verbindung um id der Mahlzeit zu erhalten
                 int get_mahl_id = 0;
-                Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery("SELECT id FROM Mahlzeit WHERE Name = '" + dropname.getSelectedItem() + "'");
+                resultSet = statement.executeQuery("SELECT id FROM Mahlzeit WHERE Name = '" + dropname.getSelectedItem() + "'");
                 while (resultSet.next()){
                     get_mahl_id = resultSet.getInt("id");
                 }
 
                 //Verbindung um id des Benutzer zu erhalten
                 int get_ben_id = 0;
-                Connection new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-                Statement new_statement = new_connection.createStatement();
-                ResultSet new_resultSet = new_statement.executeQuery("SELECT id FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'");
-                while (new_resultSet.next()){
-                    get_ben_id = new_resultSet.getInt("id");
+                resultSet = statement.executeQuery("SELECT id FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'");
+                while (resultSet.next()){
+                    get_ben_id = resultSet.getInt("id");
                 }
 
                 //Data wird eingefügt
-                Connection new_new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-                Statement new_new_statement = new_new_connection.createStatement();
-                new_new_statement.execute("INSERT INTO mmm (mahl, port, kalorien, carb, protein, fat, datum, ben, mahlzeit) VALUES (" + get_mahl_id + ", " + this.anz_portionen + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date) + "', " + get_ben_id + ", " + mahl_check + ")");
+                statement.execute("INSERT INTO mmm (mahl, port, kalorien, carb, protein, fat, datum, ben, mahlzeit) VALUES (" + get_mahl_id + ", " + this.anz_portionen + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date) + "', " + get_ben_id + ", " + mahl_check + ")");
 
                 frame.dispose();
                 Dimension frame_size = frame.getSize();
@@ -287,15 +300,9 @@ public class Mahlzeit_auswahl implements ActionListener {
         if (e.getSource() == bearbeiten){
             frame.dispose();
             String mahl_name = (String) dropname.getSelectedItem();
-            DBConnect get_carb = new DBConnect("SELECT carb FROM mahlzeit WHERE Name = '" + mahl_name + "'", "carb", 0);
-
-            int carb_int = Integer.parseInt(get_carb.getResult());
-            DBConnect get_protein = new DBConnect("SELECT protein FROM mahlzeit WHERE Name = '" + mahl_name + "'", "protein", 0);
-
-            int protein_int = Integer.parseInt(get_protein.getResult());
-            DBConnect get_fat = new DBConnect("SELECT fat FROM mahlzeit WHERE Name = '" + mahl_name + "'", "fat", 0);
-
-            int fat_int = Integer.parseInt(get_fat.getResult());
+            int carb_int = (int) carb1;
+            int protein_int = (int) protein1;
+            int fat_int = (int) fat1;
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
             new Mahlzeit_Bearbeiten(frame_size, frame_loc, this.benutzername, mahl.getText(), mahl_name, carb_int, protein_int, fat_int);

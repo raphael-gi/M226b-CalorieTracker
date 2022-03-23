@@ -99,8 +99,7 @@ public class Mahlzeit implements ActionListener {
                             get_id.con();
                             int userid = Integer.parseInt(get_id.getResult());
 
-                            DBConnect make_meal = new DBConnect("INSERT INTO mahlzeit (Name, kalorien, carb, protein, fat, ben) VALUES ('" + name +"', '" + kalorien +"', '" + carb + "', '" + protein + "', '" + fat + "', '" + userid + "')", "Benutzername", 1);
-                            make_meal.con();
+                            new DBConnect("INSERT INTO mahlzeit (Name, kalorien, carb, protein, fat, ben) VALUES ('" + name +"', '" + kalorien +"', '" + carb + "', '" + protein + "', '" + fat + "', '" + userid + "')", "Benutzername", 1);
 
                             frame.dispose();
                             Dimension frame_size = frame.getSize();

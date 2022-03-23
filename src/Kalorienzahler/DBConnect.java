@@ -33,10 +33,13 @@ public class DBConnect {
             while (resultSet.next()){
                 this.result = resultSet.getString(this.sql_get);
             }
+            resultSet.close();
         }
         if (this.check == 1){
             statement.execute(this.sql_statement);
         }
+        connection.close();
+        statement.close();
         }
         catch (Exception e){
             e.printStackTrace();
