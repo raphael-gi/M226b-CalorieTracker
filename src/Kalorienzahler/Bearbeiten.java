@@ -46,7 +46,19 @@ public class Bearbeiten implements ActionListener {
     JButton[] all_buttons = {bearbeiten, confirm, zuruck, hidden};
     JLabel[] all_labels = {anz_kalorien, anz_carbs, anz_protein, anz_fat, anz_port_label, kal_label, cal_label, protein_label, fat_label, head_label};
 
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet resultSet = null;
+
     public Bearbeiten(Dimension size, Point loc, String benutzername, String mahl_name, String portion, int mmm_id, Date datum){
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
+            Statement statement = connection.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         this.benutzername = benutzername;
         this.Portion = portion;
         this.mahl_name = mahl_name;
@@ -113,9 +125,7 @@ public class Bearbeiten implements ActionListener {
 
         try{
             //Verbindung um id zu erhalten
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM benutzer WHERE Benutzername = '" + this.benutzername + "'");
+            resultSet = statement.executeQuery("SELECT * FROM benutzer WHERE Benutzername = '" + this.benutzername + "'");
             while (resultSet.next()){
                 int userid = resultSet.getInt("id");
                 this.userid = userid;
@@ -126,11 +136,9 @@ public class Bearbeiten implements ActionListener {
         }
         try{
             //Verbindung um Namen zu erhalten
-            Connection new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            Statement new_statement = new_connection.createStatement();
-            ResultSet new_resultSet = new_statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + this.userid + " ORDER BY Name");
-            while (new_resultSet.next()){
-                String benutzernamen = new_resultSet.getString("Name");
+            resultSet = statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + this.userid + " ORDER BY Name");
+            while (resultSet.next()){
+                String benutzernamen = resultSet.getString("Name");
                 dropname.addItem(benutzernamen);
             }
             dropname.setSelectedItem(this.mahl_name);
@@ -155,9 +163,7 @@ public class Bearbeiten implements ActionListener {
             error_message.setText("");
 
             try {
-                Connection new_connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-                Statement new_statement = new_connection.createStatement();
-                ResultSet new_resultSet = new_statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
+                resultSet = statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
 
                 try {
                     this.anz_portionen = (double)portionen.getValue();
@@ -167,7 +173,7 @@ public class Bearbeiten implements ActionListener {
                 }
 
                 if (error_message.getText().isEmpty()){
-                    while (new_resultSet.next()){
+                    while (resultSet.next()){
                         //Anzahl Kohlenhydrate werden abgerufen
                         set_data("carb", anz_carbs);
                         //Anzahl Protein wird abgerufen
