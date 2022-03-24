@@ -49,6 +49,17 @@ public class Einstellungen implements ActionListener {
     private JLabel new_gewicht_label;
     private JButton new_gewicht_best;
     private JLabel einstellungen_label;
+    private JButton pas_andern_button;
+    private JLabel pas_label;
+    private JLabel pas_no_input;
+    private JLabel old_pas_label;
+    private JPasswordField old_pas_input;
+    private JButton old_pas_best;
+    private JPasswordField new_pas_input;
+    private JLabel new_pas_label;
+    private JPasswordField new_pas_best_input;
+    private JLabel new_pas_best_label;
+    private JButton new_pas_best;
 
     private JFrame frame;
 
@@ -63,9 +74,10 @@ public class Einstellungen implements ActionListener {
     private int new_age_check;
     private int new_groesse_check;
     private int new_gewicht_check;
+    private int new_pas_check;
 
-    private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best};
-    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label};
+    private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best, pas_andern_button, old_pas_best, new_pas_best};
+    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label};
 
     public Einstellungen(Dimension size, Point loc, String name, Date datum){
         this.size = size;
@@ -108,6 +120,15 @@ public class Einstellungen implements ActionListener {
         new_gewicht_label.setVisible(false);
         new_gewicht.setVisible(false);
         new_gewicht_best.setVisible(false);
+        old_pas_label.setVisible(false);
+        old_pas_input.setVisible(false);
+        old_pas_best.setVisible(false);
+        new_pas_label.setVisible(false);
+        new_pas_input.setVisible(false);
+        new_pas_best.setVisible(false);
+        new_pas_best_label.setVisible(false);
+        new_pas_best_input.setVisible(false);
+        new_pas_best.setVisible(false);
 
         error_message.setText("");
 
@@ -246,7 +267,6 @@ public class Einstellungen implements ActionListener {
             Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name, date_select);
             n.content();
         }
-
         if (e.getSource() == zuruck){
             frame.dispose();
             Dimension frame_size = frame.getSize();
@@ -357,6 +377,72 @@ public class Einstellungen implements ActionListener {
             Point frame_loc = frame.getLocation();
             Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name, date_select);
             n.content();
+        }
+        if (e.getSource() == pas_andern_button){
+            if (this.new_pas_check == 1){
+                old_pas_label.setVisible(false);
+                old_pas_input.setVisible(false);
+                old_pas_best.setVisible(false);
+                this.new_pas_check = 0;
+            }
+            else {
+                old_pas_label.setVisible(true);
+                old_pas_input.setVisible(true);
+                old_pas_best.setVisible(true);
+                this.new_pas_check = 1;
+            }
+            error_message.setText("");
+        }
+        if (e.getSource() == old_pas_best){
+            String pas = old_pas_input.getText();
+            DBConnect check = new DBConnect("SELECT passwort FROM benutzer WHERE Benutzername = '" + this.name + "'", "passwort", 0);
+            String real_pas = check.getResult();
+            if (pas.equals(real_pas)){
+                old_pas_label.setVisible(false);
+                old_pas_input.setVisible(false);
+                old_pas_best.setVisible(false);
+                new_pas_label.setVisible(true);
+                new_pas_best_label.setVisible(true);
+                new_pas_input.setVisible(true);
+                new_pas_best_input.setVisible(true);
+                new_pas_best.setVisible(true);
+            }
+            else {
+                error_message.setText("Passwort stimmt nicht!");
+            }
+        }
+        if (e.getSource() == new_pas_best){
+            String pas = new_pas_input.getText();
+            String pas_best = new_pas_best_input.getText();
+            error_message.setText("");
+            if (!pas.equals(pas_best)){
+                error_message.setText("Die Passwörter überstimmen nicht ein");
+            }
+            else {
+                if (pas.length() < 8){
+                    error_message.setText("Das Passwort ist zu kurz!");
+                }
+                else {
+                    if (pas.length() > 90){
+                        error_message.setText("Das Passwort ist zu lange!");
+                    }
+                    else {
+                        DBConnect check = new DBConnect("SELECT passwort FROM benutzer WHERE Benutzername = '" + this.name + "'", "passwort", 0);
+                        String old = check.getResult();
+                        if (pas.equals(old)){
+                            error_message.setText("Das neue Passwort darf nicht das gleiche wie das alte sein!");
+                        }
+                        else {
+                            new DBConnect("UPDATE benutzer SET Passwort = '" + pas + "' WHERE Benutzername = '" + this.name + "'", "", 1);
+                            new_pas_label.setVisible(false);
+                            new_pas_best_label.setVisible(false);
+                            new_pas_input.setVisible(false);
+                            new_pas_best_input.setVisible(false);
+                            new_pas_best.setVisible(false);
+                        }
+                    }
+                }
+            }
         }
     }
 }

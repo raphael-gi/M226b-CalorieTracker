@@ -329,6 +329,7 @@ public class Tagebuch implements ActionListener {
             e.printStackTrace();
         }
     }
+
     public void get_select(JList list_name , DefaultListModel name, int mahlzeit_id) throws SQLException {
         name.clear();
         resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date_select) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
