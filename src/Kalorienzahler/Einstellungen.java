@@ -146,11 +146,13 @@ public class Einstellungen implements ActionListener {
         }
         muskel_aufbau.addActionListener(this);
 
+        //Methoden werden ausgeführt
         gend();
         age();
         groes();
         gew();
         musk();
+        dark();
     }
 
     public void gend(){
@@ -190,10 +192,7 @@ public class Einstellungen implements ActionListener {
             muskel_aufbau.setSelected(false);
         }
     }
-
-    public void content(){
-        benutzername.setText(this.name);
-
+    public void dark(){
         Darkmode n = new Darkmode(name, all_buttons, all_labels);
         this.darkmode = n.isDark();
         if (!this.darkmode){
@@ -237,6 +236,10 @@ public class Einstellungen implements ActionListener {
                 }
             });
         }
+    }
+
+    public void content(){
+        benutzername.setText(this.name);
     }
 
     public void set_vis(int check, int check2 , JSpinner base, JLabel base_label, JButton base_best, JLabel base_base){
@@ -303,11 +306,7 @@ public class Einstellungen implements ActionListener {
             else {
                 new DBConnect("UPDATE benutzer SET dark = " + 0 + " WHERE Benutzername = '" + this.name + "'", " ", 1);
             }
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name, date_select);
-            n.content();
+            dark();
         }
         if (e.getSource() == zuruck){
             frame.dispose();
