@@ -39,6 +39,7 @@ public class Mahlzeit implements ActionListener {
 
         this.mahlzeit = mahlzeit;
         this.benutzername = benutzername;
+        this.date_selected = datum;
 
         frame = new JFrame("Mahlzeit Erstellen");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

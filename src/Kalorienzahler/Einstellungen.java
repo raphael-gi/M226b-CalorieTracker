@@ -2,7 +2,9 @@ package Kalorienzahler;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.util.Date;
 
 public class Einstellungen implements ActionListener {
@@ -58,11 +60,7 @@ public class Einstellungen implements ActionListener {
     private JPasswordField new_pas_best_input;
     private JLabel new_pas_best_label;
     private JButton new_pas_best;
-    private int sprache;
-    String[] Sprache = {"Deutsch","Englisch"};
-    private JLabel Sprache_label;
-    private int wahl;
-    private JComboBox<String> SprachW= new JComboBox<String>(Sprache);
+
     private JFrame frame;
 
     private Dimension size;
@@ -79,7 +77,7 @@ public class Einstellungen implements ActionListener {
     private int new_pas_check;
 
     private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best, pas_andern_button, old_pas_best, new_pas_best};
-    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label, Sprache_label};
+    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label};
 
     public Einstellungen(Dimension size, Point loc, String name, Date datum){
         this.size = size;
@@ -133,28 +131,15 @@ public class Einstellungen implements ActionListener {
         new_pas_best.setVisible(false);
 
         error_message.setText("");
-        benutzername.setText(this.name);
-        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.name + "'", "sprache", 0);
-        get_sprache.con();
-        sprache = Integer.parseInt(get_sprache.getResult());
 
         for (int i = 0; all_buttons.length > i; i++){
             JButton but = all_buttons[i];
             but.addActionListener(this);
         }
-        SprachW.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange() == ItemEvent.SELECTED){
-                    wahl = ItemEvent.SELECTED;
-                }
-            }
-        });
-
     }
 
-
     public void content(){
+        benutzername.setText(this.name);
 
         DBConnect get_gender = new DBConnect("SELECT gender FROM benutzer WHERE Benutzername = '" + this.name + "'", "gender", 0);
         get_gender.con();
@@ -217,9 +202,7 @@ public class Einstellungen implements ActionListener {
                     bestaetigen.setForeground(Color.RED);
                 }
             });
-
         }
-
     }
 
     public void set_vis(int check, int check2 , JSpinner base, JLabel base_label, JButton base_best, JLabel base_base){

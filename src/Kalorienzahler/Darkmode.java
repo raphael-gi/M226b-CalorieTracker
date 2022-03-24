@@ -21,6 +21,9 @@ public class Darkmode {
         if (dark){
             darken();
         }
+        else {
+            brighten();
+        }
     }
 
     public JButton[] getAll_buttons() {
@@ -47,8 +50,7 @@ public class Darkmode {
     }
 
     public void darken(){
-        for (int b = 0; all_buttons.length > b; b++){
-            JButton but = all_buttons[b];
+        for (JButton but : all_buttons){
             but.setBackground(Color.GRAY);
             but.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -61,28 +63,26 @@ public class Darkmode {
                 }
             });
         }
-        for (int l = 0; this.all_labels.length > l; l++){
-            JLabel lab = this.all_labels[l];
+        for (JLabel lab : all_labels){
             lab.setForeground(Color.white);
         }
     }
     public void brighten(){
-        for (int b = 0; all_buttons.length > b; b++){
-            JButton but = all_buttons[b];
-            but.setBackground(Color.GRAY);
-            but.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    but.getColorModel();
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    but.setForeground(Color.darkGray);
-                    but.setBackground(Color.GRAY);
-                }
-            });
+        for (JButton but : all_buttons){
+            but.setBackground(new JButton().getBackground());
+            but.setForeground(new JButton().getForeground());
+            //but.addMouseListener(new MouseAdapter() {
+            //    public void mouseEntered(java.awt.event.MouseEvent evt) {
+            //        but.getColorModel();
+            //    }
+            //    public void mouseExited(java.awt.event.MouseEvent evt) {
+            //        but.setForeground(Color.darkGray);
+            //        but.setBackground(Color.GRAY);
+            //    }
+            //});
         }
-        for (int l = 0; this.all_labels.length > l; l++){
-            JLabel lab = this.all_labels[l];
-            lab.setForeground(Color.white);
+        for (JLabel lab : all_labels){
+            lab.setForeground(new JLabel().getForeground());
         }
     }
 }
