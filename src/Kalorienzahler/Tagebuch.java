@@ -161,8 +161,6 @@ public class Tagebuch implements ActionListener {
     }
 
     public void save(JButton name_edit, JButton name_delete, JList list_name){
-        name_edit.addActionListener(this);
-        name_delete.addActionListener(this);
         name_edit.setVisible(false);
         name_delete.setVisible(false);
         list_name.addMouseListener(new MouseAdapter() {
@@ -356,14 +354,12 @@ public class Tagebuch implements ActionListener {
             }
         }
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            Statement statement = connection.createStatement();
             DBConnect fruh_select = new DBConnect("SELECT id FROM mahlzeit WHERE Name = '" + right_name + "'", "id", 0);
 
-            ResultSet fruh_select_mult = statement.executeQuery("SELECT id FROM mmm WHERE mahl = '" + fruh_select.getResult() + "' AND mahlzeit = " + mahlzeit_id + "");
+            resultSet = statement.executeQuery("SELECT id FROM mmm WHERE mahl = '" + fruh_select.getResult() + "' AND mahlzeit = " + mahlzeit_id + "");
             ArrayList also_same_id = new ArrayList();
-            while (fruh_select_mult.next()){
-                int mahl_id = fruh_select_mult.getInt("id");
+            while (resultSet.next()){
+                int mahl_id = resultSet.getInt("id");
                 also_same_id.add(mahl_id);
             }
             name.getSelectedIndex();
@@ -386,6 +382,7 @@ public class Tagebuch implements ActionListener {
             ex.printStackTrace();
         }
     }
+
     public void on_delete(JList name, int mahlzeit_id){
         on_button(name,mahlzeit_id);
         new DBConnect("DELETE FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", " ", 1);
@@ -396,16 +393,16 @@ public class Tagebuch implements ActionListener {
         Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername, date_select);
         n.content();
     }
+
     public void on_edit(JList name, int mahlzeit_id){
         on_button(name, mahlzeit_id);
         DBConnect get_mahl = new DBConnect("SELECT mahl FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", "mahl", 0);
-
         String mahl = get_mahl.getResult();
+
         DBConnect get_name = new DBConnect("SELECT Name FROM mahlzeit WHERE id = " + mahl + "", "Name", 0);
-
         String mahl_name = get_name.getResult();
-        DBConnect get_port = new DBConnect("SELECT port FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", "port", 0);
 
+        DBConnect get_port = new DBConnect("SELECT port FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", "port", 0);
         String port = get_port.getResult();
 
         frame.dispose();
