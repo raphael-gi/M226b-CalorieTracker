@@ -51,10 +51,9 @@ public class Bearbeiten implements ActionListener {
     ResultSet resultSet = null;
 
     public Bearbeiten(Dimension size, Point loc, String benutzername, String mahl_name, String portion, int mmm_id, Date datum){
-        Connection connection = null;
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
         } catch (SQLException e) {
             e.printStackTrace();
         }
