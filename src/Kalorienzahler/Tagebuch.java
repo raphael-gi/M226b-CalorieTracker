@@ -73,13 +73,18 @@ public class Tagebuch implements ActionListener {
     private Calendar c = Calendar.getInstance();
 
 
-    private int sprache = 1;
+    private int sprache;
 
     private JButton[] all_buttons = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen, fruher, spater};
     private JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label, kalorien_anz, verb_kalorien, minus, gleich, datum};
     private JList[] all_lists = {fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
 
     String[] fruh_list = {"Frühstück", "Breakfast"};
+    String[] Eat_SP = {"Mahlzeit hinzufügen", "Add meal"};
+    String[] Abend_SP ={"Abendessen", "Dinner"};
+    String[] Mitt_SP ={"Mittagessen", "Lunch"};
+    String[] Snack_SP ={"Imbiss", "Snack"};
+    String[] A_SP ={};
 
     private boolean darkmode;
 
@@ -88,6 +93,7 @@ public class Tagebuch implements ActionListener {
     ResultSet resultSet = null;
 
     public Tagebuch(Dimension size, Point loc, String benutzername, Date datum){
+
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
             statement = connection.createStatement();
@@ -115,7 +121,21 @@ public class Tagebuch implements ActionListener {
         frame.setSize(this.size);
         frame.setLocation(loc);
 
+        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
+        get_sprache.con();
+        sprache = Integer.parseInt(get_sprache.getResult());
+
+
         fruh_label.setText(fruh_list[this.sprache]);
+        mit_label.setText(Mitt_SP[this.sprache]);
+        abend_label.setText(Abend_SP[this.sprache]);
+        snack_label.setText(Snack_SP[this.sprache]);
+        Fruhstuck.setText(Eat_SP[this.sprache]);
+        Mittagessen.setText(Eat_SP[this.sprache]);
+        Abendessen.setText(Eat_SP[this.sprache]);
+        Snacks.setText(Eat_SP[this.sprache]);
+
+
         Dimension ein = new Dimension(40,40);
         einstellungen.setPreferredSize(ein);
 
@@ -250,6 +270,7 @@ public class Tagebuch implements ActionListener {
         this.gewicht = Double.parseDouble(gewicht.getResult());
         DBConnect groesse = new DBConnect("SELECT groesse FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "groesse", 0);
         this.groesse = Double.parseDouble(groesse.getResult());
+
 
         if(this.gender == 1){
             formel =  (66.47 + (13.7 * this.gewicht) + (5 * this.groesse) - (6.8 * this.alter));
@@ -402,6 +423,7 @@ public class Tagebuch implements ActionListener {
         on_button(name, mahlzeit_id);
         DBConnect get_mahl = new DBConnect("SELECT mahl FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", "mahl", 0);
         String mahl = get_mahl.getResult();
+
 
         DBConnect get_name = new DBConnect("SELECT Name FROM mahlzeit WHERE id = " + mahl + "", "Name", 0);
         String mahl_name = get_name.getResult();

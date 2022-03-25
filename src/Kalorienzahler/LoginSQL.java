@@ -4,7 +4,7 @@ public class LoginSQL {
     private String name;
     private String passwort;
     private String result;
-    LoginSQL(String name, String passwort){
+    LoginSQL(String name, String passwort) {
         this.name = name;
         this.passwort = passwort;
     }
