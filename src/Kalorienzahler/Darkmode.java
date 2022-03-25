@@ -71,18 +71,19 @@ public class Darkmode {
         for (JButton but : all_buttons){
             but.setBackground(new JButton().getBackground());
             but.setForeground(new JButton().getForeground());
-            //but.addMouseListener(new MouseAdapter() {
-            //    public void mouseEntered(java.awt.event.MouseEvent evt) {
-            //        but.getColorModel();
-            //    }
-            //    public void mouseExited(java.awt.event.MouseEvent evt) {
-            //        but.setForeground(Color.darkGray);
-            //        but.setBackground(Color.GRAY);
-            //    }
-            //});
+            but.addMouseListener(new MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    but.setForeground(new JButton().getForeground());
+                    but.setBackground(new JButton().getBackground());
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    but.setForeground(new JButton().getForeground());
+                    but.setBackground(new JButton().getBackground());
+                }
+            });
         }
         for (JLabel lab : all_labels){
-            lab.setForeground(new JLabel().getForeground());
+            lab.setForeground(Color.BLACK);
         }
     }
 }
