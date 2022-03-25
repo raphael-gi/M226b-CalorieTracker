@@ -63,6 +63,9 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         frame = new JFrame("Login");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        ImageIcon image = new ImageIcon(getClass().getResource("calories-logo.png"));
+        frame.setIconImage(image.getImage());
+
         frame.add(panel1);
 
         frame.pack();
