@@ -191,6 +191,7 @@ public class Einstellungen implements ActionListener {
             muskel_aufbau.setText("Nein");
             muskel_aufbau.setSelected(false);
         }
+
     }
     public void dark(){
         Darkmode n = new Darkmode(name, all_buttons, all_labels);
