@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="panel1" layout-manager="GridLayoutManager" row-count="42" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="1135"/>
+      <xy x="20" y="20" width="500" height="1139"/>
     </constraints>
     <properties>
       <enabled value="true"/>
@@ -351,14 +351,6 @@
           <text value="Gewicht(Kg):"/>
         </properties>
       </component>
-      <component id="fde68" class="javax.swing.JButton" binding="gewicht_ander_button">
-        <constraints>
-          <grid row="18" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Ändern"/>
-        </properties>
-      </component>
       <component id="493f6" class="javax.swing.JSpinner" binding="new_gewicht">
         <constraints>
           <grid row="20" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
@@ -528,6 +520,14 @@
         </constraints>
         <properties>
           <text value=""/>
+        </properties>
+      </component>
+      <component id="fde68" class="javax.swing.JButton" binding="gewicht_ander_button">
+        <constraints>
+          <grid row="18" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Ändern"/>
         </properties>
       </component>
     </children>
