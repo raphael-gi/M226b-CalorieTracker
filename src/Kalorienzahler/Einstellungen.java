@@ -167,6 +167,9 @@ public class Einstellungen implements ActionListener {
         this.darkmode = n.isDark();
         if (!this.darkmode){
             dark.setText("Aus");
+            panel1.setBackground(Color.WHITE);
+            muskel_aufbau.setBackground(Color.WHITE);
+            muskel_aufbau.setForeground(Color.BLACK);
         }
         else {
             dark.setText("An");
