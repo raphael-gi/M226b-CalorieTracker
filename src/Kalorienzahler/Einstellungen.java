@@ -5,8 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
-import java.lang.reflect.Method;
-import java.sql.*;
 import java.util.Date;
 
 public class Einstellungen implements ActionListener {
@@ -81,24 +79,9 @@ public class Einstellungen implements ActionListener {
     private int new_pas_check;
 
     private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best, pas_andern_button, old_pas_best, new_pas_best};
-    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label, muskel_aufbau_label};
-
-    JButton[] un_vis_but = {new_name_best, new_alter_best, new_groesse_best, new_gewicht_best, old_pas_best, new_pas_best, new_pas_best, bestaetigen};
-    JLabel[] un_vis_lab = {new_name_label, new_alter_label, new_groesse_label, new_gewicht_label, old_pas_label, new_pas_label, new_pas_best_label, pass_eingeben};
-    JSpinner[] un_vis_spin = {new_alter, new_groesse, new_gewicht};
-    JPasswordField[] un_vis_pas = {old_pas_input, new_pas_input, new_pas_best_input, passwort_feld};
-
-    Connection connection = null;
-    Statement statement = null;
-    ResultSet resultSet = null;
+    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label};
 
     public Einstellungen(Dimension size, Point loc, String name, Date datum){
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            statement = connection.createStatement();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
         this.size = size;
         this.loc = loc;
         this.name = name;
@@ -123,20 +106,31 @@ public class Einstellungen implements ActionListener {
         new_groesse.setModel(groesse_model);
         new_gewicht.setModel(gewicht_model);
 
-        for (JButton but : un_vis_but) {
-            but.setVisible(false);
-        }
-        for (JLabel lab : un_vis_lab) {
-            lab.setVisible(false);
-        }
-        for (JSpinner spin : un_vis_spin) {
-            spin.setVisible(false);
-        }
-        for (JPasswordField pas : un_vis_pas) {
-            pas.setVisible(false);
-        }
+        pass_eingeben.setVisible(false);
+        passwort_feld.setVisible(false);
+        bestaetigen.setVisible(false);
 
+        new_name_label.setVisible(false);
         new_name.setVisible(false);
+        new_name_best.setVisible(false);
+        new_alter_label.setVisible(false);
+        new_alter.setVisible(false);
+        new_alter_best.setVisible(false);
+        new_groesse_label.setVisible(false);
+        new_groesse.setVisible(false);
+        new_groesse_best.setVisible(false);
+        new_gewicht_label.setVisible(false);
+        new_gewicht.setVisible(false);
+        new_gewicht_best.setVisible(false);
+        old_pas_label.setVisible(false);
+        old_pas_input.setVisible(false);
+        old_pas_best.setVisible(false);
+        new_pas_label.setVisible(false);
+        new_pas_input.setVisible(false);
+        new_pas_best.setVisible(false);
+        new_pas_best_label.setVisible(false);
+        new_pas_best_input.setVisible(false);
+        new_pas_best.setVisible(false);
 
         error_message.setText("");
 
@@ -144,19 +138,13 @@ public class Einstellungen implements ActionListener {
             JButton but = all_buttons[i];
             but.addActionListener(this);
         }
-        muskel_aufbau.addActionListener(this);
-
-        //Methoden werden ausgeführt
-        gend();
-        age();
-        groes();
-        gew();
-        musk();
-        dark();
     }
 
-    public void gend(){
+    public void content(){
+        benutzername.setText(this.name);
+
         DBConnect get_gender = new DBConnect("SELECT gender FROM benutzer WHERE Benutzername = '" + this.name + "'", "gender", 0);
+        get_gender.con();
         int gender = Integer.parseInt(get_gender.getResult());
         if (gender == 1){
             this.gender.setText("Weiblich");
@@ -164,35 +152,19 @@ public class Einstellungen implements ActionListener {
         else {
             this.gender.setText("Männlich");
         }
-    }
-    public void age(){
+
         DBConnect get_age = new DBConnect("SELECT age FROM benutzer WHERE Benutzername = '" + this.name + "'", "age", 0);
         String age = get_age.getResult();
         this.age.setText(age);
-    }
-    public void groes(){
+
         DBConnect get_groesse = new DBConnect("SELECT groesse FROM benutzer WHERE Benutzername = '" + this.name + "'", "groesse", 0);
         String groesse = get_groesse.getResult();
         this.groesse.setText(groesse);
-    }
-    public void gew(){
+
         DBConnect get_gewicht = new DBConnect("SELECT gewicht FROM benutzer WHERE Benutzername = '" + this.name + "'", "gewicht", 0);
         String gewicht = get_gewicht.getResult();
         this.gewicht.setText(gewicht);
-    }
-    public void musk(){
-        DBConnect get_muskel = new DBConnect("SELECT muskel FROM benutzer WHERE Benutzername = '" + this.name + "'", "muskel", 0);
-        int muskel = Integer.parseInt(get_muskel.getResult());
-        if (muskel == 1){
-            muskel_aufbau.setText("Ja");
-            muskel_aufbau.setSelected(true);
-        }
-        else {
-            muskel_aufbau.setText("Nein");
-            muskel_aufbau.setSelected(false);
-        }
-    }
-    public void dark(){
+
         Darkmode n = new Darkmode(name, all_buttons, all_labels);
         this.darkmode = n.isDark();
         if (!this.darkmode){
@@ -206,10 +178,7 @@ public class Einstellungen implements ActionListener {
 
             panel1.setBackground(Color.DARK_GRAY);
 
-            passwort_feld.setBackground(Color.LIGHT_GRAY);
-
-            muskel_aufbau.setBackground(Color.DARK_GRAY);
-            muskel_aufbau.setForeground(Color.WHITE);
+            passwort_feld.setBackground(Color.lightGray);
 
             all_buttons = n.getAll_buttons();
             all_labels = n.getAll_labels();
@@ -239,10 +208,6 @@ public class Einstellungen implements ActionListener {
                 }
             });
         }
-    }
-
-    public void content(){
-        benutzername.setText(this.name);
     }
 
     public void set_vis(int check, int check2 , JSpinner base, JLabel base_label, JButton base_best, JLabel base_base){
@@ -278,26 +243,18 @@ public class Einstellungen implements ActionListener {
         }
     }
 
-    public void on_set_vis(JSpinner base, String get, String error_name, JLabel base_label, JButton base_but, int check){
+    public void on_set_vis(JSpinner base, String get, String error_name){
         if (base.getValue() == null){
             error_message.setText("" + error_name + " darf nicht Leer sein!");
         }
         else {
             new DBConnect("UPDATE Benutzer SET " + get + " = '" + base.getValue() + "' WHERE Benutzername = '" + this.name + "'", " ", 1);
+            frame.dispose();
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name, date_select);
+            n.content();
         }
-        base.setVisible(false);
-        base_label.setVisible(false);
-        base_but.setVisible(false);
-        if (check == 1){
-            new_age_check = 0;
-        }
-        if (check == 2){
-            new_groesse_check = 0;
-        }
-        if (check == 3){
-            new_gewicht_check = 0;
-        }
-
     }
 
     @Override
@@ -309,7 +266,11 @@ public class Einstellungen implements ActionListener {
             else {
                 new DBConnect("UPDATE benutzer SET dark = " + 0 + " WHERE Benutzername = '" + this.name + "'", " ", 1);
             }
-            dark();
+            frame.dispose();
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name, date_select);
+            n.content();
         }
         if (e.getSource() == zuruck){
             frame.dispose();
@@ -393,22 +354,19 @@ public class Einstellungen implements ActionListener {
             set_vis(new_age_check, 1, new_alter, new_alter_label, new_alter_best, age);
         }
         if (e.getSource() == new_alter_best){
-            on_set_vis(new_alter,"age", "Alter", new_alter_label, new_alter_best, 1);
-            age();
+            on_set_vis(new_alter,"age", "Alter");
         }
         if (e.getSource() == groesse_andern_button){
             set_vis(new_groesse_check, 2, new_groesse, new_groesse_label, new_groesse_best, groesse);
         }
         if (e.getSource() == new_groesse_best){
-            on_set_vis(new_groesse,"groesse", "Grösse", new_groesse_label, new_groesse_best, 2);
-            groes();
+            on_set_vis(new_groesse,"groesse", "Grösse");
         }
         if (e.getSource() == gewicht_ander_button){
             set_vis(new_gewicht_check, 3, new_gewicht, new_gewicht_label, new_gewicht_best, gewicht);
         }
         if (e.getSource() == new_gewicht_best){
-            on_set_vis(new_gewicht, "gewicht", "Gewicht", new_gewicht_label, new_gewicht_best, 3);
-            gew();
+            on_set_vis(new_gewicht, "gewicht", "Gewicht");
         }
         if (e.getSource() == gender_andern_button){
             DBConnect gend = new DBConnect("SELECT gender FROM Benutzer WHERE Benutzername = '" + this.name + "'", "gender", 0);
@@ -419,7 +377,11 @@ public class Einstellungen implements ActionListener {
             else {
                 new DBConnect("UPDATE Benutzer SET gender = " + 1 + " WHERE Benutzername = '" + this.name + "'", " ", 1);
             }
-            gend();
+            frame.dispose();
+            Dimension frame_size = frame.getSize();
+            Point frame_loc = frame.getLocation();
+            Einstellungen n = new Einstellungen(frame_size, frame_loc, this.name, date_select);
+            n.content();
         }
         if (e.getSource() == pas_andern_button){
             if (this.new_pas_check == 1){
@@ -485,18 +447,6 @@ public class Einstellungen implements ActionListener {
                         }
                     }
                 }
-            }
-        }
-        if (e.getSource() == muskel_aufbau){
-            DBConnect get_muskel = new DBConnect("SELECT muskel FROM benutzer WHERE Benutzername = '" + this.name + "'", "muskel", 0);
-            int muskel = Integer.parseInt(get_muskel.getResult());
-            if (muskel == 1){
-                new DBConnect("UPDATE benutzer SET muskel = 0 WHERE Benutzername = '" + this.name + "'", "", 1);
-                musk();
-            }
-            else {
-                new DBConnect("UPDATE benutzer SET muskel = 1 WHERE Benutzername = '" + this.name + "'", "", 1);
-                musk();
             }
         }
     }

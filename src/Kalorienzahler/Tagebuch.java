@@ -122,6 +122,7 @@ public class Tagebuch implements ActionListener {
         get_sprache.con();
         sprache = Integer.parseInt(get_sprache.getResult());
 
+
         fruh_label.setText(fruh_list[this.sprache]);
         mit_label.setText(Mitt_SP[this.sprache]);
         abend_label.setText(Abend_SP[this.sprache]);
