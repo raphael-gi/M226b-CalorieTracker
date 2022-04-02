@@ -372,6 +372,7 @@ public class Einstellungen implements ActionListener {
             }
         }
     }
+
     public void on_set_vis(JSpinner base, String get, String error_name, JLabel base_label, JButton base_but, int check) {
         if (base.getValue() == null){
             error_message.setText("" + error_name + " darf nicht Leer sein!");
