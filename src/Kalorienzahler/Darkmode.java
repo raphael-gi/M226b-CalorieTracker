@@ -7,10 +7,10 @@ import java.awt.event.*;
 public class Darkmode {
     private boolean dark;
 
-    private JButton[] all_buttons;
-    private JLabel[] all_labels;
+    private final JButton[] all_buttons;
+    private final JLabel[] all_labels;
 
-    private String benutzername;
+    private final String benutzername;
 
     Darkmode(String benutzername, JButton[] all_buttons, JLabel[] all_labels){
         this.benutzername = benutzername;
@@ -38,18 +38,14 @@ public class Darkmode {
         return dark;
     }
     public void check(){
+        //Wird geschaut ob Darkmode an oder aus ist
         DBConnect check = new DBConnect("SELECT dark FROM benutzer WHERE Benutzername = '" + benutzername + "'", "dark", 0);
-        check.con();
         int dark_check = Integer.parseInt(check.getResult());
-        if (dark_check == 0){
-            dark = false;
-        }
-        else {
-            dark = true;
-        }
+        dark = dark_check != 0;
     }
 
     public void darken(){
+        //Buttons werden Dunkel gemacht
         for (JButton but : all_buttons){
             but.setBackground(Color.GRAY);
             but.addMouseListener(new MouseAdapter() {
@@ -68,6 +64,7 @@ public class Darkmode {
         }
     }
     public void brighten(){
+        //Buttons werden Hell gemacht
         for (JButton but : all_buttons){
             but.setBackground(new JButton().getBackground());
             but.setForeground(new JButton().getForeground());

@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 public class Registrierung implements ActionListener {
     private JPanel panel1;
@@ -21,29 +22,11 @@ public class Registrierung implements ActionListener {
     private JSpinner gewicht;
     SpinnerNumberModel groesse_model = new SpinnerNumberModel(180, 0.00, 1000.00, 1);
     private JSpinner groesse;
-    private JFrame frame;
-
-    private Dimension size;
-    private Point loc;
+    private final JFrame frame;
 
     public Registrierung(Dimension size, Point loc){
-        frame = new JFrame("Registrierung");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        ImageIcon image = new ImageIcon(getClass().getResource("calories-logo.png"));
-        frame.setIconImage(image.getImage());
-
-        frame.add(panel1);
-
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-        this.size = size;
-        this.loc = loc;
-
-        frame.setSize(this.size);
-        frame.setLocation(loc);
+        frame = new JFrame();
+        new StarterPack(frame, panel1, "Registrierung", size, loc);
 
         alter.setModel(alter_model);
         gewicht.setModel(gewicht_model);
@@ -59,10 +42,11 @@ public class Registrierung implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == Registrieren) {
             String benutzer = Benutzer.getText();
-            String passwort = Passwort.getText();
-            String passwort_best = Passwort_Best.getText();
+            char[] passwort = Passwort.getPassword();
+            char[] passwort_best = Passwort_Best.getPassword();
+
             int alter = (int)this.alter.getValue();
-            int gender = 0;
+            int gender;
             if (mann.isSelected()){
                 gender = 1;
             }
@@ -73,15 +57,15 @@ public class Registrierung implements ActionListener {
             double groesse = (double) this.groesse.getValue();
 
             error_message.setText("");
-            if (benutzer.isEmpty() || passwort.isEmpty() || passwort_best.isEmpty()){
+            if (benutzer.isEmpty() || passwort == null || passwort_best == null){
                 error_message.setText("Füllen sie alle Felder aus!");
             }
             else {
-                if (!passwort.equals(passwort_best)){
+                if (!Arrays.equals(passwort, passwort_best)){
                     error_message.setText("Die Passwörter sind nicht gleich!");
                 }
                 else {
-                    if (passwort.length() < 8){
+                    if (passwort.length < 8){
                         error_message.setText("Passwort zu kurz!");
                     }
                     else {
@@ -93,21 +77,16 @@ public class Registrierung implements ActionListener {
                                 error_message.setText("Wählen eines der Gender aus!");
                             }
                             else {
-                                System.out.println("test");
-                                RegistrierungSQL reg = new RegistrierungSQL(benutzer,passwort, gender, alter, gewicht, groesse);
-                                try {
-                                    reg.connect();
-                                    if (reg.getResult().equals("being_used")) {
-                                        error_message.setText("Benutzername wird bereits verwendet");
-                                    } else {
-                                        frame.dispose();
-                                        Dimension frame_size = frame.getSize();
-                                        Point frame_loc = frame.getLocation();
-                                        new Login(frame_size, frame_loc);
-                                    }
-                                }
-                                catch (Exception E){
-                                    error_message.setText("Etwas ist schief gelaufen");
+                                DBConnect check = new DBConnect("SELECT Benutzername FROM benutzer WHERE Benutzername = '" + benutzer + "'","Benutzername",0);
+                                if (check.getResult() != null) {
+                                    error_message.setText("Benutzername wird bereits verwendet");
+                                } else {
+                                    Hash p = new Hash(passwort);
+                                    new DBConnect("INSERT INTO benutzer (Benutzername, Passwort, gender, age, gewicht, groesse) VALUES ('" + benutzer + "', '" + p.getHash() + "', " + gender + ", " + alter + ", " + gewicht + ", " + groesse + ")","",1);
+                                    frame.dispose();
+                                    Dimension frame_size = frame.getSize();
+                                    Point frame_loc = frame.getLocation();
+                                    new Login(frame_size, frame_loc);
                                 }
                             }
                         }
@@ -122,10 +101,20 @@ public class Registrierung implements ActionListener {
             new Login(frame_size, frame_loc);
         }
         if (e.getSource() == mann){
-            weib.setSelected(false);
+            if (weib.isSelected()){
+                weib.setSelected(false);
+            }
+            else {
+                mann.setSelected(true);
+            }
         }
         if (e.getSource() == weib){
-            mann.setSelected(false);
+            if (mann.isSelected()){
+                mann.setSelected(false);
+            }
+            else {
+                weib.setSelected(true);
+            }
         }
     }
 }

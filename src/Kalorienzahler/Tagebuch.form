@@ -1,66 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Kalorienzahler.Tagebuch">
-  <grid id="27dc6" binding="panel1" layout-manager="GridLayoutManager" row-count="27" column-count="11" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="panel1" layout-manager="GridLayoutManager" row-count="29" column-count="11" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="1" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="722" height="775"/>
+      <xy x="20" y="20" width="743" height="830"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
       <vspacer id="58431">
         <constraints>
-          <grid row="5" column="8" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="8" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <vspacer id="551b3">
         <constraints>
-          <grid row="16" column="1" row-span="1" col-span="8" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="18" column="1" row-span="1" col-span="8" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <vspacer id="b4d8b">
         <constraints>
-          <grid row="21" column="1" row-span="1" col-span="8" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="23" column="1" row-span="1" col-span="8" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <hspacer id="1eaf8">
         <constraints>
-          <grid row="11" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="13" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
       <hspacer id="b3164">
         <constraints>
-          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="13" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
       <hspacer id="a6cbd">
         <constraints>
-          <grid row="11" column="10" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="13" column="10" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
       <hspacer id="75e5e">
         <constraints>
-          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
       <vspacer id="bd3f9">
         <constraints>
-          <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <vspacer id="c434d">
         <constraints>
-          <grid row="10" column="8" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="8" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <vspacer id="20d75">
         <constraints>
-          <grid row="26" column="1" row-span="1" col-span="8" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="28" column="1" row-span="1" col-span="8" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <component id="b438d" class="javax.swing.JList" binding="fruhstuck_list">
         <constraints>
-          <grid row="7" column="1" row-span="2" col-span="8" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="9" column="1" row-span="2" col-span="8" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
@@ -70,7 +70,7 @@
       </component>
       <component id="c8115" class="javax.swing.JList" binding="mittagessen_list">
         <constraints>
-          <grid row="13" column="1" row-span="2" col-span="8" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="15" column="1" row-span="2" col-span="8" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
@@ -78,7 +78,7 @@
       </component>
       <component id="78442" class="javax.swing.JList" binding="abendessen_list">
         <constraints>
-          <grid row="18" column="1" row-span="2" col-span="8" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="20" column="1" row-span="2" col-span="8" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
@@ -86,7 +86,7 @@
       </component>
       <component id="754e6" class="javax.swing.JList" binding="snacks_list">
         <constraints>
-          <grid row="23" column="1" row-span="2" col-span="8" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="25" column="1" row-span="2" col-span="8" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
@@ -94,7 +94,7 @@
       </component>
       <component id="fa100" class="javax.swing.JButton" binding="Fruhstuck">
         <constraints>
-          <grid row="9" column="1" row-span="1" col-span="8" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="1" row-span="1" col-span="8" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Mahlzeit Hinzufügen"/>
@@ -102,7 +102,7 @@
       </component>
       <component id="bf0d4" class="javax.swing.JLabel" binding="fruh_label">
         <constraints>
-          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Frühstück"/>
@@ -110,7 +110,7 @@
       </component>
       <component id="4b68" class="javax.swing.JButton" binding="Mittagessen">
         <constraints>
-          <grid row="15" column="1" row-span="1" col-span="8" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="17" column="1" row-span="1" col-span="8" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Mahlzeit Hinzufügen"/>
@@ -118,7 +118,7 @@
       </component>
       <component id="d80f" class="javax.swing.JLabel" binding="mit_label">
         <constraints>
-          <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="14" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Mittagessen"/>
@@ -126,7 +126,7 @@
       </component>
       <component id="3b32c" class="javax.swing.JLabel" binding="abend_label">
         <constraints>
-          <grid row="17" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="19" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Abendessen"/>
@@ -134,7 +134,7 @@
       </component>
       <component id="60033" class="javax.swing.JButton" binding="Abendessen">
         <constraints>
-          <grid row="20" column="1" row-span="1" col-span="8" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="22" column="1" row-span="1" col-span="8" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Mahlzeit Hinzufügen"/>
@@ -142,7 +142,7 @@
       </component>
       <component id="78308" class="javax.swing.JButton" binding="Snacks">
         <constraints>
-          <grid row="25" column="1" row-span="1" col-span="8" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="27" column="1" row-span="1" col-span="8" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Mahlzeit Hinzufügen"/>
@@ -150,7 +150,7 @@
       </component>
       <component id="f07cc" class="javax.swing.JLabel" binding="snack_label">
         <constraints>
-          <grid row="22" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="24" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Snacks"/>
@@ -158,7 +158,7 @@
       </component>
       <component id="a3afb" class="javax.swing.JButton" binding="fruh_bearbeiten">
         <constraints>
-          <grid row="7" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Bearbeiten"/>
@@ -166,7 +166,7 @@
       </component>
       <component id="a45ab" class="javax.swing.JButton" binding="fruh_delete">
         <constraints>
-          <grid row="8" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="10" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Löschen"/>
@@ -174,7 +174,7 @@
       </component>
       <component id="e49e4" class="javax.swing.JButton" binding="mit_bearbeiten">
         <constraints>
-          <grid row="13" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="15" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Bearbeiten"/>
@@ -182,7 +182,7 @@
       </component>
       <component id="f8256" class="javax.swing.JButton" binding="mit_delete">
         <constraints>
-          <grid row="14" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="16" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Löschen"/>
@@ -190,7 +190,7 @@
       </component>
       <component id="5f8dc" class="javax.swing.JButton" binding="abend_bearbeiten">
         <constraints>
-          <grid row="18" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="20" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Bearbeiten"/>
@@ -198,7 +198,7 @@
       </component>
       <component id="5d5f7" class="javax.swing.JButton" binding="snack_bearbeiten">
         <constraints>
-          <grid row="23" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="25" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Bearbeiten"/>
@@ -206,7 +206,7 @@
       </component>
       <component id="1fdc6" class="javax.swing.JButton" binding="snack_delete">
         <constraints>
-          <grid row="24" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="26" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Löschen"/>
@@ -214,7 +214,7 @@
       </component>
       <component id="a848e" class="javax.swing.JLabel" binding="fruh_kalorien">
         <constraints>
-          <grid row="6" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value=""/>
@@ -222,7 +222,7 @@
       </component>
       <component id="2c5d3" class="javax.swing.JLabel" binding="mit_kalorien">
         <constraints>
-          <grid row="12" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="14" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value=""/>
@@ -230,7 +230,7 @@
       </component>
       <component id="55f3" class="javax.swing.JLabel" binding="abend_kalorien">
         <constraints>
-          <grid row="17" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="19" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value=""/>
@@ -238,7 +238,7 @@
       </component>
       <component id="45681" class="javax.swing.JLabel" binding="snack_kalorien">
         <constraints>
-          <grid row="22" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="24" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value=""/>
@@ -246,7 +246,7 @@
       </component>
       <component id="4d5ac" class="javax.swing.JButton" binding="abend_delete">
         <constraints>
-          <grid row="19" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="21" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Löschen"/>
@@ -259,22 +259,22 @@
       </vspacer>
       <vspacer id="5f5c">
         <constraints>
-          <grid row="9" column="9" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="9" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <vspacer id="569e7">
         <constraints>
-          <grid row="15" column="9" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="17" column="9" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <vspacer id="46479">
         <constraints>
-          <grid row="20" column="9" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="22" column="9" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <vspacer id="8e88c">
         <constraints>
-          <grid row="25" column="9" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="27" column="9" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <component id="32db" class="javax.swing.JLabel" binding="kalorien_ziel_label">
@@ -351,7 +351,7 @@
           <grid row="4" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
-      <component id="41f40" class="javax.swing.JLabel" binding="datum">
+      <component id="41f40" class="javax.swing.JLabel" binding="datum_label">
         <constraints>
           <grid row="1" column="3" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -401,6 +401,75 @@
           <text value="&gt;"/>
         </properties>
       </component>
+      <component id="22d95" class="javax.swing.JLabel" binding="protein_ziel_label">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Protein Ziel:"/>
+        </properties>
+      </component>
+      <component id="71f03" class="javax.swing.JLabel" binding="konsumierte_protein_label">
+        <constraints>
+          <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Konsumierte Protein:"/>
+        </properties>
+      </component>
+      <component id="dcd71" class="javax.swing.JLabel" binding="verbleibende_protein_label">
+        <constraints>
+          <grid row="5" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Verbleibende Protein:"/>
+        </properties>
+      </component>
+      <component id="a6c9b" class="javax.swing.JLabel" binding="protein_anz">
+        <constraints>
+          <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="144af" class="javax.swing.JLabel" binding="protein_ziel">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="9db23" class="javax.swing.JLabel" binding="verb_protein">
+        <constraints>
+          <grid row="6" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="d0dd7" class="javax.swing.JLabel" binding="minus2">
+        <constraints>
+          <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="-"/>
+        </properties>
+      </component>
+      <component id="eff39" class="javax.swing.JLabel" binding="gleich2">
+        <constraints>
+          <grid row="6" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="="/>
+        </properties>
+      </component>
+      <vspacer id="18368">
+        <constraints>
+          <grid row="7" column="4" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
     </children>
   </grid>
 </form>

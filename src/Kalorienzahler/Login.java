@@ -4,7 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Date;
+
 
 public class Login implements ActionListener {
     private JPanel panel1;
@@ -13,30 +15,13 @@ public class Login implements ActionListener {
     private JButton Login;
     private JButton Registrieren;
     private JLabel error_message;
-    private JFrame frame;
+    private final JFrame frame;
 
-    private java.util.Date date_now = new Date();
-
-    private Dimension size;
-    private Point loc;
+    private final java.util.Date date_now = new Date();
 
     public Login(Dimension size, Point loc){
-        frame = new JFrame("Login");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        ImageIcon image = new ImageIcon(getClass().getResource("calories-logo.png"));
-        frame.setIconImage(image.getImage());
-
-        frame.add(panel1);
-
-        frame.pack();
-        frame.setVisible(true);
-
-        this.size = size;
-        this.loc = loc;
-
-        frame.setSize(this.size);
-        frame.setLocation(loc);
+        frame = new JFrame();
+        new StarterPack(frame, panel1, "Login", size, loc);
         frame.setLocationRelativeTo(null);
 
         Login.addActionListener(this);
@@ -47,31 +32,31 @@ public class Login implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==Login){
             String benutzer = Benutzer.getText();
-            String passwort = Passwort.getText();
+            char[] passwort = Passwort.getPassword();
+            Hash p = new Hash(passwort);
 
             error_message.setText("");
-            LoginSQL log = new LoginSQL(benutzer,passwort);
-            try{
-                log.connect();
-            }
-            catch (Exception E){
-                error_message.setText("Etwas ist schief gelaufen");
-            }
 
-            if (benutzer.isEmpty() || passwort.isEmpty()){
-                error_message.setText("Füllen sie alle Felder aus!");
-            }
-            else {
-                if (log.getResult() == null){
-                    error_message.setText("Falsches Passwort oder Benutzername");
+            try{
+                DBConnect log = new DBConnect("SELECT Benutzername FROM benutzer WHERE Benutzername = '"+ benutzer +"' AND Passwort = '"+ p.getHash() +"'","Benutzername",0);
+                if (benutzer.isEmpty() || Arrays.toString(passwort).length() < 3){
+                    error_message.setText("Füllen sie alle Felder aus!");
                 }
                 else {
-                    frame.dispose();
-                    Dimension frame_size = frame.getSize();
-                    Point frame_loc = frame.getLocation();
-                    Tagebuch n = new Tagebuch(frame_size, frame_loc, log.getResult(), date_now);
-                    n.content();
+                    if (!benutzer.equals(log.getResult())){
+                        error_message.setText("Falsches Passwort oder Benutzername");
+                    }
+                    else {
+                        frame.dispose();
+                        Dimension frame_size = frame.getSize();
+                        Point frame_loc = frame.getLocation();
+                        Tagebuch n = new Tagebuch(frame_size, frame_loc, log.getResult(), date_now);
+                        n.content();
+                    }
                 }
+            }
+            catch (Exception E){
+                error_message.setText("Verbindung zu der Datenbank ist Fehlgeschlagen!");
             }
         }
         if (e.getSource()==Registrieren){

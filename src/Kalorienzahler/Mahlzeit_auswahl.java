@@ -1,8 +1,6 @@
 package Kalorienzahler;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,7 +13,7 @@ public class Mahlzeit_auswahl implements ActionListener {
     private JButton erstellen;
     private JLabel mahl;
     private JButton zuruck;
-    private JComboBox dropname;
+    private JComboBox<String> dropname;
     private JLabel anz_kalorien;
     private JLabel anz_carbs;
     private JLabel anz_protein;
@@ -32,10 +30,10 @@ public class Mahlzeit_auswahl implements ActionListener {
     private JLabel fat_label;
     private JLabel mahlzeit_label;
     private JLabel portionen_label;
-    private JFrame frame;
+    private final JFrame frame;
 
-    private String mahlzeit;
-    private String benutzername;
+    private final String mahlzeit;
+    private final String benutzername;
     private int userid;
     private double anz_portionen;
 
@@ -43,11 +41,21 @@ public class Mahlzeit_auswahl implements ActionListener {
     private double protein1;
     private double fat1;
 
-    private Dimension size;
-    private Point loc;
-
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
-    private Date date_select;
+    private final Date date_select;
+    String[] mahlzeit_list = {"Mahlzeit","Meal"};
+    String [] cal_list={"Kohlenhydrate:","Carbohydrates:"};
+    String [] kal_list={"Kalorien:","Calories:"};
+    String [] protein_list={"Protein","Protein"};
+    String [] fat_list={"Fett:","Fat:"};
+    String [] portion_list = {"Anzahl Portionen","Amount of portions"};
+    String [] zuruck_list = {"Zurück","Back"};
+    String [] Erstellen_list = {"Erstellen","Create"};
+    String [] bearbeiten_list = {"Bearbeiten","Edit"};
+    String[] Eat_SP = {"Hinzufügen", "Add"};
+    String [][] spracharr = {kal_list, cal_list, protein_list, fat_list, mahlzeit_list, portion_list, Erstellen_list, zuruck_list, Eat_SP, bearbeiten_list};
+    JLabel [] lab_lang = { kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
+    JButton [] but_lang = {erstellen, zuruck, hinzufugen,bearbeiten};
 
     private JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten, hidden};
     private JLabel[] all_labels = {mahl, anz_kalorien, anz_carbs, anz_protein, anz_fat, kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
@@ -64,46 +72,43 @@ public class Mahlzeit_auswahl implements ActionListener {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        this.size = size;
-        this.loc = loc;
 
         this.date_select = datum;
 
         this.mahlzeit = mahlzeit;
         this.benutzername = benutzername;
 
-        frame = new JFrame("Mahlzeit Auswählen");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        ImageIcon image = new ImageIcon(getClass().getResource("calories-logo.png"));
-        frame.setIconImage(image.getImage());
-
-        frame.add(panel1);
-
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-        frame.setSize(this.size);
-        frame.setLocation(this.loc);
+        frame = new JFrame();
+        new StarterPack(frame, panel1, "Mahlzeit Auswählen", size, loc);
 
         hidden.setVisible(false);
 
-        for (int i = 0; all_buttons.length > i; i++){
-            JButton but = all_buttons[i];
+        for (JButton but : all_buttons){
             but.addActionListener(this);
         }
         dropname.addActionListener(this);
 
         SpinnerNumberModel model = new SpinnerNumberModel(1, 0.0, 100000.0, 1);
         portion.setModel(model);
-        portion.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                anz_portionen = (double) portion.getValue();
-                hidden.doClick();
-            }
+        portion.addChangeListener(e -> {
+            anz_portionen = (double) portion.getValue();
+            hidden.doClick();
         });
+        sprach();
+    }
+    public void sprach() {
+        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
+        int sprache = Integer.parseInt(get_sprache.getResult());
+        int len = lab_lang.length + but_lang.length;
+        int ii;
+        for (int i = 0; len > i; i++) {
+            if (lab_lang.length > i) {
+                lab_lang[i].setText(spracharr[i][sprache]);
+            } else {
+                ii = i - lab_lang.length;
+                but_lang[ii].setText(spracharr[i][sprache]);
+            }
+        }
     }
     public void set_data(String what, JLabel name) throws SQLException {
         if (dropname.getSelectedItem() == null){
@@ -126,7 +131,6 @@ public class Mahlzeit_auswahl implements ActionListener {
                 ex.printStackTrace();
             }
         }
-
     }
     public void content(){
         Darkmode n = new Darkmode(this.benutzername, all_buttons, all_labels);
@@ -143,8 +147,7 @@ public class Mahlzeit_auswahl implements ActionListener {
             //Verbindung um id zu erhalten
             resultSet = statement.executeQuery("SELECT * FROM benutzer WHERE Benutzername = '" + this.benutzername + "'");
             while (resultSet.next()){
-                int userid = resultSet.getInt("id");
-                this.userid = userid;
+                this.userid = resultSet.getInt("id");
             }
         }
         catch (Exception E){
