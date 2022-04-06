@@ -25,12 +25,16 @@ public class Mahlzeit implements ActionListener {
     private final String benutzername;
 
     private final Date date_selected;
+
+    //Arrays mit Sprachen
     String [] name_list = {"Mahlzeitame","Mealname"};
     String [] cal_list={"Kohlenhydrate:","Carbohydrates:"};
     String [] protein_list={"Protein","Protein"};
     String [] fat_list={"Fett:","Fat:"};
     String [] zuruck_list = {"Zurück","Back"};
     String [] Erstellen_list = {"Erstellen","Create"};
+
+    //Array mit allen Sprachen Arrays
     String [][] spracharr = {name_list, cal_list, protein_list, fat_list, Erstellen_list, zuruck_list};
 
     JButton[] all_buttons = {Erstellen, zuruck};

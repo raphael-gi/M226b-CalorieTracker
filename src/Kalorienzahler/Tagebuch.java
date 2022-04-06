@@ -75,7 +75,7 @@ public class Tagebuch implements ActionListener {
 
     private int sprache;
 
-
+    //Arrays mit Sprachen
     String[] fruh_list = {"Frühstück", "Breakfast"};
     String[] Eat_SP = {"Mahlzeit hinzufügen", "Add meal"};
     String[] Abend_SP = {"Abendessen", "Dinner"};
@@ -86,10 +86,11 @@ public class Tagebuch implements ActionListener {
     String[] verb_kalorien_list = {"Verbleibbende Kalorien:", "Remaining calories:"};
     String[] loeschen_list = {"Löschen", "Delete"};
     String[] bearbeiten_list = {"Bearbeiten", "Edit"};
+
+    //Array mit allen Sprachen Arrays
     String[][] spracharr = {fruh_list, Mitt_SP, Abend_SP, Snack_SP, kalorien_ziel_list, kons_kalorien_list, verb_kalorien_list, Eat_SP, Eat_SP, Eat_SP, Eat_SP, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list};
     JLabel[] lab_lang = {fruh_label, mit_label, abend_label, snack_label, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label};
     JButton[] but_lang = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete};
-
 
     Connection connection = null;
     Statement statement = null;
@@ -97,6 +98,7 @@ public class Tagebuch implements ActionListener {
 
     public Tagebuch(Dimension size, Point loc, String benutzername, Date datum){
         try {
+            //DB Verbindung wird aufgebaut
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
             statement = connection.createStatement();
         } catch (SQLException throwables) {
@@ -141,12 +143,10 @@ public class Tagebuch implements ActionListener {
             but.addActionListener(this);
         }
 
+        //Die Buttons und Listen aller Mahlzeiten werden richtig eingestellt
         save(fruh_bearbeiten, fruh_delete, fruhstuck_list);
-
         save(mit_bearbeiten, mit_delete, mittagessen_list);
-
         save(abend_bearbeiten, abend_delete, abendessen_list);
-
         save(snack_bearbeiten, snack_delete, snacks_list);
 
         DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);

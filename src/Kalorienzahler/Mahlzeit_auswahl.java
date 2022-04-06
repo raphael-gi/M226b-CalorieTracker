@@ -43,6 +43,8 @@ public class Mahlzeit_auswahl implements ActionListener {
 
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
     private final Date date_select;
+
+    //Arrays mit Sprachen
     String[] mahlzeit_list = {"Mahlzeit","Meal"};
     String [] cal_list={"Kohlenhydrate:","Carbohydrates:"};
     String [] kal_list={"Kalorien:","Calories:"};
@@ -53,6 +55,8 @@ public class Mahlzeit_auswahl implements ActionListener {
     String [] Erstellen_list = {"Erstellen","Create"};
     String [] bearbeiten_list = {"Bearbeiten","Edit"};
     String[] Eat_SP = {"Hinzufügen", "Add"};
+
+    //Array mit allen Sprachen Arrays
     String [][] spracharr = {kal_list, cal_list, protein_list, fat_list, mahlzeit_list, portion_list, Erstellen_list, zuruck_list, Eat_SP, bearbeiten_list};
     JLabel [] lab_lang = { kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
     JButton [] but_lang = {erstellen, zuruck, hinzufugen,bearbeiten};

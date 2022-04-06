@@ -34,6 +34,8 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     private final int fat;
 
     private final Date date_selected;
+
+    //Arrays mit Sprachen
     String[] carb_list = {"Kohlenhydrate:","Carbohydrates:"};
     String [] name_list={"Name:","Name:"};
     String [] protein_list={"Protein:","Protein:"};
@@ -43,6 +45,8 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     String [] bearbeiten_list = {"Bearbeiten","Edit"};
     JButton[] all_buttons = {bearbeiten, zuruck, loeschen};
     JLabel[] all_labels = {name_label, carb_label, fat_label, protein_label,};
+
+    //Array mit allen Sprachen Arrays
     String [][] spracharr = {name_list, carb_list, fat_list, protein_list, bearbeiten_list, zuruck_list, loeschen_list};
 
     Connection connection = null;

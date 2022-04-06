@@ -48,6 +48,7 @@ public class Bearbeiten implements ActionListener {
     String [] zuruck_list = {"Zurück","Back"};
     String [] bearbeiten_list = {"Bearbeiten","Edit"};
 
+    //Array mit allen Sprachen Arrays
     String [][] spracharr = {anz_port_list, kal_list, cal_list, protein_list, fat_list, head_list, zuruck_list, bearbeiten_list};
     JLabel [] lab_lang = {anz_port_label, kal_label, cal_label, protein_label, fat_label, head_label};
     JButton [] but_lang = {zuruck, bearbeiten};

@@ -85,6 +85,7 @@ public class Einstellungen implements ActionListener {
     private int new_pas_check;
     private int new_pas_check2;
 
+    //Arrays mit Sprachen
     String[] sprachen = {"Deutsch","English"};
     String [] zuruck_list = {"Zurück","Back"};
     String [] benutzername_list = {"Benutzername:", "Username:"};
@@ -113,6 +114,7 @@ public class Einstellungen implements ActionListener {
     private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best, pas_andern_button, old_pas_best, new_pas_best};
     private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label, muskel_aufbau_label, Sprache_Label};
 
+    //Array mit allen Sprachen Arrays
     String[][] spracharr = {einstellungen_list, Sprache_list, benutzername_list, new_benutzername_list, gender_list, age_list, new_age_list, groesse_list, new_groesse_list, gewicht_list, new_gewicht_list, password_list, old_password_list, new_password_list, conf_password_list, muskeln_list, darkmode_list, eingeb_password_list, zuruck_list, andern_list, andern_list, andern_list, andern_list, andern_list ,andern_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, logout_list, loeschen_list, bestaetigen_list};
     JLabel[] lab_lang = {einstellungen_label, Sprache_Label, benutzername_label, new_name_label, gender_label, age_label, new_alter_label, groesse_label, new_groesse_label, gewicht_label, new_gewicht_label, pas_label, old_pas_label, new_pas_label, new_pas_best_label, muskel_aufbau_label, darkmode_label, pass_eingeben};
     JButton[] but_lang = {zuruck, name_andern_button, gender_andern_button, age_andern_button, groesse_andern_button, gewicht_ander_button, pas_andern_button, new_name_best, new_alter_best, new_groesse_best, new_gewicht_best, old_pas_best, new_pas_best, logout, loeschen, bestaetigen};
@@ -169,7 +171,6 @@ public class Einstellungen implements ActionListener {
         }
         DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.name + "'", "sprache", 0);
         int b = Integer.parseInt(get_sprache.getResult());
-        //System.out.println(b);
         sprachW.setSelectedIndex(b);
 
         for (JButton but : all_buttons){

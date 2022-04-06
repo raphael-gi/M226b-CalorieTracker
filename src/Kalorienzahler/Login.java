@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Date;
 
-
 public class Login implements ActionListener {
     private JPanel panel1;
     private JTextField Benutzer;
@@ -60,6 +59,7 @@ public class Login implements ActionListener {
             }
         }
         if (e.getSource()==Registrieren){
+            //Schliesst Fenster und öffnet das Registrierungsfenster
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
