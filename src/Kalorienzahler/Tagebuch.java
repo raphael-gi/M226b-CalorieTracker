@@ -81,18 +81,24 @@ public class Tagebuch implements ActionListener {
 
     String[] fruh_list = {"Frühstück", "Breakfast"};
     String[] Eat_SP = {"Mahlzeit hinzufügen", "Add meal"};
-    String[] Abend_SP ={"Abendessen", "Dinner"};
-    String[] Mitt_SP ={"Mittagessen", "Lunch"};
-    String[] Snack_SP ={"Imbiss", "Snack"};
-    String[] A_SP ={};
-
+    String[] Abend_SP = {"Abendessen", "Dinner"};
+    String[] Mitt_SP = {"Mittagessen", "Lunch"};
+    String[] Snack_SP = {"Imbiss", "Snack"};
+    String[] kalorien_ziel_list = {"Kalorien Ziel:", "Calories target:"};
+    String[] kons_kalorien_list = {"Konsumierte Kalorien:", "Calories consumed:"};
+    String[] verb_kalorien_list = {"Verbleibbende Kalorien:", "Remaining calories:"};
+    String[] loeschen_list = {"Löschen", "Delete"};
+    String[] bearbeiten_list = {"Bearbeiten", "Edit"};
+    String[][] spracharr = {fruh_list, Mitt_SP, Abend_SP, Snack_SP, kalorien_ziel_list, kons_kalorien_list, verb_kalorien_list, Eat_SP, Eat_SP, Eat_SP, Eat_SP, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list};
+    JLabel[] lab_lang = {fruh_label, mit_label, abend_label, snack_label, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label};
+    JButton[] but_lang = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete};
     private boolean darkmode;
 
     Connection connection = null;
     Statement statement = null;
     ResultSet resultSet = null;
 
-    public Tagebuch(Dimension size, Point loc, String benutzername, Date datum){
+    public Tagebuch(Dimension size, Point loc, String benutzername, Date datum) {
 
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
@@ -125,8 +131,19 @@ public class Tagebuch implements ActionListener {
         get_sprache.con();
         sprache = Integer.parseInt(get_sprache.getResult());
 
+        int len = lab_lang.length + but_lang.length;
+        int ii;
+        for (int i = 0; len > i; i++) {
+            if (lab_lang.length > i) {
+                lab_lang[i].setText(spracharr[i][this.sprache]);
+            } else {
+                ii = i - lab_lang.length;
+                but_lang[ii].setText(spracharr[i][this.sprache]);
+            }
+        }
+    
 
-        fruh_label.setText(fruh_list[this.sprache]);
+        /*fruh_label.setText(fruh_list[this.sprache]);
         mit_label.setText(Mitt_SP[this.sprache]);
         abend_label.setText(Abend_SP[this.sprache]);
         snack_label.setText(Snack_SP[this.sprache]);
@@ -134,6 +151,19 @@ public class Tagebuch implements ActionListener {
         Mittagessen.setText(Eat_SP[this.sprache]);
         Abendessen.setText(Eat_SP[this.sprache]);
         Snacks.setText(Eat_SP[this.sprache]);
+        kalorien_ziel_label.setText(kalorien_ziel_list[this.sprache]);
+        kons_kalorien_label.setText(kons_kalorien_list[this.sprache]);
+        verb_kalorien_label.setText(verb_kalorien_list[this.sprache]);
+        fruh_bearbeiten.setText(bearbeiten_list[this.sprache]);
+        fruh_delete.setText(loeschen_list[this.sprache]);
+        mit_bearbeiten.setText(bearbeiten_list[this.sprache]);
+        mit_delete.setText(loeschen_list[this.sprache]);
+        abend_bearbeiten.setText(bearbeiten_list[this.sprache]);
+        abend_delete.setText(loeschen_list[this.sprache]);
+        snack_bearbeiten.setText(bearbeiten_list[this.sprache]);
+        snack_delete.setText(loeschen_list[this.sprache]);*/
+
+
 
 
         Dimension ein = new Dimension(40,40);
@@ -234,16 +264,20 @@ public class Tagebuch implements ActionListener {
         c.add(Calendar.DATE, 2);
         Date spat = c.getTime();
         if (ft.format(date_now).equals(ft.format(date_select))){
-            datum.setText("Heute");
+            String [] heute_list = {"Heute","Today"};
+            datum.setText(heute_list[this.sprache]);
+
         }
         else {
             datum.setText(format.format(date_select));
         }
         if (ft.format(fruh.getTime()).equals(ft.format(date_select))){
-            datum.setText("Gestern");
+            String [] gestern_list = {"Gestern","Yesterday"};
+            datum.setText(gestern_list[this.sprache]);
         }
         if (ft.format(spat.getTime()).equals(ft.format(date_select))){
-            datum.setText("Morgen");
+            String [] morgen_list = {"Morgen","Tomorrow"};
+            datum.setText(morgen_list[this.sprache]);
         }
         c.setTime(date_select);
     }

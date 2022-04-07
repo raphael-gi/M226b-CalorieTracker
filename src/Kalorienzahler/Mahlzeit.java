@@ -20,6 +20,7 @@ public class Mahlzeit implements ActionListener {
     private JSpinner carb_input;
     private JSpinner protein_input;
     private JSpinner fat_input;
+    private int sprache;
 
     private String mahlzeit;
     private String benutzername;
@@ -28,10 +29,17 @@ public class Mahlzeit implements ActionListener {
 
     private Dimension size;
     private Point loc;
-
+    String [] name_list = {"Mahlzeitame","Mealname"};
+    String [] cal_list={"Kohlenhydrate:","Carbohydrates:"};
+    String [] protein_list={"Protein","Protein"};
+    String [] fat_list={"Fett:","Fat:"};
+    String [] zuruck_list = {"Zurück","Back"};
+    String [] Erstellen_list = {"Erstellen","Create"};
+    String [][] spracharr = {name_list, cal_list, protein_list, fat_list, Erstellen_list, zuruck_list};
     JButton[] all_buttons = {Erstellen, zuruck};
     JLabel[] all_labels = {name_label, carb_label, protein_label, fat_label};
     JSpinner[] all_spinners = {carb_input, protein_input, fat_input};
+
 
     public Mahlzeit(Dimension size, Point loc, String mahlzeit, String benutzername, Date datum){
         this.size = size;
@@ -68,7 +76,29 @@ public class Mahlzeit implements ActionListener {
             panel1.setBackground(Color.DARK_GRAY);
             all_buttons = n.getAll_buttons();
             all_labels = n.getAll_labels();
+            sprach();
         }
+    }
+    public void sprach(){
+        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
+        sprache = Integer.parseInt(get_sprache.getResult());
+        int len = all_labels.length + all_buttons.length;
+        int ii;
+        for (int i = 0; len > i; i++){
+            if (all_labels.length > i){
+                all_labels[i].setText(spracharr[i][this.sprache]);
+            }
+            else {
+                ii = i - all_labels.length;
+                all_buttons[ii].setText(spracharr[i][this.sprache]);
+            }
+        }
+        /*name_label.setText(name_list[this.sprache]);
+        carb_label.setText(cal_list[this.sprache]);
+        protein_label.setText(protein_list[this.sprache]);
+        fat_label.setText(fat_list[this.sprache]);
+        zuruck.setText(zuruck_list[this.sprache]);
+        Erstellen.setText(Erstellen_list[this.sprache]);*/
     }
 
     @Override

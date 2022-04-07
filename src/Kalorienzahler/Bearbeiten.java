@@ -37,11 +37,21 @@ public class Bearbeiten implements ActionListener {
     private String mahl_name;
     private String Portion;
     private int mmm_id;
+    private int sprache;
 
     private Date date_select;
 
     private int userid;
     private double anz_portionen;
+    String [] anz_port_list = {"Anzahl Portionen", "Number of portions"};
+    String [] cal_list={"Kohlenhydrate:","Carbohydrates:"};
+    String [] kal_list={"Kalorien:","Calories:"};
+    String [] protein_list={"Protein","Protein"};
+    String [] fat_list={"Fett:","Fat:"};
+    String [] head_list={"Mahlzeit Bearbeiten","Edit meal"};
+    String [] zuruck_list = {"Zurück","Back"};
+    String [] bearbeiten_list = {"Bearbeiten","Edit"};
+
 
     JButton[] all_buttons = {bearbeiten, confirm, zuruck, hidden};
     JLabel[] all_labels = {anz_kalorien, anz_carbs, anz_protein, anz_fat, anz_port_label, kal_label, cal_label, protein_label, fat_label, head_label};
@@ -96,8 +106,21 @@ public class Bearbeiten implements ActionListener {
             public void stateChanged(ChangeEvent e) {
                 anz_portionen = (double) portionen.getValue();
                 hidden.doClick();
+                sprach();
             }
         });
+    }
+    public void sprach(){
+        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
+        sprache = Integer.parseInt(get_sprache.getResult());
+        anz_port_label.setText(anz_port_list[this.sprache]);
+        kal_label.setText(kal_list[this.sprache]);
+        cal_label.setText(cal_list[this.sprache]);
+        protein_label.setText(protein_list[this.sprache]);
+        fat_label.setText(fat_list[this.sprache]);
+        head_label.setText(head_list[this.sprache]);
+        zuruck.setText(zuruck_list[this.sprache]);
+        bearbeiten.setText(bearbeiten_list[this.sprache]);
     }
     public void set_data(String what, JLabel name) {
         String mahl_name = String.valueOf(dropname.getSelectedItem());

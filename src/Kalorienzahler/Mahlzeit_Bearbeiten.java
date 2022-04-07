@@ -35,11 +35,20 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     private int carb;
     private int protein;
     private int fat;
-
+    private int sprache;
     private Date date_selected;
 
+    String[] carb_list = {"Kohlenhydrate:","Carbohydrates:"};
+    String [] name_list={"Name:","Name:"};
+    String [] protein_list={"Protein:","Protein:"};
+    String [] fat_list={"Fett:","Fat:"};
+    String [] zuruck_list = {"Zurück","Back"};
+    String [] loeschen_list = {"Löschen","Delete"};
+    String [] bearbeiten_list = {"Bearbeiten","Edit"};
     JButton[] all_buttons = {bearbeiten, zuruck, loeschen};
     JLabel[] all_labels = {name_label, carb_label, fat_label, protein_label,};
+    String [][] spracharr = {name_list, carb_list, fat_list, protein_list, bearbeiten_list, zuruck_list, loeschen_list};
+
 
     Connection connection = null;
     Statement statement = null;
@@ -84,6 +93,31 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         }
         loeschen.addActionListener(this);
         contenttt();
+        sprach();
+    }
+    public void sprach(){
+        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
+        sprache = Integer.parseInt(get_sprache.getResult());
+        int len = all_labels.length + all_buttons.length;
+        int ii;
+        for (int i = 0; len > i; i++){
+            if (all_labels.length > i){
+                all_labels[i].setText(spracharr[i][this.sprache]);
+            }
+            else {
+                ii = i - all_labels.length;
+                all_buttons[ii].setText(spracharr[i][this.sprache]);
+            }
+        }
+
+        /*carb_label.setText(carb_list[this.sprache]);
+        name_label.setText(name_list[this.sprache]);
+        protein_label.setText(protein_list[this.sprache]);
+        fat_label.setText(fat_list[this.sprache]);
+        zuruck.setText(zuruck_list[this.sprache]);
+        bearbeiten.setText(bearbeiten_list[this.sprache]);
+        loeschen.setText(loeschen_list[this.sprache]);*/
+
     }
     public void contenttt(){
         name_input.setText(mahl_name);

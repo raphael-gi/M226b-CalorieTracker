@@ -42,6 +42,7 @@ public class Mahlzeit_auswahl implements ActionListener {
     private double carb1;
     private double protein1;
     private double fat1;
+    private int sprache;
 
     private Dimension size;
     private Point loc;
@@ -49,6 +50,19 @@ public class Mahlzeit_auswahl implements ActionListener {
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
     private Date date_select;
 
+    String[] mahlzeit_list = {"Mahlzeit","Meal"};
+    String [] cal_list={"Kohlenhydrate:","Carbohydrates:"};
+    String [] kal_list={"Kalorien:","Calories:"};
+    String [] protein_list={"Protein","Protein"};
+    String [] fat_list={"Fett:","Fat:"};
+    String [] portion_list = {"Anzahl Portionen","Number of portions"};
+    String [] zuruck_list = {"Zurück","Back"};
+    String [] Erstellen_list = {"Erstellen","Create"};
+    String [] bearbeiten_list = {"Bearbeiten","Edit"};
+    String[] Eat_SP = {"Hinzufügen", "Add"};
+    String [][] spracharr = {kal_list, cal_list, protein_list, fat_list, mahlzeit_list, protein_list, Erstellen_list, zuruck_list, Eat_SP, bearbeiten_list};
+    JLabel [] lab_lang = { kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
+    JButton [] but_lang = {erstellen, zuruck, hinzufugen,bearbeiten};
     private JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten, hidden};
     private JLabel[] all_labels = {mahl, anz_kalorien, anz_carbs, anz_protein, anz_fat, kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
 
@@ -58,6 +72,7 @@ public class Mahlzeit_auswahl implements ActionListener {
 
     public Mahlzeit_auswahl(Dimension size, Point loc, String mahlzeit, String benutzername, Date datum){
         //Verbindung wird aufgebaut
+
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
             statement = connection.createStatement();
@@ -102,8 +117,35 @@ public class Mahlzeit_auswahl implements ActionListener {
             public void stateChanged(ChangeEvent e) {
                 anz_portionen = (double) portion.getValue();
                 hidden.doClick();
+
             }
         });
+        sprach();
+    }
+    public void sprach(){
+        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
+        sprache = Integer.parseInt(get_sprache.getResult());
+        int len = lab_lang.length + but_lang.length;
+        int ii;
+        for (int i = 0; len > i; i++){
+            if (lab_lang.length > i){
+                lab_lang[i].setText(spracharr[i][this.sprache]);
+            }
+            else {
+                ii = i - lab_lang.length;
+                but_lang[ii].setText(spracharr[i][this.sprache]);
+            }
+        }
+        /*mahlzeit_label.setText(mahlzeit_list[this.sprache]);
+        kalorien_label.setText(kal_list[this.sprache]);
+        carb_label.setText(cal_list[this.sprache]);
+        protein_label.setText(protein_list[this.sprache]);
+        fat_label.setText(fat_list[this.sprache]);
+        portionen_label.setText(portion_list[this.sprache]);
+        zuruck.setText(zuruck_list[this.sprache]);
+        bearbeiten.setText(bearbeiten_list[this.sprache]);
+        erstellen.setText(Erstellen_list[this.sprache]);
+        hinzufugen.setText(Eat_SP[this.sprache]);*/
     }
     public void set_data(String what, JLabel name) throws SQLException {
         if (dropname.getSelectedItem() == null){
