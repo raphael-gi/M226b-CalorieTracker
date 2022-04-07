@@ -6,7 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 
 public class Einstellungen implements ActionListener {
     private JPanel panel1;
@@ -63,20 +65,17 @@ public class Einstellungen implements ActionListener {
     private JButton new_pas_best;
     private JLabel muskel_aufbau_label;
     private JCheckBox muskel_aufbau;
-    private int sprache;
-    private String[] sprachen = {"Deutsch","English"};
-    private JComboBox sprachW;
+    private JRadioButton gew_zuh;
+    private JRadioButton gew_halt;
+    private JRadioButton gew_ver;
     private JLabel Sprache_Label;
-    private String wahl;
-    private int wahlnum;
+    private JComboBox<String> sprachW;
 
-    private JFrame frame;
+    private final JFrame frame;
 
-    private Dimension size;
-    private Point loc;
     private String name;
     private boolean darkmode;
-    private Date date_select;
+    private final Date date_select;
 
     private int new_loeschen_check;
     private int new_name_check;
@@ -84,7 +83,10 @@ public class Einstellungen implements ActionListener {
     private int new_groesse_check;
     private int new_gewicht_check;
     private int new_pas_check;
+    private int new_pas_check2;
 
+    //Arrays mit Sprachen
+    String[] sprachen = {"Deutsch","English"};
     String [] zuruck_list = {"Zurück","Back"};
     String [] benutzername_list = {"Benutzername:", "Username:"};
     String [] loeschen_list = {"Account löschen","Delete account"};
@@ -95,8 +97,8 @@ public class Einstellungen implements ActionListener {
     String [] einstellungen_list = {"Einstellungen","Settings"};
     String [] Sprache_list = {"Sprache:","Language:"};
     String [] andern_list = {"Ändern","Change"};
-    String [] groesse_list = {"Körpergrösse(Cm):","Body size(Cm):"};
-    String [] new_groesse_list = {"Neue Körpergrösse(Cm):","New body size(Cm):"};
+    String [] groesse_list = {"Körpergrösse(Cm):","Height (Cm):"};
+    String [] new_groesse_list = {"Neue Körpergrösse(Cm):","New Height(Cm):"};
     String [] gewicht_list = {"Gewicht(Kg):","Weight(Kg):"};
     String [] new_gewicht_list = {"Neues Gewicht(Kg):","New weight(Kg):"};
     String [] password_list = {"Passwort:","Password:"};
@@ -106,9 +108,16 @@ public class Einstellungen implements ActionListener {
     String [] eingeb_password_list = {"Passwort eingeben:","Enter password:"};
     String [] muskeln_list = {"Muskel Aufbauen","Build muscle"};
     String [] bestaetigen_list = {"Bestätigen","Confirm"};
+    String [] darkmode_list = {"Darkmode", "Darkmode"};
+    String [] logout_list = {"Logout", "Logout"};
 
     private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best, pas_andern_button, old_pas_best, new_pas_best};
     private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label, muskel_aufbau_label, Sprache_Label};
+
+    //Array mit allen Sprachen Arrays
+    String[][] spracharr = {einstellungen_list, Sprache_list, benutzername_list, new_benutzername_list, gender_list, age_list, new_age_list, groesse_list, new_groesse_list, gewicht_list, new_gewicht_list, password_list, old_password_list, new_password_list, conf_password_list, muskeln_list, darkmode_list, eingeb_password_list, zuruck_list, andern_list, andern_list, andern_list, andern_list, andern_list ,andern_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, logout_list, loeschen_list, bestaetigen_list};
+    JLabel[] lab_lang = {einstellungen_label, Sprache_Label, benutzername_label, new_name_label, gender_label, age_label, new_alter_label, groesse_label, new_groesse_label, gewicht_label, new_gewicht_label, pas_label, old_pas_label, new_pas_label, new_pas_best_label, muskel_aufbau_label, darkmode_label, pass_eingeben};
+    JButton[] but_lang = {zuruck, name_andern_button, gender_andern_button, age_andern_button, groesse_andern_button, gewicht_ander_button, pas_andern_button, new_name_best, new_alter_best, new_groesse_best, new_gewicht_best, old_pas_best, new_pas_best, logout, loeschen, bestaetigen};
 
     JButton[] un_vis_but = {new_name_best, new_alter_best, new_groesse_best, new_gewicht_best, old_pas_best, new_pas_best, new_pas_best, bestaetigen};
     JLabel[] un_vis_lab = {new_name_label, new_alter_label, new_groesse_label, new_gewicht_label, old_pas_label, new_pas_label, new_pas_best_label, pass_eingeben};
@@ -117,7 +126,6 @@ public class Einstellungen implements ActionListener {
 
     Connection connection = null;
     Statement statement = null;
-    ResultSet resultSet = null;
 
     public Einstellungen(Dimension size, Point loc, String name, Date datum){
         try {
@@ -126,25 +134,12 @@ public class Einstellungen implements ActionListener {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        this.size = size;
-        this.loc = loc;
+
         this.name = name;
         this.date_select = datum;
 
-        frame = new JFrame("Einstellungen");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        ImageIcon image = new ImageIcon(getClass().getResource("calories-logo.png"));
-        frame.setIconImage(image.getImage());
-
-        frame.add(panel1);
-
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-        frame.setSize(this.size);
-        frame.setLocation(loc);
+        frame = new JFrame();
+        new StarterPack(frame, panel1, "Einstellungen", size, loc);
 
         Font label_font = new Font("Arial", Font.BOLD, 15);
         einstellungen_label.setFont(label_font);
@@ -152,15 +147,6 @@ public class Einstellungen implements ActionListener {
         new_alter.setModel(alter_model);
         new_groesse.setModel(groesse_model);
         new_gewicht.setModel(gewicht_model);
-
-        for (String nam : sprachen) {
-            sprachW.addItem(nam);
-
-        }
-        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.name + "'", "sprache", 0);
-        int b = Integer.parseInt(get_sprache.getResult());
-        
-        sprachW.setSelectedIndex(b);
 
         for (JButton but : un_vis_but) {
             but.setVisible(false);
@@ -179,82 +165,72 @@ public class Einstellungen implements ActionListener {
 
         error_message.setText("");
 
-        for (int i = 0; all_buttons.length > i; i++){
-            JButton but = all_buttons[i];
+
+        for (String nam : sprachen) {
+            sprachW.addItem(nam);
+        }
+        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.name + "'", "sprache", 0);
+        int b = Integer.parseInt(get_sprache.getResult());
+        sprachW.setSelectedIndex(b);
+
+        for (JButton but : all_buttons){
             but.addActionListener(this);
         }
         muskel_aufbau.addActionListener(this);
+        gew_zuh.addActionListener(this);
+        gew_halt.addActionListener(this);
+        gew_ver.addActionListener(this);
         sprachW.addActionListener(this);
-
-
-
-
 
         //Methoden werden ausgeführt
         sprach();
+        ben();
         gend();
         age();
         groes();
         gew();
         musk();
+        bulk();
         dark();
     }
-
-
     public void sprach(){
         DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.name + "'", "sprache", 0);
-        sprache = Integer.parseInt(get_sprache.getResult());
-        benutzername_label.setText(benutzername_list[this.sprache]);
-        new_name_label.setText(new_benutzername_list[this.sprache]);
-        gender_label.setText(gender_list[this.sprache]);
-        age_label.setText(age_list[this.sprache]);
-        new_alter_label.setText(new_age_list[this.sprache]);
-        einstellungen_label.setText(einstellungen_list[this.sprache]);
-        Sprache_Label.setText(Sprache_list[this.sprache]);
-        groesse_label.setText(groesse_list[this.sprache]);
-        new_groesse_label.setText(new_groesse_list[this.sprache]);
-        pas_label.setText(password_list[this.sprache]);
-        old_pas_label.setText(old_password_list[this.sprache]);
-        pass_eingeben.setText(eingeb_password_list[this.sprache]);
-        new_pas_label.setText(new_password_list[this.sprache]);
-        new_pas_best_label.setText(conf_password_list[this.sprache]);
-        zuruck.setText(zuruck_list[this.sprache]);
-        loeschen.setText(loeschen_list[this.sprache]);
-        muskel_aufbau_label.setText(muskeln_list[this.sprache]);
-        bestaetigen.setText(bestaetigen_list[this.sprache]);
-        new_pas_best.setText(bestaetigen_list[this.sprache]);
-        old_pas_best.setText(bestaetigen_list[this.sprache]);
-        new_name_best.setText(bestaetigen_list[this.sprache]);
-        new_alter_best.setText(bestaetigen_list[this.sprache]);
-        new_gewicht_best.setText(bestaetigen_list[this.sprache]);
-        new_groesse_best.setText(bestaetigen_list[this.sprache]);
-        name_andern_button.setText(andern_list[this.sprache]);
-        gender_andern_button.setText(andern_list[this.sprache]);
-        age_andern_button.setText(andern_list[this.sprache]);
-        groesse_andern_button.setText(andern_list[this.sprache]);
-        gewicht_ander_button.setText(andern_list[this.sprache]);
-        pas_andern_button.setText(andern_list[this.sprache]);
-        gewicht_label.setText(gewicht_list[this.sprache]);
-        new_gewicht_label.setText(new_gewicht_list[this.sprache]);
+        int sprachee = Integer.parseInt(get_sprache.getResult());
+        int len = lab_lang.length + but_lang.length;
+        int ii;
+        for (int i = 0; len > i; i++){
+            if (lab_lang.length > i){
+                lab_lang[i].setText(spracharr[i][sprachee]);
+            }
+            else {
+                ii = i - lab_lang.length;
+                but_lang[ii].setText(spracharr[i][sprachee]);
+            }
+        }
     }
 
+    public void ben(){
+        benutzername.setText(this.name);
+    }
+    public void gend(){
+        DBConnect get_gender = new DBConnect("SELECT gender FROM benutzer WHERE Benutzername = '" + this.name + "'", "gender", 0);
+        int gender = Integer.parseInt(get_gender.getResult());
+        DBConnect sp_get = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.name + "'", "sprache", 0);
+        System.out.println(sp_get.getResult());
+        String[] gend;
+        if (gender == 1){
+            gend = new String[]{"Weiblich", "Feminine"};
+        }
+        else {
+            gend = new String[]{"Männlich", "Masculine"};
+        }
+        this.gender.setText(gend[Integer.parseInt(sp_get.getResult())]);
+    }
     public void age(){
         DBConnect get_age = new DBConnect("SELECT age FROM benutzer WHERE Benutzername = '" + this.name + "'", "age", 0);
         String age = get_age.getResult();
         this.age.setText(age);
     }
-
-    public void gend(){
-        DBConnect get_gender = new DBConnect("SELECT gender FROM benutzer WHERE Benutzername = '" + this.name + "'", "gender", 0);
-        int gender = Integer.parseInt(get_gender.getResult());
-        if (gender == 1){
-            this.gender.setText("Weiblich");
-        }
-        else {
-            this.gender.setText("Männlich");
-        }
-    }
-
     public void groes(){
         DBConnect get_groesse = new DBConnect("SELECT groesse FROM benutzer WHERE Benutzername = '" + this.name + "'", "groesse", 0);
         String groesse = get_groesse.getResult();
@@ -277,6 +253,19 @@ public class Einstellungen implements ActionListener {
             muskel_aufbau.setSelected(false);
         }
     }
+    public void bulk(){
+        DBConnect get_bulk = new DBConnect("SELECT bulk FROM benutzer WHERE Benutzername = '" + this.name + "'", "bulk", 0);
+        int bulk = Integer.parseInt(get_bulk.getResult());
+        if (bulk == 0){
+            gew_halt.setSelected(true);
+        }
+        if (bulk == 1){
+            gew_zuh.setSelected(true);
+        }
+        if (bulk == 2){
+            gew_ver.setSelected(true);
+        }
+    }
     public void dark(){
         Darkmode n = new Darkmode(name, all_buttons, all_labels);
         this.darkmode = n.isDark();
@@ -286,6 +275,13 @@ public class Einstellungen implements ActionListener {
             panel1.setBackground(Color.WHITE);
             muskel_aufbau.setBackground(Color.WHITE);
             muskel_aufbau.setForeground(Color.BLACK);
+
+            gew_halt.setBackground(Color.WHITE);
+            gew_zuh.setBackground(Color.WHITE);
+            gew_ver.setBackground(Color.WHITE);
+            gew_halt.setForeground(Color.BLACK);
+            gew_zuh.setForeground(Color.BLACK);
+            gew_ver.setForeground(Color.BLACK);
         }
         else {
             String an [] = {"An","On"};
@@ -298,8 +294,19 @@ public class Einstellungen implements ActionListener {
             muskel_aufbau.setBackground(Color.DARK_GRAY);
             muskel_aufbau.setForeground(Color.WHITE);
 
+            gew_halt.setBackground(Color.DARK_GRAY);
+            gew_zuh.setBackground(Color.DARK_GRAY);
+            gew_ver.setBackground(Color.DARK_GRAY);
+            gew_halt.setForeground(Color.WHITE);
+            gew_zuh.setForeground(Color.WHITE);
+            gew_ver.setForeground(Color.WHITE);
+
             all_buttons = n.getAll_buttons();
             all_labels = n.getAll_labels();
+
+            logout.setForeground(Color.CYAN);
+            loeschen.setForeground(Color.RED);
+            bestaetigen.setForeground(Color.RED);
 
             logout.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -328,8 +335,12 @@ public class Einstellungen implements ActionListener {
         }
     }
 
-    public void content(){
-        benutzername.setText(this.name);
+    public void upd(String what, String to){
+        try {
+            statement.execute("UPDATE Benutzer SET " + what + " = '" + to + "' WHERE Benutzername = '" + this.name + "'");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void set_vis(int check, int check2 , JSpinner base, JLabel base_label, JButton base_best, JLabel base_base){
@@ -365,12 +376,12 @@ public class Einstellungen implements ActionListener {
         }
     }
 
-    public void on_set_vis(JSpinner base, String get, String error_name, JLabel base_label, JButton base_but, int check){
+    public void on_set_vis(JSpinner base, String get, String error_name, JLabel base_label, JButton base_but, int check) {
         if (base.getValue() == null){
             error_message.setText("" + error_name + " darf nicht Leer sein!");
         }
         else {
-            new DBConnect("UPDATE Benutzer SET " + get + " = '" + base.getValue() + "' WHERE Benutzername = '" + this.name + "'", " ", 1);
+            upd(get, String.valueOf(base.getValue()));
         }
         base.setVisible(false);
         base_label.setVisible(false);
@@ -391,10 +402,10 @@ public class Einstellungen implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == dark){
             if (!this.darkmode){
-                new DBConnect("UPDATE benutzer SET dark = " + 1 + " WHERE Benutzername = '" + this.name + "'", " ", 1);
+                upd("dark", "1");
             }
             else {
-                new DBConnect("UPDATE benutzer SET dark = " + 0 + " WHERE Benutzername = '" + this.name + "'", " ", 1);
+                upd("dark", "0");
             }
             dark();
         }
@@ -410,6 +421,8 @@ public class Einstellungen implements ActionListener {
                 pass_eingeben.setVisible(false);
                 passwort_feld.setVisible(false);
                 bestaetigen.setVisible(false);
+                passwort_feld.setText("");
+                error_message.setText("");
                 new_loeschen_check = 0;
             }
             else {
@@ -421,16 +434,16 @@ public class Einstellungen implements ActionListener {
         }
         if (e.getSource() == bestaetigen){
             error_message.setText("");
-            String passwort = passwort_feld.getText();
+            char[] passwort = passwort_feld.getPassword();
+            Hash p = new Hash(passwort);
+
             DBConnect pass = new DBConnect("SELECT Passwort FROM benutzer WHERE Benutzername = '" + this.name + "'", "Passwort", 0);
-            pass.con();
             String data_passwort = pass.getResult();
-            if (!passwort.equals(data_passwort)){
+            if (!p.getHash().equals(data_passwort)){
                 error_message.setText("Passwort stimmt nicht!");
             }
             else {
-                DBConnect delete = new DBConnect("DELETE FROM benutzer WHERE Benutzername = '" + this.name + "'", " ", 1);
-                delete.con();
+                new DBConnect("DELETE FROM benutzer WHERE Benutzername = '" + this.name + "'", " ", 1);
                 frame.dispose();
                 Dimension frame_size = frame.getSize();
                 Point frame_loc = frame.getLocation();
@@ -448,6 +461,8 @@ public class Einstellungen implements ActionListener {
                 new_name_label.setVisible(false);
                 new_name.setVisible(false);
                 new_name_best.setVisible(false);
+                new_name.setText("");
+                error_message.setText("");
                 this.new_name_check = 0;
             }
             else {
@@ -462,17 +477,25 @@ public class Einstellungen implements ActionListener {
                 error_message.setText("Benutzername darf nicht Leer sein!");
             }
             else {
-                DBConnect check = new DBConnect("SELECT Benutzername FROM Benutzer WHERE Benutzername = '" + new_name.getText() + "'", "Benutzername", 0);
-                if (check.getResult() != null){
-                    error_message.setText("Benutzername wird bereits verwendet!");
+                if (new_name.getText().equals(this.name)){
+                    error_message.setText("Benutzername darf nicht gleich wie der Alte sein!");
                 }
                 else {
-                    new DBConnect("UPDATE Benutzer SET Benutzername = '" + new_name.getText() + "' WHERE Benutzername = '" + this.name + "'", " ", 1);
-                    frame.dispose();
-                    Dimension frame_size = frame.getSize();
-                    Point frame_loc = frame.getLocation();
-                    Einstellungen n = new Einstellungen(frame_size, frame_loc, new_name.getText(), date_select);
-                    n.content();
+                    DBConnect check = new DBConnect("SELECT Benutzername FROM Benutzer WHERE Benutzername = '" + new_name.getText() + "'", "Benutzername", 0);
+                    if (check.getResult() != null){
+                        error_message.setText("Benutzername wird bereits verwendet!");
+                    }
+                    else {
+                        upd("Benutzername", new_name.getText());
+
+                        name = new_name.getText();
+                        new_name.setVisible(false);
+                        new_name_best.setVisible(false);
+                        new_name_label.setVisible(false);
+                        new_name_check = 0;
+                        new_name.setText("");
+                        ben();
+                    }
                 }
             }
         }
@@ -501,10 +524,10 @@ public class Einstellungen implements ActionListener {
             DBConnect gend = new DBConnect("SELECT gender FROM Benutzer WHERE Benutzername = '" + this.name + "'", "gender", 0);
             int gender = Integer.parseInt(gend.getResult());
             if (gender == 1){
-                new DBConnect("UPDATE Benutzer SET gender = " + 2 + " WHERE Benutzername = '" + this.name + "'", " ", 1);
+                upd("gender", "2");
             }
             else {
-                new DBConnect("UPDATE Benutzer SET gender = " + 1 + " WHERE Benutzername = '" + this.name + "'", " ", 1);
+                upd("gender", "1");
             }
             gend();
         }
@@ -513,6 +536,7 @@ public class Einstellungen implements ActionListener {
                 old_pas_label.setVisible(false);
                 old_pas_input.setVisible(false);
                 old_pas_best.setVisible(false);
+                old_pas_input.setText("");
                 this.new_pas_check = 0;
             }
             else {
@@ -521,13 +545,22 @@ public class Einstellungen implements ActionListener {
                 old_pas_best.setVisible(true);
                 this.new_pas_check = 1;
             }
+            if (this.new_pas_check2 == 1){
+                new_pas_label.setVisible(false);
+                new_pas_best_label.setVisible(false);
+                new_pas_input.setVisible(false);
+                new_pas_best_input.setVisible(false);
+                new_pas_best.setVisible(false);
+            }
             error_message.setText("");
         }
         if (e.getSource() == old_pas_best){
-            String pas = old_pas_input.getText();
+            char[] pas = old_pas_input.getPassword();
+            Hash p = new Hash(pas);
+
             DBConnect check = new DBConnect("SELECT passwort FROM benutzer WHERE Benutzername = '" + this.name + "'", "passwort", 0);
             String real_pas = check.getResult();
-            if (pas.equals(real_pas)){
+            if (real_pas.equals(p.getHash())){
                 old_pas_label.setVisible(false);
                 old_pas_input.setVisible(false);
                 old_pas_best.setVisible(false);
@@ -536,39 +569,48 @@ public class Einstellungen implements ActionListener {
                 new_pas_input.setVisible(true);
                 new_pas_best_input.setVisible(true);
                 new_pas_best.setVisible(true);
+                old_pas_input.setText("");
+                error_message.setText("");
+                new_pas_check2 = 1;
             }
             else {
                 error_message.setText("Passwort stimmt nicht!");
             }
         }
         if (e.getSource() == new_pas_best){
-            String pas = new_pas_input.getText();
-            String pas_best = new_pas_best_input.getText();
+            char[] pas = new_pas_input.getPassword();
+            char[] pas_best = new_pas_best_input.getPassword();
+            Hash p = new Hash(pas);
+
             error_message.setText("");
-            if (!pas.equals(pas_best)){
+            if (!Arrays.equals(pas, pas_best)){
                 error_message.setText("Die Passwörter überstimmen nicht ein");
             }
             else {
-                if (pas.length() < 8){
+                if (pas.length < 8){
                     error_message.setText("Das Passwort ist zu kurz!");
                 }
                 else {
-                    if (pas.length() > 90){
+                    if (pas.length > 90){
                         error_message.setText("Das Passwort ist zu lange!");
                     }
                     else {
                         DBConnect check = new DBConnect("SELECT passwort FROM benutzer WHERE Benutzername = '" + this.name + "'", "passwort", 0);
                         String old = check.getResult();
-                        if (pas.equals(old)){
+                        if (p.getHash().equals(old)){
                             error_message.setText("Das neue Passwort darf nicht das gleiche wie das alte sein!");
                         }
                         else {
-                            new DBConnect("UPDATE benutzer SET Passwort = '" + pas + "' WHERE Benutzername = '" + this.name + "'", "", 1);
+                            upd("Passwort", p.getHash());
                             new_pas_label.setVisible(false);
                             new_pas_best_label.setVisible(false);
                             new_pas_input.setVisible(false);
                             new_pas_best_input.setVisible(false);
                             new_pas_best.setVisible(false);
+                            new_pas_input.setText("");
+                            new_pas_best_input.setText("");
+                            new_pas_check = 0;
+                            new_pas_check2 = 0;
                         }
                     }
                 }
@@ -578,24 +620,41 @@ public class Einstellungen implements ActionListener {
             DBConnect get_muskel = new DBConnect("SELECT muskel FROM benutzer WHERE Benutzername = '" + this.name + "'", "muskel", 0);
             int muskel = Integer.parseInt(get_muskel.getResult());
             if (muskel == 1){
-                new DBConnect("UPDATE benutzer SET muskel = 0 WHERE Benutzername = '" + this.name + "'", "", 1);
-                musk();
+                upd("muskel", "0");
             }
             else {
-                new DBConnect("UPDATE benutzer SET muskel = 1 WHERE Benutzername = '" + this.name + "'", "", 1);
-                musk();
+                upd("muskel", "1");
             }
+            musk();
+        }
+        if (e.getSource() == gew_halt){
+            upd("bulk", "0");
+            gew_zuh.setSelected(false);
+            gew_ver.setSelected(false);
+            bulk();
+        }
+        if (e.getSource() == gew_zuh){
+            upd("bulk", "1");
+            gew_halt.setSelected(false);
+            gew_ver.setSelected(false);
+            bulk();
+        }
+        if (e.getSource() == gew_ver){
+            upd("bulk", "2");
+            gew_halt.setSelected(false);
+            gew_zuh.setSelected(false);
+            bulk();
         }
         if (e.getSource() == sprachW){
-
-            wahl = (String) sprachW.getSelectedItem();
-            if (wahl.equals("Deutsch")){
+            String wahl = (String) sprachW.getSelectedItem();
+            if (Objects.equals(wahl, "Deutsch")){
                 new DBConnect("UPDATE benutzer SET sprache = 0 WHERE Benutzername = '" + this.name + "'", "", 1);
             }
-            if (wahl.equals("English")){
+            if (Objects.equals(wahl, "English")){
                 new DBConnect("UPDATE benutzer SET sprache = 1 WHERE Benutzername = '" + this.name + "'", "", 1);
             }
             sprach();
+            gend();
         }
     }
 }

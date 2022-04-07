@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import java.util.Date;
 
 public class Mahlzeit implements ActionListener {
-    private JFrame frame;
+    private final JFrame frame;
     private JPanel panel1;
     private JButton Erstellen;
     private JTextField Name;
@@ -22,47 +22,33 @@ public class Mahlzeit implements ActionListener {
     private JSpinner fat_input;
     private int sprache;
 
-    private String mahlzeit;
-    private String benutzername;
+    private final String mahlzeit;
+    private final String benutzername;
 
-    private Date date_selected;
+    private final Date date_selected;
 
-    private Dimension size;
-    private Point loc;
+    //Arrays mit Sprachen
     String [] name_list = {"Mahlzeitame","Mealname"};
     String [] cal_list={"Kohlenhydrate:","Carbohydrates:"};
     String [] protein_list={"Protein","Protein"};
     String [] fat_list={"Fett:","Fat:"};
     String [] zuruck_list = {"Zurück","Back"};
     String [] Erstellen_list = {"Erstellen","Create"};
+
+    //Array mit allen Sprachen Arrays
     String [][] spracharr = {name_list, cal_list, protein_list, fat_list, Erstellen_list, zuruck_list};
+
     JButton[] all_buttons = {Erstellen, zuruck};
     JLabel[] all_labels = {name_label, carb_label, protein_label, fat_label};
-    JSpinner[] all_spinners = {carb_input, protein_input, fat_input};
 
 
     public Mahlzeit(Dimension size, Point loc, String mahlzeit, String benutzername, Date datum){
-        this.size = size;
-        this.loc = loc;
-
         this.mahlzeit = mahlzeit;
         this.benutzername = benutzername;
         this.date_selected = datum;
 
-        frame = new JFrame("Mahlzeit Erstellen");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        ImageIcon image = new ImageIcon(getClass().getResource("calories-logo.png"));
-        frame.setIconImage(image.getImage());
-
-        frame.add(panel1);
-
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-        frame.setSize(this.size);
-        frame.setLocation(this.loc);
+        frame = new JFrame();
+        new StarterPack(frame, panel1, "Mahlzeit Erstellen", size, loc);
 
         Erstellen.addActionListener(this);
         zuruck.addActionListener(this);
@@ -81,24 +67,19 @@ public class Mahlzeit implements ActionListener {
     }
     public void sprach(){
         DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
-        sprache = Integer.parseInt(get_sprache.getResult());
+        int sprache = Integer.parseInt(get_sprache.getResult());
         int len = all_labels.length + all_buttons.length;
         int ii;
         for (int i = 0; len > i; i++){
             if (all_labels.length > i){
-                all_labels[i].setText(spracharr[i][this.sprache]);
+                all_labels[i].setText(spracharr[i][sprache]);
             }
             else {
                 ii = i - all_labels.length;
-                all_buttons[ii].setText(spracharr[i][this.sprache]);
+                all_buttons[ii].setText(spracharr[i][sprache]);
             }
         }
-        /*name_label.setText(name_list[this.sprache]);
-        carb_label.setText(cal_list[this.sprache]);
-        protein_label.setText(protein_list[this.sprache]);
-        fat_label.setText(fat_list[this.sprache]);
-        zuruck.setText(zuruck_list[this.sprache]);
-        Erstellen.setText(Erstellen_list[this.sprache]);*/
+
     }
 
     @Override
@@ -120,11 +101,9 @@ public class Mahlzeit implements ActionListener {
                 }
                 else {
                     DBConnect check_id = new DBConnect("SELECT id FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "id", 0);
-                    check_id.con();
                     String id = check_id.getResult();
 
                     DBConnect check_name = new DBConnect("SELECT Name FROM mahlzeit WHERE Name = '" + name + "' AND ben = " + id + "", "Name", 0);
-                    check_name.con();
                     if (check_name.getResult() != null){
                         error_message.setText("Mahlzeit exestiert bereits. Wählen sie einen anderen Namen!");
                     }
@@ -133,7 +112,6 @@ public class Mahlzeit implements ActionListener {
                             int kalorien = carb * 4 + protein * 4 + fat * 9;
 
                             DBConnect get_id = new DBConnect("SELECT id FROM benutzer WHERE Benutzername = '" + this.benutzername + "'","id",0);
-                            get_id.con();
                             int userid = Integer.parseInt(get_id.getResult());
 
                             new DBConnect("INSERT INTO mahlzeit (Name, kalorien, carb, protein, fat, ben) VALUES ('" + name +"', '" + kalorien +"', '" + carb + "', '" + protein + "', '" + fat + "', '" + userid + "')", "Benutzername", 1);

@@ -24,20 +24,18 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     private JLabel protein_label;
     private JButton zuruck;
     private JButton loeschen;
-    private JFrame frame;
+    private final JFrame frame;
 
-    private Dimension size;
-    private Point loc;
+    private final String benutzername;
+    private final String mahl;
+    private final String mahl_name;
+    private final int carb;
+    private final int protein;
+    private final int fat;
 
-    private String benutzername;
-    private String mahl;
-    private String mahl_name;
-    private int carb;
-    private int protein;
-    private int fat;
-    private int sprache;
-    private Date date_selected;
+    private final Date date_selected;
 
+    //Arrays mit Sprachen
     String[] carb_list = {"Kohlenhydrate:","Carbohydrates:"};
     String [] name_list={"Name:","Name:"};
     String [] protein_list={"Protein:","Protein:"};
@@ -49,6 +47,8 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     JLabel[] all_labels = {name_label, carb_label, fat_label, protein_label,};
     String [][] spracharr = {name_list, carb_list, fat_list, protein_list, bearbeiten_list, zuruck_list, loeschen_list};
 
+    //Array mit allen Sprachen Arrays
+    String [][] spracharr = {name_list, carb_list, fat_list, protein_list, bearbeiten_list, zuruck_list, loeschen_list};
 
     Connection connection = null;
     Statement statement = null;
@@ -69,57 +69,33 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         this.carb = carb;
         this.protein = protein;
         this.fat = fat;
-        frame = new JFrame("Login");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        ImageIcon image = new ImageIcon(getClass().getResource("calories-logo.png"));
-        frame.setIconImage(image.getImage());
+        frame = new JFrame();
+        new StarterPack(frame, panel1, "Mahlzeit Bearbeiten", size, loc);
 
-        frame.add(panel1);
-
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-        this.size = size;
-        this.loc = loc;
-
-        frame.setSize(this.size);
-        frame.setLocation(loc);
-
-        for (int i = 0; all_buttons.length > i; i++){
-            JButton but = all_buttons[i];
+        for (JButton but : all_buttons){
             but.addActionListener(this);
         }
         loeschen.addActionListener(this);
-        contenttt();
+        content();
         sprach();
     }
     public void sprach(){
         DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
-        sprache = Integer.parseInt(get_sprache.getResult());
+        int sprache = Integer.parseInt(get_sprache.getResult());
         int len = all_labels.length + all_buttons.length;
         int ii;
         for (int i = 0; len > i; i++){
             if (all_labels.length > i){
-                all_labels[i].setText(spracharr[i][this.sprache]);
+                all_labels[i].setText(spracharr[i][sprache]);
             }
             else {
                 ii = i - all_labels.length;
-                all_buttons[ii].setText(spracharr[i][this.sprache]);
+                all_buttons[ii].setText(spracharr[i][sprache]);
             }
         }
-
-        /*carb_label.setText(carb_list[this.sprache]);
-        name_label.setText(name_list[this.sprache]);
-        protein_label.setText(protein_list[this.sprache]);
-        fat_label.setText(fat_list[this.sprache]);
-        zuruck.setText(zuruck_list[this.sprache]);
-        bearbeiten.setText(bearbeiten_list[this.sprache]);
-        loeschen.setText(loeschen_list[this.sprache]);*/
-
     }
-    public void contenttt(){
+    public void content(){
         name_input.setText(mahl_name);
         carb_model.setValue(carb);
         protein_model.setValue(protein);
