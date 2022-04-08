@@ -120,17 +120,14 @@ public class Tagebuch implements ActionListener {
 
         JButton[] all_buttons = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen, fruher, spater};
         JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label, kalorien_anz, verb_kalorien, minus, gleich, datum_label, protein_ziel_label, konsumierte_protein_label, verbleibende_protein_label, protein_ziel, protein_anz, verb_protein, minus2, gleich2};
-        Darkmode check = new Darkmode(benutzername, all_buttons, all_labels);
-        if (check.isDark()){
+        Darkmode d = new Darkmode(benutzername, all_buttons, all_labels);
+        if (d.isDark()){
             panel1.setBackground(Color.DARK_GRAY);
-            JList[] all_lists = {fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
-            for (JList list : all_lists){
+            var all_lists = new JList[]{fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
+            for (var list : all_lists){
                 list.setForeground(Color.white);
                 list.setBackground(Color.gray);
             }
-            Darkmode n = new Darkmode(benutzername, all_buttons, all_labels);
-            all_buttons = n.getAll_buttons();
-            all_labels = n.getAll_labels();
         }
 
         Font label_font = new Font("Arial", Font.BOLD, 15);
@@ -196,6 +193,7 @@ public class Tagebuch implements ActionListener {
                         mittagessen_list.clearSelection();
                         abendessen_list.clearSelection();
                     }
+                    //Loesch und Bearbeit Buttons werden Unsichtbar gemacht
                     fruh_bearbeiten.setVisible(false);
                     fruh_delete.setVisible(false);
                     mit_bearbeiten.setVisible(false);
@@ -463,13 +461,34 @@ public class Tagebuch implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == Fruhstuck){
-            on_new_meal("Frühstück");
+            String mahl_name = "";
+            if (sprache == 0){
+                mahl_name = "Frühstück";
+            }
+            else if (sprache == 1){
+                mahl_name = "Breakfast";
+            }
+            on_new_meal(mahl_name);
         }
         if (e.getSource() == Mittagessen){
-            on_new_meal("Mittagessen");
+            String mahl_name = "";
+            if (sprache == 0){
+                mahl_name = "Mittagessen";
+            }
+            else if (sprache == 1){
+                mahl_name = "Lunch";
+            }
+            on_new_meal(mahl_name);
         }
         if (e.getSource() == Abendessen){
-            on_new_meal("Abendessen");
+            String mahl_name = "";
+            if (sprache == 0){
+                mahl_name = "Abendessen";
+            }
+            else if (sprache == 1){
+                mahl_name = "Dinner";
+            }
+            on_new_meal(mahl_name);
         }
         if (e.getSource() == Snacks){
             on_new_meal("Snacks");

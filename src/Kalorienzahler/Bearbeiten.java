@@ -37,14 +37,6 @@ public class Bearbeiten implements ActionListener {
 
     private int userid;
     private double anz_portionen;
-    String [] anz_port_list = {"Anzahl Portionen", "Number of portions"};
-    String [] cal_list={"Kohlenhydrate:","Carbohydrates:"};
-    String [] kal_list={"Kalorien:","Calories:"};
-    String [] protein_list={"Protein","Protein"};
-    String [] fat_list={"Fett:","Fat:"};
-    String [] head_list={"Mahlzeit Bearbeiten","Edit meal"};
-    String [] zuruck_list = {"Zurück","Back"};
-    String [] bearbeiten_list = {"Bearbeiten","Edit"};
 
     //Arrays mit Sprachen
     String [] anz_port_list = {"Anzahl Portionen", "Number of portions"};
@@ -133,11 +125,9 @@ public class Bearbeiten implements ActionListener {
     }
     public void content(){
         //Darkmode wird gemacht
-        Darkmode n = new Darkmode(this.benutzername, all_buttons, all_labels);
-        if (n.isDark()){
+        Darkmode d = new Darkmode(this.benutzername, all_buttons, all_labels);
+        if (d.isDark()){
             panel1.setBackground(Color.DARK_GRAY);
-            all_buttons = n.getAll_buttons();
-            all_labels = n.getAll_labels();
         }
 
         double Portion = Double.parseDouble(this.Portion);
@@ -169,6 +159,7 @@ public class Bearbeiten implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == zuruck){
+            //Frame wird geschlossen und Tagebuch wird geöffnet
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
@@ -178,8 +169,9 @@ public class Bearbeiten implements ActionListener {
         if (e.getSource() == dropname || e.getSource() == confirm || e.getSource() == hidden){
             String mahl_name = String.valueOf(dropname.getSelectedItem());
 
+            //Error Message wird reseted
             error_message.setText("");
-
+            //Error Handling beginn
             try {
                 resultSet = statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
 
@@ -229,6 +221,7 @@ public class Bearbeiten implements ActionListener {
 
             new DBConnect("UPDATE mmm SET mahl = " + mahl + ", port = " + portionen.getValue() + ", kalorien = " + kalorien + ", carb = " + carb + ", protein = " + protein + ", fat = " + fat + " WHERE id = " + this.mmm_id + "", " ", 1);
 
+            //Frame wird geschlossen und Tagebuch wird geöffnet
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();

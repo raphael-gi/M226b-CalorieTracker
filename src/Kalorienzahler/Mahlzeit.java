@@ -18,9 +18,11 @@ public class Mahlzeit implements ActionListener {
     private JLabel protein_label;
     private JLabel fat_label;
     private JSpinner carb_input;
+    SpinnerNumberModel carb_model = new SpinnerNumberModel(0, 0, 100000, 1);
     private JSpinner protein_input;
+    SpinnerNumberModel protein_model = new SpinnerNumberModel(0, 0, 100000, 1);
     private JSpinner fat_input;
-    private int sprache;
+    SpinnerNumberModel fat_model = new SpinnerNumberModel(0, 0, 100000, 1);
 
     private final String mahlzeit;
     private final String benutzername;
@@ -41,7 +43,6 @@ public class Mahlzeit implements ActionListener {
     JButton[] all_buttons = {Erstellen, zuruck};
     JLabel[] all_labels = {name_label, carb_label, protein_label, fat_label};
 
-
     public Mahlzeit(Dimension size, Point loc, String mahlzeit, String benutzername, Date datum){
         this.mahlzeit = mahlzeit;
         this.benutzername = benutzername;
@@ -50,19 +51,24 @@ public class Mahlzeit implements ActionListener {
         frame = new JFrame();
         new StarterPack(frame, panel1, "Mahlzeit Erstellen", size, loc);
 
+        //JSpinner erhalten ein Model
+        carb_input.setModel(carb_model);
+        protein_input.setModel(protein_model);
+        fat_input.setModel(fat_model);
+
+        //Buttons erhalten Action Listeners
         Erstellen.addActionListener(this);
         zuruck.addActionListener(this);
 
-        content();
+        //Methoden werden ausgefürt
+        darkmode();
+        sprach();
     }
 
-    public void content(){
-        Darkmode n = new Darkmode(this.benutzername, all_buttons, all_labels);
-        if (n.isDark()){
+    public void darkmode(){
+        Darkmode d = new Darkmode(this.benutzername, all_buttons, all_labels);
+        if (d.isDark()){
             panel1.setBackground(Color.DARK_GRAY);
-            all_buttons = n.getAll_buttons();
-            all_labels = n.getAll_labels();
-            sprach();
         }
     }
     public void sprach(){
@@ -79,19 +85,20 @@ public class Mahlzeit implements ActionListener {
                 all_buttons[ii].setText(spracharr[i][sprache]);
             }
         }
-
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==Erstellen){
+            //Variabeln werden deklariert
             String name = Name.getText();
             int carb = (int) carb_input.getValue();
             int protein = (int) protein_input.getValue();
             int fat = (int) fat_input.getValue();
 
+            //Error Message wird reseted
             error_message.setText("");
-
+            //Error Handling beginnt
             if (name.isEmpty() || carb_input.getValue() == null || protein_input.getValue() == null || fat_input.getValue() == null){
                 error_message.setText("Füllen sie alle Felder aus!");
             }
@@ -115,7 +122,7 @@ public class Mahlzeit implements ActionListener {
                             int userid = Integer.parseInt(get_id.getResult());
 
                             new DBConnect("INSERT INTO mahlzeit (Name, kalorien, carb, protein, fat, ben) VALUES ('" + name +"', '" + kalorien +"', '" + carb + "', '" + protein + "', '" + fat + "', '" + userid + "')", "Benutzername", 1);
-
+                            //Frame wird geschlossen und Mahlzeit_auswahl geöffnet
                             frame.dispose();
                             Dimension frame_size = frame.getSize();
                             Point frame_loc = frame.getLocation();
@@ -131,6 +138,7 @@ public class Mahlzeit implements ActionListener {
         }
 
         if (e.getSource() == zuruck){
+            //Frame wird geschlossen und Mahlzeit_auswahl geöffnet
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();

@@ -45,7 +45,6 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     String [] bearbeiten_list = {"Bearbeiten","Edit"};
     JButton[] all_buttons = {bearbeiten, zuruck, loeschen};
     JLabel[] all_labels = {name_label, carb_label, fat_label, protein_label,};
-    String [][] spracharr = {name_list, carb_list, fat_list, protein_list, bearbeiten_list, zuruck_list, loeschen_list};
 
     //Array mit allen Sprachen Arrays
     String [][] spracharr = {name_list, carb_list, fat_list, protein_list, bearbeiten_list, zuruck_list, loeschen_list};
@@ -96,6 +95,7 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         }
     }
     public void content(){
+        //Labels werden angeschrieben
         name_input.setText(mahl_name);
         carb_model.setValue(carb);
         protein_model.setValue(protein);
@@ -105,11 +105,9 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         protein_input.setModel(protein_model);
         fat_input.setModel(fat_model);
 
-        Darkmode n = new Darkmode(this.benutzername, all_buttons, all_labels);
-        if (n.isDark()){
+        Darkmode d = new Darkmode(this.benutzername, all_buttons, all_labels);
+        if (d.isDark()){
             panel1.setBackground(Color.DARK_GRAY);
-            all_buttons = n.getAll_buttons();
-            all_labels = n.getAll_labels();
             loeschen.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
                     loeschen.setForeground(Color.RED);
@@ -123,9 +121,19 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         }
     }
 
+    public void neues_fenster(){
+        //Frame wird geschlossen und Mahlzeit_auswahl geöffnet
+        frame.dispose();
+        Dimension frame_size = frame.getSize();
+        Point frame_loc = frame.getLocation();
+        Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername, date_selected);
+        n.content();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == bearbeiten){
+            //Variabeln werden deklariert
             String name = name_input.getText();
             int carb = (int) carb_input.getValue();
             int protein = (int) protein_input.getValue();
@@ -143,29 +151,18 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
                 ex.printStackTrace();
             }
             new DBConnect("UPDATE mahlzeit SET Name = '" + name + "', kalorien = '" + kalorien + "', carb = '" + carb_input.getValue() + "', protein = '" + protein_input.getValue() + "', fat = '" + fat_input.getValue() + "' WHERE Name = '" + mahl_name + "' AND ben = " + id + "", " ", 1);
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername, date_selected);
-            n.content();
+
+            neues_fenster();
         }
         if (e.getSource() == loeschen){
             DBConnect id = new DBConnect("SELECT id FROM benutzer WHERE Benutzername = '" + benutzername + "'", "id", 0);
 
             new DBConnect("DELETE FROM mahlzeit WHERE ben = " + id.getResult() + " AND Name = '" + mahl_name + "'", "", 1);
 
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername, date_selected);
-            n.content();
+            neues_fenster();
         }
         if (e.getSource() == zuruck){
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername, date_selected);
-            n.content();
+            neues_fenster();
         }
     }
 }

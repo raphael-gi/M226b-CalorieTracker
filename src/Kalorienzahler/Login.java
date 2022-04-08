@@ -34,8 +34,9 @@ public class Login implements ActionListener {
             char[] passwort = Passwort.getPassword();
             Hash p = new Hash(passwort);
 
+            //Error Message wird reseted
             error_message.setText("");
-
+            //Error Handling beginnt
             try{
                 DBConnect log = new DBConnect("SELECT Benutzername FROM benutzer WHERE Benutzername = '"+ benutzer +"' AND Passwort = '"+ p.getHash() +"'","Benutzername",0);
                 if (benutzer.isEmpty() || Arrays.toString(passwort).length() < 3){
@@ -46,6 +47,7 @@ public class Login implements ActionListener {
                         error_message.setText("Falsches Passwort oder Benutzername");
                     }
                     else {
+                        //Frame wird geschlossen und Tagebuch geöffnet
                         frame.dispose();
                         Dimension frame_size = frame.getSize();
                         Point frame_loc = frame.getLocation();

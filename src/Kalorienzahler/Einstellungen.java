@@ -4,13 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
-public class Einstellungen implements ActionListener {
+public class Einstellungen implements ActionListener{
     private JPanel panel1;
     private JLabel benutzername;
     private JButton dark;
@@ -86,6 +87,7 @@ public class Einstellungen implements ActionListener {
     private int new_pas_check2;
 
     //Arrays mit Sprachen
+    private int sprache;
     String[] sprachen = {"Deutsch","English"};
     String [] zuruck_list = {"Zurück","Back"};
     String [] benutzername_list = {"Benutzername:", "Username:"};
@@ -111,8 +113,8 @@ public class Einstellungen implements ActionListener {
     String [] darkmode_list = {"Darkmode", "Darkmode"};
     String [] logout_list = {"Logout", "Logout"};
 
-    private JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best, pas_andern_button, old_pas_best, new_pas_best};
-    private JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label, muskel_aufbau_label, Sprache_Label};
+    private final JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best, pas_andern_button, old_pas_best, new_pas_best};
+    private final JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label, muskel_aufbau_label, Sprache_Label};
 
     //Array mit allen Sprachen Arrays
     String[][] spracharr = {einstellungen_list, Sprache_list, benutzername_list, new_benutzername_list, gender_list, age_list, new_age_list, groesse_list, new_groesse_list, gewicht_list, new_gewicht_list, password_list, old_password_list, new_password_list, conf_password_list, muskeln_list, darkmode_list, eingeb_password_list, zuruck_list, andern_list, andern_list, andern_list, andern_list, andern_list ,andern_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, logout_list, loeschen_list, bestaetigen_list};
@@ -123,6 +125,7 @@ public class Einstellungen implements ActionListener {
     JLabel[] un_vis_lab = {new_name_label, new_alter_label, new_groesse_label, new_gewicht_label, old_pas_label, new_pas_label, new_pas_best_label, pass_eingeben};
     JSpinner[] un_vis_spin = {new_alter, new_groesse, new_gewicht};
     JPasswordField[] un_vis_pas = {old_pas_input, new_pas_input, new_pas_best_input, passwort_feld};
+    JRadioButton[] radios = {gew_halt, gew_zuh, gew_ver};
 
     Connection connection = null;
     Statement statement = null;
@@ -173,6 +176,7 @@ public class Einstellungen implements ActionListener {
         int b = Integer.parseInt(get_sprache.getResult());
         sprachW.setSelectedIndex(b);
 
+        //Alles erhält einen Action Listener
         for (JButton but : all_buttons){
             but.addActionListener(this);
         }
@@ -216,7 +220,6 @@ public class Einstellungen implements ActionListener {
         DBConnect get_gender = new DBConnect("SELECT gender FROM benutzer WHERE Benutzername = '" + this.name + "'", "gender", 0);
         int gender = Integer.parseInt(get_gender.getResult());
         DBConnect sp_get = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.name + "'", "sprache", 0);
-        System.out.println(sp_get.getResult());
         String[] gend;
         if (gender == 1){
             gend = new String[]{"Weiblich", "Feminine"};
@@ -267,24 +270,24 @@ public class Einstellungen implements ActionListener {
         }
     }
     public void dark(){
-        Darkmode n = new Darkmode(name, all_buttons, all_labels);
-        this.darkmode = n.isDark();
+        //Stellt alles für den Darkmode um
+        Darkmode d = new Darkmode(name, all_buttons, all_labels);
+        this.darkmode = d.isDark();
         if (!this.darkmode){
-            String aus [] = {"Aus","Off"};
+            String[] aus = {"Aus","Off"};
             dark.setText(aus[this.sprache]);
             panel1.setBackground(Color.WHITE);
             muskel_aufbau.setBackground(Color.WHITE);
             muskel_aufbau.setForeground(Color.BLACK);
 
-            gew_halt.setBackground(Color.WHITE);
-            gew_zuh.setBackground(Color.WHITE);
-            gew_ver.setBackground(Color.WHITE);
-            gew_halt.setForeground(Color.BLACK);
-            gew_zuh.setForeground(Color.BLACK);
-            gew_ver.setForeground(Color.BLACK);
+            //Radio Buttons erhalten die richtige Farbe
+            for (JRadioButton rad : radios){
+                rad.setBackground(Color.WHITE);
+                rad.setForeground(Color.BLACK);
+            }
         }
         else {
-            String an [] = {"An","On"};
+            String[] an = {"An","On"};
             dark.setText(an[this.sprache]);
 
             panel1.setBackground(Color.DARK_GRAY);
@@ -294,15 +297,10 @@ public class Einstellungen implements ActionListener {
             muskel_aufbau.setBackground(Color.DARK_GRAY);
             muskel_aufbau.setForeground(Color.WHITE);
 
-            gew_halt.setBackground(Color.DARK_GRAY);
-            gew_zuh.setBackground(Color.DARK_GRAY);
-            gew_ver.setBackground(Color.DARK_GRAY);
-            gew_halt.setForeground(Color.WHITE);
-            gew_zuh.setForeground(Color.WHITE);
-            gew_ver.setForeground(Color.WHITE);
-
-            all_buttons = n.getAll_buttons();
-            all_labels = n.getAll_labels();
+            for (JRadioButton rad : radios){
+                rad.setBackground(Color.DARK_GRAY);
+                rad.setForeground(Color.WHITE);
+            }
 
             logout.setForeground(Color.CYAN);
             loeschen.setForeground(Color.RED);

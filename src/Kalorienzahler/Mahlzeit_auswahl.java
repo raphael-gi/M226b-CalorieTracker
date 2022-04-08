@@ -40,13 +40,12 @@ public class Mahlzeit_auswahl implements ActionListener {
     private double carb1;
     private double protein1;
     private double fat1;
-    private int sprache;
 
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
     private final Date date_select;
 
     //Arrays mit Sprachen
-    String[] mahlzeit_list = {"Mahlzeit","Meal"};
+    String [] mahlzeit_list = {"Mahlzeit","Meal"};
     String [] cal_list={"Kohlenhydrate:","Carbohydrates:"};
     String [] kal_list={"Kalorien:","Calories:"};
     String [] protein_list={"Protein","Protein"};
@@ -55,11 +54,11 @@ public class Mahlzeit_auswahl implements ActionListener {
     String [] zuruck_list = {"Zurück","Back"};
     String [] Erstellen_list = {"Erstellen","Create"};
     String [] bearbeiten_list = {"Bearbeiten","Edit"};
-    String[] Eat_SP = {"Hinzufügen", "Add"};
+    String [] Eat_SP = {"Hinzufügen", "Add"};
 
     //Array mit allen Sprachen Arrays
     String [][] spracharr = {kal_list, cal_list, protein_list, fat_list, mahlzeit_list, portion_list, Erstellen_list, zuruck_list, Eat_SP, bearbeiten_list};
-    JLabel [] lab_lang = { kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
+    JLabel [] lab_lang = {kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
     JButton [] but_lang = {erstellen, zuruck, hinzufugen,bearbeiten};
 
     private JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten, hidden};
@@ -71,7 +70,6 @@ public class Mahlzeit_auswahl implements ActionListener {
 
     public Mahlzeit_auswahl(Dimension size, Point loc, String mahlzeit, String benutzername, Date datum){
         //Verbindung wird aufgebaut
-
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
             statement = connection.createStatement();
@@ -139,11 +137,9 @@ public class Mahlzeit_auswahl implements ActionListener {
         }
     }
     public void content(){
-        Darkmode n = new Darkmode(this.benutzername, all_buttons, all_labels);
-        if (n.isDark()){
+        Darkmode d = new Darkmode(this.benutzername, all_buttons, all_labels);
+        if (d.isDark()){
             panel1.setBackground(Color.DARK_GRAY);
-            all_buttons = n.getAll_buttons();
-            all_labels = n.getAll_labels();
         }
 
         mahl.setText(this.mahlzeit);
@@ -205,12 +201,14 @@ public class Mahlzeit_auswahl implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==erstellen){
+            //Frame wird geschlossen und Mahlzeit geöffnet
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
             new Mahlzeit(frame_size, frame_loc, this.mahlzeit, this.benutzername, date_select);
         }
         if (e.getSource()== zuruck){
+            //Frame wird geschlossen und Tagebuch geöffnet
             frame.dispose();
             Dimension frame_size = frame.getSize();
             Point frame_loc = frame.getLocation();
@@ -220,9 +218,10 @@ public class Mahlzeit_auswahl implements ActionListener {
         if (e.getSource()==dropname){
             String mahl_name = String.valueOf(dropname.getSelectedItem());
 
+            //Error Message wird reseted
             error_message.setText("");
             this.anz_portionen = (double)portion.getValue();
-
+            //Error Handling wird gestartet
             try {
                 resultSet = statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
 
@@ -267,13 +266,13 @@ public class Mahlzeit_auswahl implements ActionListener {
         if (e.getSource() == hinzufugen){
             //Ausgewählte Mahlzeit wird angeschaut
             int mahl_check = 0;
-            if (this.mahlzeit.equals("Frühstück")){
+            if (this.mahlzeit.equals("Frühstück") || this.mahlzeit.equals("Breakfast")){
                 mahl_check = 1;
             }
-            if (this.mahlzeit.equals("Mittagessen")){
+            if (this.mahlzeit.equals("Mittagessen") || this.mahlzeit.equals("Lunch")){
                 mahl_check = 2;
             }
-            if (this.mahlzeit.equals("Abendessen")){
+            if (this.mahlzeit.equals("Abendessen") || this.mahlzeit.equals("Dinner")){
                 mahl_check = 3;
             }
             if (this.mahlzeit.equals("Snacks")){
@@ -297,6 +296,7 @@ public class Mahlzeit_auswahl implements ActionListener {
                 //Data wird eingefügt
                 statement.execute("INSERT INTO mmm (mahl, port, kalorien, carb, protein, fat, datum, ben, mahlzeit) VALUES (" + get_mahl_id + ", " + this.anz_portionen + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date_select) + "', " + get_ben_id + ", " + mahl_check + ")");
 
+                //Frame wird geschlossen und Tagebuch geöffnet
                 frame.dispose();
                 Dimension frame_size = frame.getSize();
                 Point frame_loc = frame.getLocation();
@@ -309,6 +309,7 @@ public class Mahlzeit_auswahl implements ActionListener {
         }
 
         if (e.getSource() == bearbeiten){
+            //Frame wird geschlossen und Mahlzeit_Bearbeiten geöffnet
             frame.dispose();
             String mahl_name = (String) dropname.getSelectedItem();
             int carb_int = (int) carb1;

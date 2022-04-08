@@ -20,6 +20,7 @@ public class StarterPack {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
+        //Gösse und Location werden gesetzt
         frame.setSize(size);
         frame.setLocation(loc);
     }
