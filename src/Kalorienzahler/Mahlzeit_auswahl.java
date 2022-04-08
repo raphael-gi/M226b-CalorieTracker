@@ -101,10 +101,12 @@ public class Mahlzeit_auswahl implements ActionListener {
         sprach();
     }
     public void sprach() {
+        //Ausgewählte Sprache des Benutzers wird angepasst
         DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
         int sprache = Integer.parseInt(get_sprache.getResult());
         int len = lab_lang.length + but_lang.length;
         int ii;
+        //Alle Labels und Buttons werden auf die gewünschte Sprache übersetzt
         for (int i = 0; len > i; i++) {
             if (lab_lang.length > i) {
                 lab_lang[i].setText(spracharr[i][sprache]);

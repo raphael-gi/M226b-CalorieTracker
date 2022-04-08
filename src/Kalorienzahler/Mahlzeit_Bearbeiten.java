@@ -46,7 +46,7 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     JButton[] all_buttons = {bearbeiten, zuruck, loeschen};
     JLabel[] all_labels = {name_label, carb_label, fat_label, protein_label,};
 
-    //Array mit allen Sprachen Arrays
+    //2 Dimensionaler Array mit allen Sprachen Arrays
     String [][] spracharr = {name_list, carb_list, fat_list, protein_list, bearbeiten_list, zuruck_list, loeschen_list};
 
     Connection connection = null;
@@ -54,7 +54,7 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     ResultSet resultSet = null;
 
     public Mahlzeit_Bearbeiten(Dimension size, Point loc, String benutzername, String mahl, String mahl_name, int carb, int protein, int fat, Date datum){
-        //Verbindung wird aufgebaut
+        //Verbindung zu DBwird aufgebaut
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
             statement = connection.createStatement();
@@ -79,11 +79,13 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         content();
         sprach();
     }
+    //Ausgewählte Sprache des Benutzers wird angepasst
     public void sprach(){
         DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
         int sprache = Integer.parseInt(get_sprache.getResult());
         int len = all_labels.length + all_buttons.length;
         int ii;
+        //Alle Labels und Buttons werden auf die gewünschte Sprache übersetzt
         for (int i = 0; len > i; i++){
             if (all_labels.length > i){
                 all_labels[i].setText(spracharr[i][sprache]);

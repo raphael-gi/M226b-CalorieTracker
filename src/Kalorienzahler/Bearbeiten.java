@@ -94,10 +94,12 @@ public class Bearbeiten implements ActionListener {
         sprach();
     }
     public void sprach(){
+        //Ausgewählte Sprache des Benutzers wird angepasst
         DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
         int sprache = Integer.parseInt(get_sprache.getResult());
         int len = lab_lang.length + but_lang.length;
         int ii;
+        //Alle Labels und Buttons werden auf die gewünschte Sprache übersetzt
         for (int i = 0; len > i; i++){
             if (lab_lang.length > i){
                 lab_lang[i].setText(spracharr[i][sprache]);
@@ -218,7 +220,7 @@ public class Bearbeiten implements ActionListener {
 
             DBConnect get_mahl = new DBConnect("SELECT id FROM mahlzeit WHERE Name = '" + drop_selected + "' AND ben = " + ben_id + "", "id", 0);
             String mahl = get_mahl.getResult();
-
+            //verändert das ausgewählte mahl in der DB
             new DBConnect("UPDATE mmm SET mahl = " + mahl + ", port = " + portionen.getValue() + ", kalorien = " + kalorien + ", carb = " + carb + ", protein = " + protein + ", fat = " + fat + " WHERE id = " + this.mmm_id + "", " ", 1);
 
             //Frame wird geschlossen und Tagebuch wird geöffnet

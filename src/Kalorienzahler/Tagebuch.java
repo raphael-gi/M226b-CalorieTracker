@@ -104,6 +104,7 @@ public class Tagebuch implements ActionListener {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        //Benutzername und Datum werden auf die Informationen der DB angepasst
         this.benutzername = benutzername;
         this.date_select = datum;
 
@@ -206,6 +207,7 @@ public class Tagebuch implements ActionListener {
             }
         });
     }
+    //Datum wird erstellt für DB und für die anzeige im Gui
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
     SimpleDateFormat format = new SimpleDateFormat("EEEE, MMM d");
     public void dat(){
@@ -231,7 +233,7 @@ public class Tagebuch implements ActionListener {
         }
         c.setTime(date_select);
     }
-
+    //Abrufen der Daten die an dem Ausgewählten Datum gespeichert wurden
     public void list_content(ArrayList<Integer> kalories, ArrayList<Integer> proteins){
         try {
             resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date_select) + "'");
@@ -248,6 +250,7 @@ public class Tagebuch implements ActionListener {
     }
 
     int get_ben_id = 0;
+    //Die Daten des Benutzers abrufen
     public void content(){
         DBConnect get_gender = new DBConnect("SELECT gender FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "gender",0);
         int gender = Integer.parseInt(get_gender.getResult());
@@ -259,7 +262,7 @@ public class Tagebuch implements ActionListener {
         double groesse = Double.parseDouble(get_groesse.getResult());
         DBConnect get_muskel = new DBConnect("SELECT muskel FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "muskel", 0);
         int muskel = Integer.parseInt(get_muskel.getResult());
-
+        //Stellt gewisse Werte aus wenn der Nutzer keine Muskeln aufbauen möchte
         if (muskel == 0){
             protein_ziel_label.setVisible(false);
             konsumierte_protein_label.setVisible(false);
@@ -378,7 +381,7 @@ public class Tagebuch implements ActionListener {
             e.printStackTrace();
         }
     }
-
+    //Abgespeicherte Mahlzeiten abrufen
     public void get_select(JList<String> list_name , DefaultListModel<String> name, int mahlzeit_id) throws SQLException {
         name.clear();
         resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date_select) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
@@ -459,6 +462,7 @@ public class Tagebuch implements ActionListener {
     }
 
     @Override
+    //Sprache Anpassen für die Überschriften für die Bearbeiten seite
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == Fruhstuck){
             String mahl_name = "";
@@ -523,6 +527,7 @@ public class Tagebuch implements ActionListener {
             Point frame_loc = frame.getLocation();
             new Einstellungen(frame_size, frame_loc, this.benutzername, date_select);
         }
+        //testet in welche Richtung Zukunftoder Vergangenheit sich der Nutzer bewegen will und passt das Datum entsprechend an
         if (e.getSource() == fruher){
             c.add(Calendar.DATE, -1);
             date_select = c.getTime();

@@ -37,7 +37,7 @@ public class Registrierung implements ActionListener {
         mann.addActionListener(this);
         weib.addActionListener(this);
     }
-
+    //Prüfen ob die Angegebenen Daten korrekt sind
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == Registrieren) {
@@ -55,7 +55,7 @@ public class Registrierung implements ActionListener {
             }
             double gewicht = (double) this.gewicht.getValue();
             double groesse = (double) this.groesse.getValue();
-
+            //Error handling
             error_message.setText("");
             if (benutzer.isEmpty() || passwort == null || passwort_best == null){
                 error_message.setText("Füllen sie alle Felder aus!");

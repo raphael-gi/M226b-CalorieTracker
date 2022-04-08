@@ -172,6 +172,7 @@ public class Einstellungen implements ActionListener{
         for (String nam : sprachen) {
             sprachW.addItem(nam);
         }
+        //Es wird geschaut welche sprache ausgewählt ist
         DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.name + "'", "sprache", 0);
         int b = Integer.parseInt(get_sprache.getResult());
         sprachW.setSelectedIndex(b);
@@ -197,11 +198,13 @@ public class Einstellungen implements ActionListener{
         bulk();
         dark();
     }
+    //Sprache vom Benutzer abfragen
     public void sprach(){
         DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.name + "'", "sprache", 0);
         int sprachee = Integer.parseInt(get_sprache.getResult());
         int len = lab_lang.length + but_lang.length;
         int ii;
+        //Sprache im Programm für die gewünschte Sprache anpassen
         for (int i = 0; len > i; i++){
             if (lab_lang.length > i){
                 lab_lang[i].setText(spracharr[i][sprachee]);
@@ -217,10 +220,13 @@ public class Einstellungen implements ActionListener{
         benutzername.setText(this.name);
     }
     public void gend(){
+        //DB verbidung um herauszufinden welches Geschlecht der benutzer ausgewählt hat
         DBConnect get_gender = new DBConnect("SELECT gender FROM benutzer WHERE Benutzername = '" + this.name + "'", "gender", 0);
         int gender = Integer.parseInt(get_gender.getResult());
+        //DB verbidung um herauszufinden welche sprache der benutzer ausgewählt hat
         DBConnect sp_get = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.name + "'", "sprache", 0);
         String[] gend;
+        //Ausgewähltes Geschlecht wird auf die gewünschte Sprache angepasst
         if (gender == 1){
             gend = new String[]{"Weiblich", "Feminine"};
         }
@@ -230,21 +236,25 @@ public class Einstellungen implements ActionListener{
         this.gender.setText(gend[Integer.parseInt(sp_get.getResult())]);
     }
     public void age(){
+        //Das Alter des Nutzers wird Abgefragt
         DBConnect get_age = new DBConnect("SELECT age FROM benutzer WHERE Benutzername = '" + this.name + "'", "age", 0);
         String age = get_age.getResult();
         this.age.setText(age);
     }
     public void groes(){
+        //Die Grösse des Nutzers wird Abgefragt
         DBConnect get_groesse = new DBConnect("SELECT groesse FROM benutzer WHERE Benutzername = '" + this.name + "'", "groesse", 0);
         String groesse = get_groesse.getResult();
         this.groesse.setText(groesse);
     }
     public void gew(){
+        //Das Gewicht des Nutzers wird Abgefragt
         DBConnect get_gewicht = new DBConnect("SELECT gewicht FROM benutzer WHERE Benutzername = '" + this.name + "'", "gewicht", 0);
         String gewicht = get_gewicht.getResult();
         this.gewicht.setText(gewicht);
     }
     public void musk(){
+        //Es wird abgefragt ob der Nutzer Muskeln aufbauen möchte
         DBConnect get_muskel = new DBConnect("SELECT muskel FROM benutzer WHERE Benutzername = '" + this.name + "'", "muskel", 0);
         int muskel = Integer.parseInt(get_muskel.getResult());
         if (muskel == 1){
@@ -257,6 +267,7 @@ public class Einstellungen implements ActionListener{
         }
     }
     public void bulk(){
+        //Fragt ab ob der Benutzer abnehmen zunehmen oder sein gewicht halten will
         DBConnect get_bulk = new DBConnect("SELECT bulk FROM benutzer WHERE Benutzername = '" + this.name + "'", "bulk", 0);
         int bulk = Integer.parseInt(get_bulk.getResult());
         if (bulk == 0){
@@ -644,6 +655,7 @@ public class Einstellungen implements ActionListener{
             bulk();
         }
         if (e.getSource() == sprachW){
+            //Wird getestet welche Sprache augewählt ist bzw. welche ausgewählt wird und damit in der DB geändert
             String wahl = (String) sprachW.getSelectedItem();
             if (Objects.equals(wahl, "Deutsch")){
                 new DBConnect("UPDATE benutzer SET sprache = 0 WHERE Benutzername = '" + this.name + "'", "", 1);
