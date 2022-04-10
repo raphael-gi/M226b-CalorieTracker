@@ -61,8 +61,8 @@ public class Mahlzeit_auswahl implements ActionListener {
     JLabel [] lab_lang = {kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
     JButton [] but_lang = {erstellen, zuruck, hinzufugen,bearbeiten};
 
-    private JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten, hidden};
-    private JLabel[] all_labels = {mahl, anz_kalorien, anz_carbs, anz_protein, anz_fat, kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
+    private final JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten, hidden};
+    private final JLabel[] all_labels = {mahl, anz_kalorien, anz_carbs, anz_protein, anz_fat, kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
 
     Connection connection = null;
     Statement statement = null;
@@ -159,7 +159,7 @@ public class Mahlzeit_auswahl implements ActionListener {
         }
         try{
             //Verbindung um Namen zu erhalten
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
             resultSet = statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + this.userid + " ORDER BY Name");
             while (resultSet.next()){
                 String benutzernamen = resultSet.getString("Name");
