@@ -160,7 +160,7 @@ public class Mahlzeit_auswahl implements ActionListener {
         try{
             //Verbindung um Namen zu erhalten
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + this.userid + " ORDER BY Name");
+            resultSet = statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + this.userid + " ORDER BY Name");
             while (resultSet.next()){
                 String benutzernamen = resultSet.getString("Name");
                 dropname.addItem(benutzernamen);

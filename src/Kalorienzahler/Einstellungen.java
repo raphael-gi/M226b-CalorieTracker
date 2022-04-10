@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.sql.*;
 import java.util.Arrays;
@@ -87,7 +86,7 @@ public class Einstellungen implements ActionListener{
     private int new_pas_check2;
 
     //Arrays mit Sprachen
-    private int sprache;
+    int sprache;
     String[] sprachen = {"Deutsch","English"};
     String [] zuruck_list = {"Zurück","Back"};
     String [] benutzername_list = {"Benutzername:", "Username:"};
@@ -131,6 +130,7 @@ public class Einstellungen implements ActionListener{
     Statement statement = null;
 
     public Einstellungen(Dimension size, Point loc, String name, Date datum){
+        //Verbindung zu Datenbank wird aufgebaut
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
             statement = connection.createStatement();
@@ -165,9 +165,8 @@ public class Einstellungen implements ActionListener{
         }
 
         new_name.setVisible(false);
-
+        //Error Message wird zurückgesetzt
         error_message.setText("");
-
 
         for (String nam : sprachen) {
             sprachW.addItem(nam);
@@ -404,7 +403,6 @@ public class Einstellungen implements ActionListener{
         if (check == 3){
             new_gewicht_check = 0;
         }
-
     }
 
     @Override
@@ -503,6 +501,7 @@ public class Einstellungen implements ActionListener{
                         new_name_label.setVisible(false);
                         new_name_check = 0;
                         new_name.setText("");
+                        error_message.setText("");
                         ben();
                     }
                 }
@@ -570,14 +569,17 @@ public class Einstellungen implements ActionListener{
             DBConnect check = new DBConnect("SELECT passwort FROM benutzer WHERE Benutzername = '" + this.name + "'", "passwort", 0);
             String real_pas = check.getResult();
             if (real_pas.equals(p.getHash())){
+                //Felder werden unsichtbar gemacht
                 old_pas_label.setVisible(false);
                 old_pas_input.setVisible(false);
                 old_pas_best.setVisible(false);
+                //Felder werden sichtbar gemacht
                 new_pas_label.setVisible(true);
                 new_pas_best_label.setVisible(true);
                 new_pas_input.setVisible(true);
                 new_pas_best_input.setVisible(true);
                 new_pas_best.setVisible(true);
+                //Input Felder werden reseted
                 old_pas_input.setText("");
                 error_message.setText("");
                 new_pas_check2 = 1;
@@ -587,8 +589,10 @@ public class Einstellungen implements ActionListener{
             }
         }
         if (e.getSource() == new_pas_best){
+            //Variabeln werden abgerufen
             char[] pas = new_pas_input.getPassword();
             char[] pas_best = new_pas_best_input.getPassword();
+            //Passwort wird gehashed
             Hash p = new Hash(pas);
 
             error_message.setText("");
@@ -611,11 +615,13 @@ public class Einstellungen implements ActionListener{
                         }
                         else {
                             upd("Passwort", p.getHash());
+                            //Felder werden unsichtbar gemacht
                             new_pas_label.setVisible(false);
                             new_pas_best_label.setVisible(false);
                             new_pas_input.setVisible(false);
                             new_pas_best_input.setVisible(false);
                             new_pas_best.setVisible(false);
+                            //Input Felder werden reseted
                             new_pas_input.setText("");
                             new_pas_best_input.setText("");
                             new_pas_check = 0;
@@ -668,4 +674,3 @@ public class Einstellungen implements ActionListener{
         }
     }
 }
-
