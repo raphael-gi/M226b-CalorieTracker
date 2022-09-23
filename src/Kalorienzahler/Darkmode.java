@@ -4,44 +4,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Darkmode {
-    private boolean dark;
-
+public class Darkmode extends Global {
     private final JButton[] all_buttons;
     private final JLabel[] all_labels;
 
-    private final String benutzername;
-
-    Darkmode(String benutzername, JButton[] all_buttons, JLabel[] all_labels){
-        this.benutzername = benutzername;
+    Darkmode(JButton[] all_buttons, JLabel[] all_labels){
         this.all_buttons = all_buttons;
         this.all_labels = all_labels;
 
-        check();
-        if (dark){
+        if (darkmode){
             darken();
         }
         else {
             brighten();
         }
-    }
-
-    public JButton[] getAll_buttons() {
-        return all_buttons;
-    }
-
-    public JLabel[] getAll_labels() {
-        return all_labels;
-    }
-
-    public boolean isDark() {
-        return dark;
-    }
-    public void check(){
-        //Wird geschaut ob Darkmode an oder aus ist
-        DBConnect check = new DBConnect("SELECT dark FROM benutzer WHERE Benutzername = '" + benutzername + "'", "dark", 0);
-        int dark_check = Integer.parseInt(check.getResult());
-        dark = dark_check != 0;
     }
 
     public void darken(){

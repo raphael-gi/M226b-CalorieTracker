@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 public class Hash {
     private final String hash;
-    //Passwort Hashen
     Hash(char[] passwort) {
         MessageDigest md = null;
         try {

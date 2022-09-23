@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Tagebuch implements ActionListener {
-    private JPanel panel1;
+public class Tagebuch extends Global implements ActionListener {
+    private JPanel panel;
     private JButton Fruhstuck;
     private JButton Mittagessen;
     private JButton Abendessen;
@@ -59,25 +59,15 @@ public class Tagebuch implements ActionListener {
     private JLabel verb_protein;
     private JLabel minus2;
     private JLabel gleich2;
-    private final JFrame frame;
 
-    private final String benutzername;
-    private int anz_fruh_kalorien;
-    private int anz_mit_kalorien;
-    private int anz_abend_kalorien;
-    private int anz_snack_kalorien;
     private double prot_formel;
 
-    private Date date_select;
     private final java.util.Date date_now = new Date();
     private final Calendar c = Calendar.getInstance();
 
-
-    private int sprache;
-
     //Arrays mit Sprachen
-    String[] fruh_list = {"Frühstück", "Breakfast"};
     String[] Eat_SP = {"Mahlzeit hinzufügen", "Add meal"};
+    String[] Fruh_SP = {"Frühstück", "Breakfast"};
     String[] Abend_SP = {"Abendessen", "Dinner"};
     String[] Mitt_SP = {"Mittagessen", "Lunch"};
     String[] Snack_SP = {"Imbiss", "Snack"};
@@ -88,30 +78,31 @@ public class Tagebuch implements ActionListener {
     String[] bearbeiten_list = {"Bearbeiten", "Edit"};
 
     //Array mit allen Sprachen Arrays
-    String[][] spracharr = {fruh_list, Mitt_SP, Abend_SP, Snack_SP, kalorien_ziel_list, kons_kalorien_list, verb_kalorien_list, Eat_SP, Eat_SP, Eat_SP, Eat_SP, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list};
+    String[][] spracharr = {Fruh_SP, Mitt_SP, Abend_SP, Snack_SP, kalorien_ziel_list, kons_kalorien_list, verb_kalorien_list, Eat_SP, Eat_SP, Eat_SP, Eat_SP, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list};
     JLabel[] lab_lang = {fruh_label, mit_label, abend_label, snack_label, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label};
     JButton[] but_lang = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete};
+
+    private final JButton[] add = {Fruhstuck, Mittagessen, Abendessen, Snacks};
+    private final String[][] meals = {Fruh_SP, Mitt_SP, Abend_SP, Snack_SP};
+    private final JList[] list = {fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
+    private final JButton[] edit = {fruh_bearbeiten, mit_bearbeiten, abend_bearbeiten, snack_bearbeiten};
+    private final JButton[] delete = {fruh_delete, mit_delete, abend_delete, snack_delete};
 
     Connection connection = null;
     Statement statement = null;
     ResultSet resultSet = null;
 
-    public Tagebuch(Dimension size, Point loc, String benutzername, Date datum){
+    public Tagebuch() {
         try {
-            //DB Verbindung wird aufgebaut
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
             statement = connection.createStatement();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        //Benutzername und Datum werden auf die Informationen der DB angepasst
-        this.benutzername = benutzername;
-        this.date_select = datum;
 
-        frame = new JFrame();
-        new StarterPack(frame, panel1, "Tagebuch", size, loc);
+        newPanel(panel);
 
-        fruh_label.setText(fruh_list[this.sprache]);
+        fruh_label.setText(Fruh_SP[sprache]);
         Dimension ein = new Dimension(40,40);
         einstellungen.setPreferredSize(ein);
 
@@ -121,9 +112,9 @@ public class Tagebuch implements ActionListener {
 
         JButton[] all_buttons = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen, fruher, spater};
         JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label, kalorien_anz, verb_kalorien, minus, gleich, datum_label, protein_ziel_label, konsumierte_protein_label, verbleibende_protein_label, protein_ziel, protein_anz, verb_protein, minus2, gleich2};
-        Darkmode d = new Darkmode(benutzername, all_buttons, all_labels);
-        if (d.isDark()){
-            panel1.setBackground(Color.DARK_GRAY);
+        new Darkmode(all_buttons, all_labels);
+        if (darkmode) {
+            panel.setBackground(Color.DARK_GRAY);
             var all_lists = new JList[]{fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
             for (var list : all_lists){
                 list.setForeground(Color.white);
@@ -147,22 +138,18 @@ public class Tagebuch implements ActionListener {
         save(abend_bearbeiten, abend_delete, abendessen_list);
         save(snack_bearbeiten, snack_delete, snacks_list);
 
-        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
-        sprache = Integer.parseInt(get_sprache.getResult());
-
         int len = lab_lang.length + but_lang.length;
         int ii;
         for (int i = 0; len > i; i++) {
             if (lab_lang.length > i) {
-                lab_lang[i].setText(spracharr[i][this.sprache]);
+                lab_lang[i].setText(spracharr[i][sprache]);
             } else {
                 ii = i - lab_lang.length;
-                but_lang[ii].setText(spracharr[i][this.sprache]);
+                but_lang[ii].setText(spracharr[i][sprache]);
             }
         }
         dat();
     }
-
 
     public void save(JButton name_edit, JButton name_delete, JList<String> list_name){
         name_edit.setVisible(false);
@@ -216,27 +203,29 @@ public class Tagebuch implements ActionListener {
         Date fruh = c.getTime();
         c.add(Calendar.DATE, 2);
         Date spat = c.getTime();
-        if (ft.format(date_now).equals(ft.format(date_select))){
+        if (ft.format(date_now).equals(ft.format(date))){
             String [] heute_list = {"Heute","Today"};
-            datum_label.setText(heute_list[this.sprache]);
+            datum_label.setText(heute_list[sprache]);
         }
         else {
-            datum_label.setText(format.format(date_select));
+            datum_label.setText(format.format(date));
         }
-        if (ft.format(fruh.getTime()).equals(ft.format(date_select))){
+        if (ft.format(fruh.getTime()).equals(ft.format(date))){
             String [] gestern_list = {"Gestern","Yesterday"};
-            datum_label.setText(gestern_list[this.sprache]);
+            datum_label.setText(gestern_list[sprache]);
         }
-        if (ft.format(spat.getTime()).equals(ft.format(date_select))){
+        if (ft.format(spat.getTime()).equals(ft.format(date))){
             String [] morgen_list = {"Morgen","Tomorrow"};
-            datum_label.setText(morgen_list[this.sprache]);
+            datum_label.setText(morgen_list[sprache]);
         }
-        c.setTime(date_select);
+        c.setTime(date);
     }
     //Abrufen der Daten die an dem Ausgewählten Datum gespeichert wurden
-    public void list_content(ArrayList<Integer> kalories, ArrayList<Integer> proteins){
+    public ArrayList[] list_content(){
+        ArrayList<Integer> kalories = new ArrayList<>();
+        ArrayList<Integer> proteins = new ArrayList<>();
         try {
-            resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date_select) + "'");
+            resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + id + "' AND datum = '" + ft.format(date) + "'");
             while (resultSet.next()){
                 int kalorien = resultSet.getInt("kalorien");
                 kalories.add(kalorien);
@@ -247,22 +236,15 @@ public class Tagebuch implements ActionListener {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        ArrayList[] list = new ArrayList[2];
+        list[0] = kalories;
+        list[1] = proteins;
+        return list;
     }
 
-    int get_ben_id = 0;
     //Die Daten des Benutzers abrufen
     public void content(){
-        DBConnect get_gender = new DBConnect("SELECT gender FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "gender",0);
-        int gender = Integer.parseInt(get_gender.getResult());
-        DBConnect get_alter = new DBConnect("SELECT age FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "age", 0);
-        int alter = Integer.parseInt(get_alter.getResult());
-        DBConnect get_gewicht = new DBConnect("SELECT gewicht FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "gewicht", 0);
-        double gewicht = Double.parseDouble(get_gewicht.getResult());
-        DBConnect get_groesse = new DBConnect("SELECT groesse FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "groesse", 0);
-        double groesse = Double.parseDouble(get_groesse.getResult());
-        DBConnect get_muskel = new DBConnect("SELECT muskel FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "muskel", 0);
-        int muskel = Integer.parseInt(get_muskel.getResult());
-        //Stellt gewisse Werte aus wenn der Nutzer keine Muskeln aufbauen möchte
+
         if (muskel == 0){
             protein_ziel_label.setVisible(false);
             konsumierte_protein_label.setVisible(false);
@@ -278,30 +260,24 @@ public class Tagebuch implements ActionListener {
         }
         double cal_formel;
         if(gender == 1){
-            cal_formel =  (66.47 + (13.7 * gewicht) + (5 * groesse) - (6.8 * alter));
+            cal_formel =  (66.47 + (13.7 * gewicht) + (5 * groesse) - (6.8 * age));
         }else{
-            cal_formel =  (655.1 + (9.6 * gewicht) + (1.8 * groesse) - (4.7 * alter));
+            cal_formel =  (655.1 + (9.6 * gewicht) + (1.8 * groesse) - (4.7 * age));
         }
         //Verbindung um id des Benutzer zu erhalten
         try {
-            resultSet = statement.executeQuery("SELECT id FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'");
-            while (resultSet.next()){
-                get_ben_id = resultSet.getInt("id");
-            }
-            DBConnect bulk = new DBConnect("SELECT bulk FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'", "bulk", 0);
-            ArrayList<Integer> kalories = new ArrayList<>();
-            ArrayList<Integer> proteins = new ArrayList<>();
-            list_content(kalories, proteins);
+
+            ArrayList[] list = list_content();
 
             int anz_kalorien = 0;
-            for (Integer kalory : kalories) {
-                anz_kalorien = anz_kalorien + kalory;
+            for (Object kalory : list[0]) {
+                anz_kalorien = anz_kalorien + (int) kalory;
             }
 
-            if (bulk.getResult().equals("1")){
+            if (bulk == 1) {
                 cal_formel = cal_formel + 350;
             }
-            if (bulk.getResult().equals("2")){
+            if (bulk == 2) {
                 cal_formel = cal_formel - 350;
             }
             int formel_gerund = (int) Math.round(cal_formel);
@@ -314,8 +290,8 @@ public class Tagebuch implements ActionListener {
 
 
             int anz_protein = 0;
-            for (Integer protein : proteins) {
-                anz_protein = anz_protein + protein;
+            for (Object protein : list[1]) {
+                anz_protein = anz_protein + (int) protein;
             }
             formel_gerund = (int) Math.round(prot_formel);
             double prot_rest = prot_formel - anz_protein;
@@ -325,20 +301,10 @@ public class Tagebuch implements ActionListener {
             rest_round = (int) (Math.round(prot_rest * 10d) / 10d);
             verb_protein.setText(String.valueOf(rest_round));
 
-
-            //Frühstück Kalorien werden angezeigt
-            get_meal_cal(1);
-            fruh_kalorien.setText(String.valueOf(this.anz_fruh_kalorien));
-            //Mittagessen Kalorien werden angezeigt
-            get_meal_cal(2);
-            mit_kalorien.setText(String.valueOf(this.anz_mit_kalorien));
-            //Abendessen Kalorien werden angezeigt
-            get_meal_cal(3);
-            abend_kalorien.setText(String.valueOf(this.anz_abend_kalorien));
-            //Snacks Kalorien werden angezeigt
-            get_meal_cal(4);
-            snack_kalorien.setText(String.valueOf(this.anz_snack_kalorien));
-
+            fruh_kalorien.setText(String.valueOf(get_meal_cal(1)));
+            mit_kalorien.setText(String.valueOf(get_meal_cal(2)));
+            abend_kalorien.setText(String.valueOf(get_meal_cal(3)));
+            snack_kalorien.setText(String.valueOf(get_meal_cal(4)));
 
             get_select(fruhstuck_list, fruhstuck,1);
 
@@ -352,39 +318,27 @@ public class Tagebuch implements ActionListener {
         }
     }
 
-    public void get_meal_cal(int mahlzeit_id){
+    public int get_meal_cal(int mahlzeit_id) {
+        int anz_kalorien = 0;
         try {
-            resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + get_ben_id + "' AND datum = '" + ft.format(date_select) + "' AND mahlzeit = " + mahlzeit_id + "");
+            resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + id + "' AND datum = '" + ft.format(date) + "' AND mahlzeit = " + mahlzeit_id + "");
             ArrayList<Integer> kalories = new ArrayList<>();
             while (resultSet.next()){
                 int kalorien = resultSet.getInt("kalorien");
                 kalories.add(kalorien);
             }
-            int anz_kalorien = 0;
             for (Integer kalory : kalories) {
                 anz_kalorien = anz_kalorien + kalory;
-            }
-
-            if (mahlzeit_id == 1){
-                this.anz_fruh_kalorien = anz_kalorien;
-            }
-            if (mahlzeit_id == 2){
-                this.anz_mit_kalorien = anz_kalorien;
-            }
-            if (mahlzeit_id == 3){
-                this.anz_abend_kalorien = anz_kalorien;
-            }
-            if (mahlzeit_id == 4){
-                this.anz_snack_kalorien = anz_kalorien;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return anz_kalorien;
     }
-    //Abgespeicherte Mahlzeiten abrufen
+
     public void get_select(JList<String> list_name , DefaultListModel<String> name, int mahlzeit_id) throws SQLException {
         name.clear();
-        resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + get_ben_id + " AND mahlzeit.ben = " + get_ben_id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date_select) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
+        resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + id + " AND mahlzeit.ben = " + id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
         ArrayList<String> names = new ArrayList<>();
         while (resultSet.next()){
             String mahl_name = resultSet.getString("Name");
@@ -398,10 +352,10 @@ public class Tagebuch implements ActionListener {
     int correct_id = 0;
     public void on_button(JList<String> name, int mahlzeit_id){
         String right_name = name.getSelectedValue();
-
         try {
-            DBConnect fruh_select = new DBConnect("SELECT id FROM mahlzeit WHERE Name = '" + right_name + "'", "id", 0);
-
+            DBConnect fruh_select = new DBConnect("SELECT id FROM mahlzeit WHERE Name = '" + right_name + "'");
+            fruh_select.setSql_get("id");
+            fruh_select.con();
             resultSet = statement.executeQuery("SELECT id FROM mmm WHERE mahl = '" + fruh_select.getResult() + "' AND mahlzeit = " + mahlzeit_id + "");
             ArrayList<Integer> also_same_id = new ArrayList<>();
             while (resultSet.next()){
@@ -429,114 +383,69 @@ public class Tagebuch implements ActionListener {
         }
     }
 
-    public void on_delete(JList<String> name, int mahlzeit_id){
+    public void on_delete(JList<String> name, int mahlzeit_id) {
         on_button(name,mahlzeit_id);
-        new DBConnect("DELETE FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", " ", 1);
+        DBConnect dbConnect = new DBConnect("DELETE FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "");
+        dbConnect.con();
         content();
     }
 
-    public void on_edit(JList<String> name, int mahlzeit_id){
+    public void on_edit(JList<String> name, int mahlzeit_id) {
         on_button(name, mahlzeit_id);
-        DBConnect get_mahl = new DBConnect("SELECT mahl FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", "mahl", 0);
+        DBConnect get_mahl = new DBConnect("SELECT mahl FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "");
+        get_mahl.setSql_get("mahl");
+        get_mahl.con();
         String mahl = get_mahl.getResult();
 
-        DBConnect get_name = new DBConnect("SELECT Name FROM mahlzeit WHERE id = " + mahl + "", "Name", 0);
+        DBConnect get_name = new DBConnect("SELECT Name FROM mahlzeit WHERE id = " + mahl + "");
+        get_name.setSql_get("Name");
+        get_name.con();
         String mahl_name = get_name.getResult();
 
-        DBConnect get_port = new DBConnect("SELECT port FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "", "port", 0);
+        DBConnect get_port = new DBConnect("SELECT port FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "");
+        get_port.setSql_get("port");
+        get_port.con();
         String port = get_port.getResult();
 
-        frame.dispose();
-        Dimension frame_size = frame.getSize();
-        Point frame_loc = frame.getLocation();
-        Bearbeiten n = new Bearbeiten(frame_size, frame_loc, this.benutzername, mahl_name ,port, correct_id, date_select);
-        n.content();
-    }
-
-    public void on_new_meal(String mahlzeit){
-        frame.dispose();
-        Dimension frame_size = frame.getSize();
-        Point frame_loc = frame.getLocation();
-        Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc, mahlzeit, this.benutzername, date_select);
-        mahl.content();
+        frame.remove(panel);
+        Bearbeiten bearbeiten = new Bearbeiten(mahl_name ,port, correct_id);
+        bearbeiten.content();
     }
 
     @Override
     //Sprache Anpassen für die Überschriften für die Bearbeiten seite
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == Fruhstuck){
-            String mahl_name = "";
-            if (sprache == 0){
-                mahl_name = "Frühstück";
+        for (int i = 0; i < 4; i++) {
+            JList<String> list = this.list[i];
+            if (e.getSource() == this.add[i]) {
+                String mahl_name = this.meals[i][0];
+                if (sprache == 1) {
+                    mahl_name = this.meals[i][1];
+                }
+                frame.remove(panel);
+                Mahlzeit_auswahl mahlzeit_auswahl = new Mahlzeit_auswahl(mahl_name);
+                mahlzeit_auswahl.content();
             }
-            else if (sprache == 1){
-                mahl_name = "Breakfast";
+            if (e.getSource() == this.delete[i]) {
+                on_delete(list, i+1);
             }
-            on_new_meal(mahl_name);
-        }
-        if (e.getSource() == Mittagessen){
-            String mahl_name = "";
-            if (sprache == 0){
-                mahl_name = "Mittagessen";
+            if (e.getSource() == this.edit[i]) {
+                on_edit(list, i+1);
             }
-            else if (sprache == 1){
-                mahl_name = "Lunch";
-            }
-            on_new_meal(mahl_name);
-        }
-        if (e.getSource() == Abendessen){
-            String mahl_name = "";
-            if (sprache == 0){
-                mahl_name = "Abendessen";
-            }
-            else if (sprache == 1){
-                mahl_name = "Dinner";
-            }
-            on_new_meal(mahl_name);
-        }
-        if (e.getSource() == Snacks){
-            on_new_meal("Snacks");
-        }
-        if (e.getSource() == fruh_bearbeiten){
-            on_edit(fruhstuck_list, 1);
-        }
-        if (e.getSource() == fruh_delete){
-            on_delete(fruhstuck_list,1);
-        }
-        if (e.getSource() == mit_bearbeiten){
-            on_edit(mittagessen_list, 2);
-        }
-        if (e.getSource() == mit_delete){
-            on_delete(mittagessen_list,2);
-        }
-        if (e.getSource() == abend_bearbeiten){
-            on_edit(abendessen_list, 3);
-        }
-        if (e.getSource() == abend_delete){
-            on_delete(abendessen_list,3);
-        }
-        if (e.getSource() == snack_bearbeiten){
-            on_edit(snacks_list, 4);
-        }
-        if (e.getSource() == snack_delete){
-            on_delete(snacks_list,4);
         }
         if (e.getSource() == einstellungen){
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            new Einstellungen(frame_size, frame_loc, this.benutzername, date_select);
+            frame.remove(panel);
+            new Einstellungen();
         }
-        //testet in welche Richtung Zukunftoder Vergangenheit sich der Nutzer bewegen will und passt das Datum entsprechend an
         if (e.getSource() == fruher){
             c.add(Calendar.DATE, -1);
-            date_select = c.getTime();
+            date = c.getTime();
             dat();
             content();
         }
         if (e.getSource() == spater){
             c.add(Calendar.DATE, 1);
-            date_select = c.getTime();
+            date = c.getTime();
             dat();
             content();
         }

@@ -1,13 +1,12 @@
 package Kalorienzahler;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
-public class Registrierung implements ActionListener {
-    private JPanel panel1;
+public class Registrierung extends Global implements ActionListener {
+    private JPanel panel;
     private JTextField Benutzer;
     private JPasswordField Passwort;
     private JPasswordField Passwort_Best;
@@ -22,11 +21,9 @@ public class Registrierung implements ActionListener {
     private JSpinner gewicht;
     SpinnerNumberModel groesse_model = new SpinnerNumberModel(180, 0.00, 1000.00, 1);
     private JSpinner groesse;
-    private final JFrame frame;
 
-    public Registrierung(Dimension size, Point loc){
-        frame = new JFrame();
-        new StarterPack(frame, panel1, "Registrierung", size, loc);
+    public Registrierung() {
+        newPanel(panel);
 
         alter.setModel(alter_model);
         gewicht.setModel(gewicht_model);
@@ -37,7 +34,12 @@ public class Registrierung implements ActionListener {
         mann.addActionListener(this);
         weib.addActionListener(this);
     }
-    //Prüfen ob die Angegebenen Daten korrekt sind
+
+    public void sendLogin() {
+        frame.remove(panel);
+        new Login();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == Registrieren) {
@@ -77,16 +79,15 @@ public class Registrierung implements ActionListener {
                                 error_message.setText("Wählen eines der Gender aus!");
                             }
                             else {
-                                DBConnect check = new DBConnect("SELECT Benutzername FROM benutzer WHERE Benutzername = '" + benutzer + "'","Benutzername",0);
+                                DBConnect check = new DBConnect("SELECT Benutzername FROM benutzer WHERE Benutzername = '" + benutzer + "'");
+                                check.setSql_get("Benutzername");
+                                check.con();
                                 if (check.getResult() != null) {
                                     error_message.setText("Benutzername wird bereits verwendet");
                                 } else {
                                     Hash p = new Hash(passwort);
-                                    new DBConnect("INSERT INTO benutzer (Benutzername, Passwort, gender, age, gewicht, groesse) VALUES ('" + benutzer + "', '" + p.getHash() + "', " + gender + ", " + alter + ", " + gewicht + ", " + groesse + ")","",1);
-                                    frame.dispose();
-                                    Dimension frame_size = frame.getSize();
-                                    Point frame_loc = frame.getLocation();
-                                    new Login(frame_size, frame_loc);
+                                    new DBConnect("INSERT INTO benutzer (Benutzername, Passwort, gender, age, gewicht, groesse) VALUES ('" + benutzer + "', '" + p.getHash() + "', " + gender + ", " + alter + ", " + gewicht + ", " + groesse + ")");
+                                    sendLogin();
                                 }
                             }
                         }
@@ -95,10 +96,7 @@ public class Registrierung implements ActionListener {
             }
         }
         if (e.getSource() == Login) {
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            new Login(frame_size, frame_loc);
+            sendLogin();
         }
         if (e.getSource() == mann){
             if (weib.isSelected()){

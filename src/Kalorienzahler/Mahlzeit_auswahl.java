@@ -6,10 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
-public class Mahlzeit_auswahl implements ActionListener {
-    private JPanel panel1;
+public class Mahlzeit_auswahl extends Global implements ActionListener {
+    private JPanel panel;
     private JButton erstellen;
     private JLabel mahl;
     private JButton zuruck;
@@ -30,11 +29,8 @@ public class Mahlzeit_auswahl implements ActionListener {
     private JLabel fat_label;
     private JLabel mahlzeit_label;
     private JLabel portionen_label;
-    private final JFrame frame;
 
     private final String mahlzeit;
-    private final String benutzername;
-    private int userid;
     private double anz_portionen;
 
     private double carb1;
@@ -42,7 +38,6 @@ public class Mahlzeit_auswahl implements ActionListener {
     private double fat1;
 
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
-    private final Date date_select;
 
     //Arrays mit Sprachen
     String [] mahlzeit_list = {"Mahlzeit","Meal"};
@@ -68,7 +63,8 @@ public class Mahlzeit_auswahl implements ActionListener {
     Statement statement = null;
     ResultSet resultSet = null;
 
-    public Mahlzeit_auswahl(Dimension size, Point loc, String mahlzeit, String benutzername, Date datum){
+
+    public Mahlzeit_auswahl(String mahlzeit) {
         //Verbindung wird aufgebaut
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
@@ -76,21 +72,18 @@ public class Mahlzeit_auswahl implements ActionListener {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        this.date_select = datum;
+        frame.add(panel);
+        frame.revalidate();
+        frame.repaint();
 
         this.mahlzeit = mahlzeit;
-        this.benutzername = benutzername;
 
-        frame = new JFrame();
-        new StarterPack(frame, panel1, "Mahlzeit Auswählen", size, loc);
 
         hidden.setVisible(false);
 
         for (JButton but : all_buttons){
             but.addActionListener(this);
         }
-        dropname.addActionListener(this);
 
         SpinnerNumberModel model = new SpinnerNumberModel(1, 0.0, 100000.0, 1);
         portion.setModel(model);
@@ -102,8 +95,6 @@ public class Mahlzeit_auswahl implements ActionListener {
     }
     public void sprach() {
         //Ausgewählte Sprache des Benutzers wird angepasst
-        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
-        int sprache = Integer.parseInt(get_sprache.getResult());
         int len = lab_lang.length + but_lang.length;
         int ii;
         //Alle Labels und Buttons werden auf die gewünschte Sprache übersetzt
@@ -124,8 +115,9 @@ public class Mahlzeit_auswahl implements ActionListener {
         else {
             String mahl_name = String.valueOf(dropname.getSelectedItem());
             try {
-                DBConnect get_mahl = new DBConnect("SELECT * FROM mahlzeit WHERE Name = '" + mahl_name + "'", what, 0);
-
+                DBConnect get_mahl = new DBConnect("SELECT * FROM mahlzeit WHERE Name = '" + mahl_name + "'");
+                get_mahl.setSql_get(what);
+                get_mahl.con();
                 String mahl = get_mahl.getResult();
                 int mahl_int = Integer.parseInt(mahl);
                 double mahl_double = mahl_int * this.anz_portionen;
@@ -139,42 +131,28 @@ public class Mahlzeit_auswahl implements ActionListener {
         }
     }
     public void content(){
-        Darkmode d = new Darkmode(this.benutzername, all_buttons, all_labels);
-        if (d.isDark()){
-            panel1.setBackground(Color.DARK_GRAY);
+        new Darkmode(all_buttons, all_labels);
+        if (darkmode) {
+            panel.setBackground(Color.DARK_GRAY);
         }
 
         mahl.setText(this.mahlzeit);
         this.anz_portionen = (double)portion.getValue();
 
         try{
-            //Verbindung um id zu erhalten
-            resultSet = statement.executeQuery("SELECT * FROM benutzer WHERE Benutzername = '" + this.benutzername + "'");
-            while (resultSet.next()){
-                this.userid = resultSet.getInt("id");
-            }
-        }
-        catch (Exception E){
-            System.out.println("verbindung zu ID ist Fehlgeschlagen");
-        }
-        try{
-            //Verbindung um Namen zu erhalten
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + this.userid + " ORDER BY Name");
-            while (resultSet.next()){
+            resultSet = statement.executeQuery("SELECT * FROM mahlzeit WHERE ben = " + id + " ORDER BY Name");
+            while (resultSet.next()) {
                 String benutzernamen = resultSet.getString("Name");
                 dropname.addItem(benutzernamen);
             }
+            dropname.addActionListener(this);
         }
         catch (Exception E){
             System.out.println("verbindung zu Name ist Fehlgeschlagen");
         }
         try {
-            //Anzahl Kohlenhydrate werden abgerufen
             set_data("carb", this.anz_carbs);
-            //Anzahl Protein wird abgerufen
             set_data("protein", this.anz_protein);
-            //Anzahl Fett wird abgerufen
             set_data("fat", this.anz_fat);
 
             if (this.anz_carbs.getText().equals("") || this.anz_protein.getText().equals("") || this.anz_fat.getText().equals("")){
@@ -199,43 +177,33 @@ public class Mahlzeit_auswahl implements ActionListener {
             System.out.println("content fail");
         }
     }
+    public void sendTagebuch() {
+        frame.remove(panel);
+        Tagebuch tagebuch = new Tagebuch();
+        tagebuch.content();
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==erstellen){
-            //Frame wird geschlossen und Mahlzeit geöffnet
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            new Mahlzeit(frame_size, frame_loc, this.mahlzeit, this.benutzername, date_select);
+            frame.remove(panel);
+            new Mahlzeit(this.mahlzeit);
         }
         if (e.getSource()== zuruck){
-            //Frame wird geschlossen und Tagebuch geöffnet
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername, date_select);
-            n.content();
+            sendTagebuch();
         }
         if (e.getSource()==dropname){
             String mahl_name = String.valueOf(dropname.getSelectedItem());
-
-            //Error Message wird reseted
             error_message.setText("");
             this.anz_portionen = (double)portion.getValue();
-            //Error Handling wird gestartet
             try {
                 resultSet = statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
 
-                if (error_message.getText().isEmpty()){
+                if (error_message.getText().isEmpty()) {
                     while (resultSet.next()){
-                        //Anzahl Kohlenhydrate werden abgerufen
                         set_data("carb", this.anz_carbs);
-                        //Anzahl Protein wird abgerufen
                         set_data("protein", this.anz_protein);
-                        //Anzahl Fett wird abgerufen
                         set_data("fat", this.anz_fat);
-                        //Anzahl Kalorien werden abgerufen
                         double carb_double = Double.parseDouble(this.anz_carbs.getText());
                         double protein_double = Double.parseDouble(this.anz_protein.getText());
                         double fat_double = Double.parseDouble(this.anz_fat.getText());
@@ -288,22 +256,10 @@ public class Mahlzeit_auswahl implements ActionListener {
                     get_mahl_id = resultSet.getInt("id");
                 }
 
-                //Verbindung um id des Benutzer zu erhalten
-                int get_ben_id = 0;
-                resultSet = statement.executeQuery("SELECT id FROM Benutzer WHERE Benutzername = '" + this.benutzername + "'");
-                while (resultSet.next()){
-                    get_ben_id = resultSet.getInt("id");
-                }
-
                 //Data wird eingefügt
-                statement.execute("INSERT INTO mmm (mahl, port, kalorien, carb, protein, fat, datum, ben, mahlzeit) VALUES (" + get_mahl_id + ", " + this.anz_portionen + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date_select) + "', " + get_ben_id + ", " + mahl_check + ")");
+                statement.execute("INSERT INTO mmm (mahl, port, kalorien, carb, protein, fat, datum, ben, mahlzeit) VALUES (" + get_mahl_id + ", " + this.anz_portionen + ", " + this.anz_kalorien.getText() + ", " + this.anz_carbs.getText() + ", " + this.anz_protein.getText() + ", " + this.anz_fat.getText() + ", '" + ft.format(date) + "', " + id + ", " + mahl_check + ")");
 
-                //Frame wird geschlossen und Tagebuch geöffnet
-                frame.dispose();
-                Dimension frame_size = frame.getSize();
-                Point frame_loc = frame.getLocation();
-                Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername, date_select);
-                n.content();
+                sendTagebuch();
             }
             catch (Exception E){
                 E.printStackTrace();
@@ -311,15 +267,12 @@ public class Mahlzeit_auswahl implements ActionListener {
         }
 
         if (e.getSource() == bearbeiten){
-            //Frame wird geschlossen und Mahlzeit_Bearbeiten geöffnet
-            frame.dispose();
             String mahl_name = (String) dropname.getSelectedItem();
             int carb_int = (int) carb1;
             int protein_int = (int) protein1;
             int fat_int = (int) fat1;
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            new Mahlzeit_Bearbeiten(frame_size, frame_loc, this.benutzername, mahl.getText(), mahl_name, carb_int, protein_int, fat_int, date_select);
+            frame.remove(panel);
+            new Mahlzeit_Bearbeiten(mahl.getText(), mahl_name, carb_int, protein_int, fat_int);
         }
     }
 }

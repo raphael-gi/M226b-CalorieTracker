@@ -5,10 +5,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.util.Date;
 
-public class Bearbeiten implements ActionListener {
-    private JPanel panel1;
+public class Bearbeiten extends Global implements ActionListener {
+    private JPanel panel;
     private JButton bearbeiten;
     private JComboBox <String> dropname;
     private JButton confirm;
@@ -26,16 +25,11 @@ public class Bearbeiten implements ActionListener {
     private JLabel protein_label;
     private JLabel fat_label;
     private JLabel head_label;
-    private final JFrame frame;
 
-    private final String benutzername;
     private final String mahl_name;
     private final String Portion;
     private final int mmm_id;
 
-    private final Date date_select;
-
-    private int userid;
     private double anz_portionen;
 
     //Arrays mit Sprachen
@@ -60,7 +54,7 @@ public class Bearbeiten implements ActionListener {
     Statement statement = null;
     ResultSet resultSet = null;
 
-    public Bearbeiten(Dimension size, Point loc, String benutzername, String mahl_name, String portion, int mmm_id, Date datum){
+    public Bearbeiten(String mahl_name, String portion, int mmm_id){
         try {
             //Verbindung zur DB wird aufgebaut
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
@@ -69,19 +63,15 @@ public class Bearbeiten implements ActionListener {
             e.printStackTrace();
         }
 
-        this.benutzername = benutzername;
+        newPanel(panel);
+
         this.Portion = portion;
         this.mahl_name = mahl_name;
         this.mmm_id = mmm_id;
-        this.date_select = datum;
-
-        frame = new JFrame();
-        new StarterPack(frame, panel1, "Bearbeiten", size, loc);
 
         hidden.setVisible(false);
 
         //Action Listeners wird hinzugefügt
-        dropname.addActionListener(this);
         for (JButton but : all_buttons){
             but.addActionListener(this);
         }
@@ -95,11 +85,9 @@ public class Bearbeiten implements ActionListener {
     }
     public void sprach(){
         //Ausgewählte Sprache des Benutzers wird angepasst
-        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
-        int sprache = Integer.parseInt(get_sprache.getResult());
         int len = lab_lang.length + but_lang.length;
         int ii;
-        //Alle Labels und Buttons werden auf die gewünschte Sprache übersetzt
+
         for (int i = 0; len > i; i++){
             if (lab_lang.length > i){
                 lab_lang[i].setText(spracharr[i][sprache]);
@@ -113,7 +101,9 @@ public class Bearbeiten implements ActionListener {
     public void set_data(String what, JLabel name) {
         String mahl_name = String.valueOf(dropname.getSelectedItem());
         try {
-            DBConnect get_mahl = new DBConnect("SELECT * FROM mahlzeit WHERE Name = '" + mahl_name + "'", what, 0);
+            DBConnect get_mahl = new DBConnect("SELECT * FROM mahlzeit WHERE Name = '" + mahl_name + "'");
+            get_mahl.setSql_get(what);
+            get_mahl.con();
             String mahl = get_mahl.getResult();
             int mahl_int = Integer.parseInt(mahl);
             double mahl_double = mahl_int * this.anz_portionen;
@@ -126,54 +116,41 @@ public class Bearbeiten implements ActionListener {
         }
     }
     public void content(){
-        //Darkmode wird gemacht
-        Darkmode d = new Darkmode(this.benutzername, all_buttons, all_labels);
-        if (d.isDark()){
-            panel1.setBackground(Color.DARK_GRAY);
+        new Darkmode(all_buttons, all_labels);
+        if (darkmode){
+            panel.setBackground(Color.DARK_GRAY);
         }
 
         double Portion = Double.parseDouble(this.Portion);
         portionen.setValue(Portion);
         try{
-            //Verbindung um id zu erhalten
-            resultSet = statement.executeQuery("SELECT * FROM benutzer WHERE Benutzername = '" + this.benutzername + "'");
-            while (resultSet.next()){
-                this.userid = resultSet.getInt("id");
-            }
-        }
-        catch (Exception E){
-            System.out.println("verbindung zu ID ist Fehlgeschlagen");
-        }
-        try{
-            //Verbindung um Namen zu erhalten
-            resultSet = statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + this.userid + " ORDER BY Name");
+            resultSet = statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + id + " ORDER BY Name");
             while (resultSet.next()){
                 String benutzernamen = resultSet.getString("Name");
                 dropname.addItem(benutzernamen);
             }
             dropname.setSelectedItem(this.mahl_name);
+            dropname.addActionListener(this);
         }
         catch (Exception E){
             System.out.println("verbindung zu Name ist Fehlgeschlagen");
         }
     }
+    public void sendTagebuch() {
+        frame.remove(panel);
+        Tagebuch tagebuch = new Tagebuch();
+        tagebuch.content();
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == zuruck){
-            //Frame wird geschlossen und Tagebuch wird geöffnet
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername, date_select);
-            n.content();
+        if (e.getSource() == zuruck) {
+            sendTagebuch();
         }
         if (e.getSource() == dropname || e.getSource() == confirm || e.getSource() == hidden){
             String mahl_name = String.valueOf(dropname.getSelectedItem());
 
-            //Error Message wird reseted
             error_message.setText("");
-            //Error Handling beginn
             try {
                 resultSet = statement.executeQuery("SELECT * FROM mahlzeit WHERE name = '" + mahl_name + "'");
 
@@ -207,28 +184,23 @@ public class Bearbeiten implements ActionListener {
                 ex.printStackTrace();
             }
         }
-        if (e.getSource() == bearbeiten){
+        if (e.getSource() == bearbeiten) {
             String drop_selected = (String)dropname.getSelectedItem();
             int kalorien = Integer.parseInt(anz_kalorien.getText());
             float carb = Float.parseFloat(anz_carbs.getText());
             float protein = Float.parseFloat(anz_protein.getText());
             float fat = Float.parseFloat(anz_fat.getText());
 
-
-            DBConnect get_ben = new DBConnect("SELECT id FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "id", 0);
-            String ben_id = get_ben.getResult();
-
-            DBConnect get_mahl = new DBConnect("SELECT id FROM mahlzeit WHERE Name = '" + drop_selected + "' AND ben = " + ben_id + "", "id", 0);
+            DBConnect get_mahl = new DBConnect("SELECT id FROM mahlzeit WHERE Name = '" + drop_selected + "' AND ben = " + id + "");
+            get_mahl.setSql_get("id");
+            get_mahl.con();
             String mahl = get_mahl.getResult();
-            //verändert das ausgewählte mahl in der DB
-            new DBConnect("UPDATE mmm SET mahl = " + mahl + ", port = " + portionen.getValue() + ", kalorien = " + kalorien + ", carb = " + carb + ", protein = " + protein + ", fat = " + fat + " WHERE id = " + this.mmm_id + "", " ", 1);
-
-            //Frame wird geschlossen und Tagebuch wird geöffnet
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Tagebuch n = new Tagebuch(frame_size, frame_loc, this.benutzername, date_select);
-            n.content();
+            System.out.println(mahl);
+            System.out.println(this.mmm_id);
+            //DBConnect dbConnect = new DBConnect("UPDATE mmm SET mahl = " + mahl + ", port = " + portionen.getValue() + ", kalorien = " + kalorien + ", carb = " + carb + ", protein = " + protein + ", fat = " + fat + " WHERE id = " + this.mmm_id + "");
+            DBConnect dbConnect = new DBConnect("UPDATE mmm SET mahl = " + mahl + " WHERE  id = " + this.mmm_id + "");
+            dbConnect.con();
+            sendTagebuch();
         }
     }
 }

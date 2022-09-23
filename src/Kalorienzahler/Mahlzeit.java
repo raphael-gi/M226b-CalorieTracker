@@ -4,11 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
 
-public class Mahlzeit implements ActionListener {
-    private final JFrame frame;
-    private JPanel panel1;
+public class Mahlzeit extends Global implements ActionListener {
+    private JPanel panel;
     private JButton Erstellen;
     private JTextField Name;
     private JLabel error_message;
@@ -25,9 +23,6 @@ public class Mahlzeit implements ActionListener {
     SpinnerNumberModel fat_model = new SpinnerNumberModel(0, 0, 100000, 1);
 
     private final String mahlzeit;
-    private final String benutzername;
-
-    private final Date date_selected;
 
     //Arrays mit Sprachen
     String [] name_list = {"Mahlzeitame","Mealname"};
@@ -43,13 +38,13 @@ public class Mahlzeit implements ActionListener {
     JButton[] all_buttons = {Erstellen, zuruck};
     JLabel[] all_labels = {name_label, carb_label, protein_label, fat_label};
 
-    public Mahlzeit(Dimension size, Point loc, String mahlzeit, String benutzername, Date datum){
-        this.mahlzeit = mahlzeit;
-        this.benutzername = benutzername;
-        this.date_selected = datum;
 
-        frame = new JFrame();
-        new StarterPack(frame, panel1, "Mahlzeit Erstellen", size, loc);
+    public Mahlzeit(String mahlzeit){
+        this.mahlzeit = mahlzeit;
+
+        frame.add(panel);
+        frame.revalidate();
+        frame.repaint();
 
         //JSpinner erhalten ein Model
         carb_input.setModel(carb_model);
@@ -66,14 +61,12 @@ public class Mahlzeit implements ActionListener {
     }
 
     public void darkmode(){
-        Darkmode d = new Darkmode(this.benutzername, all_buttons, all_labels);
-        if (d.isDark()){
-            panel1.setBackground(Color.DARK_GRAY);
+        new Darkmode(all_buttons, all_labels);
+        if (darkmode) {
+            panel.setBackground(Color.DARK_GRAY);
         }
     }
     public void sprach(){
-        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
-        int sprache = Integer.parseInt(get_sprache.getResult());
         int len = all_labels.length + all_buttons.length;
         int ii;
         for (int i = 0; len > i; i++){
@@ -85,6 +78,11 @@ public class Mahlzeit implements ActionListener {
                 all_buttons[ii].setText(spracharr[i][sprache]);
             }
         }
+    }
+    public void sendMahlzeit() {
+        frame.remove(panel);
+        Mahlzeit_auswahl mahlzeit_auswahl = new Mahlzeit_auswahl(this.mahlzeit);
+        mahlzeit_auswahl.content();
     }
 
     @Override
@@ -107,10 +105,9 @@ public class Mahlzeit implements ActionListener {
                     error_message.setText("Der Name ist zu lange!");
                 }
                 else {
-                    DBConnect check_id = new DBConnect("SELECT id FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "id", 0);
-                    String id = check_id.getResult();
-
-                    DBConnect check_name = new DBConnect("SELECT Name FROM mahlzeit WHERE Name = '" + name + "' AND ben = " + id + "", "Name", 0);
+                    DBConnect check_name = new DBConnect("SELECT Name FROM mahlzeit WHERE Name = '" + name + "' AND ben = " + id + "");
+                    check_name.setSql_get("Name");
+                    check_name.con();
                     if (check_name.getResult() != null){
                         error_message.setText("Mahlzeit exestiert bereits. Wählen sie einen anderen Namen!");
                     }
@@ -118,16 +115,9 @@ public class Mahlzeit implements ActionListener {
                         try{
                             int kalorien = carb * 4 + protein * 4 + fat * 9;
 
-                            DBConnect get_id = new DBConnect("SELECT id FROM benutzer WHERE Benutzername = '" + this.benutzername + "'","id",0);
-                            int userid = Integer.parseInt(get_id.getResult());
-
-                            new DBConnect("INSERT INTO mahlzeit (Name, kalorien, carb, protein, fat, ben) VALUES ('" + name +"', '" + kalorien +"', '" + carb + "', '" + protein + "', '" + fat + "', '" + userid + "')", "Benutzername", 1);
-                            //Frame wird geschlossen und Mahlzeit_auswahl geöffnet
-                            frame.dispose();
-                            Dimension frame_size = frame.getSize();
-                            Point frame_loc = frame.getLocation();
-                            Mahlzeit_auswahl mahl = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahlzeit, this.benutzername, date_selected);
-                            mahl.content();
+                            DBConnect dbConnect = new DBConnect("INSERT INTO mahlzeit (Name, kalorien, carb, protein, fat, ben) VALUES ('" + name +"', '" + kalorien +"', '" + carb + "', '" + protein + "', '" + fat + "', " + id + ")");
+                            dbConnect.con();
+                            sendMahlzeit();
                         }
                         catch (Exception E){
                             error_message.setText("Geben sie als Wert Zahlen an!");
@@ -138,12 +128,7 @@ public class Mahlzeit implements ActionListener {
         }
 
         if (e.getSource() == zuruck){
-            //Frame wird geschlossen und Mahlzeit_auswahl geöffnet
-            frame.dispose();
-            Dimension frame_size = frame.getSize();
-            Point frame_loc = frame.getLocation();
-            Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahlzeit, this.benutzername, date_selected);
-            n.content();
+            sendMahlzeit();
         }
     }
 }

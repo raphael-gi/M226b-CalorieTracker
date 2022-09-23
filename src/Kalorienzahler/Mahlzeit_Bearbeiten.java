@@ -5,11 +5,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
-import java.sql.*;
-import java.util.Date;
 
-public class Mahlzeit_Bearbeiten implements ActionListener {
-    private JPanel panel1;
+public class Mahlzeit_Bearbeiten extends Global implements ActionListener {
+    private JPanel panel;
     private JButton bearbeiten;
     private JTextField name_input;
     private JLabel name_label;
@@ -24,16 +22,12 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     private JLabel protein_label;
     private JButton zuruck;
     private JButton loeschen;
-    private final JFrame frame;
 
-    private final String benutzername;
     private final String mahl;
     private final String mahl_name;
     private final int carb;
     private final int protein;
     private final int fat;
-
-    private final Date date_selected;
 
     //Arrays mit Sprachen
     String[] carb_list = {"Kohlenhydrate:","Carbohydrates:"};
@@ -49,28 +43,16 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
     //2 Dimensionaler Array mit allen Sprachen Arrays
     String [][] spracharr = {name_list, carb_list, fat_list, protein_list, bearbeiten_list, zuruck_list, loeschen_list};
 
-    Connection connection = null;
-    Statement statement = null;
-    ResultSet resultSet = null;
-
-    public Mahlzeit_Bearbeiten(Dimension size, Point loc, String benutzername, String mahl, String mahl_name, int carb, int protein, int fat, Date datum){
-        //Verbindung zu DBwird aufgebaut
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        this.date_selected = datum;
-        this.benutzername = benutzername;
+    public Mahlzeit_Bearbeiten(String mahl, String mahl_name, int carb, int protein, int fat){
         this.mahl = mahl;
         this.mahl_name = mahl_name;
         this.carb = carb;
         this.protein = protein;
         this.fat = fat;
 
-        frame = new JFrame();
-        new StarterPack(frame, panel1, "Mahlzeit Bearbeiten", size, loc);
+        frame.add(panel);
+        frame.revalidate();
+        frame.repaint();
 
         for (JButton but : all_buttons){
             but.addActionListener(this);
@@ -79,13 +61,9 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         content();
         sprach();
     }
-    //Ausgewählte Sprache des Benutzers wird angepasst
     public void sprach(){
-        DBConnect get_sprache = new DBConnect("SELECT sprache FROM benutzer WHERE Benutzername = '" + this.benutzername + "'", "sprache", 0);
-        int sprache = Integer.parseInt(get_sprache.getResult());
         int len = all_labels.length + all_buttons.length;
         int ii;
-        //Alle Labels und Buttons werden auf die gewünschte Sprache übersetzt
         for (int i = 0; len > i; i++){
             if (all_labels.length > i){
                 all_labels[i].setText(spracharr[i][sprache]);
@@ -107,9 +85,9 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         protein_input.setModel(protein_model);
         fat_input.setModel(fat_model);
 
-        Darkmode d = new Darkmode(this.benutzername, all_buttons, all_labels);
-        if (d.isDark()){
-            panel1.setBackground(Color.DARK_GRAY);
+        new Darkmode(all_buttons, all_labels);
+        if (darkmode){
+            panel.setBackground(Color.DARK_GRAY);
             loeschen.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
                     loeschen.setForeground(Color.RED);
@@ -123,13 +101,10 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
         }
     }
 
-    public void neues_fenster(){
-        //Frame wird geschlossen und Mahlzeit_auswahl geöffnet
-        frame.dispose();
-        Dimension frame_size = frame.getSize();
-        Point frame_loc = frame.getLocation();
-        Mahlzeit_auswahl n = new Mahlzeit_auswahl(frame_size, frame_loc, this.mahl, this.benutzername, date_selected);
-        n.content();
+    public void newFrame() {
+        frame.remove(panel);
+        Mahlzeit_auswahl mahlzeit_auswahl = new Mahlzeit_auswahl(this.mahl);
+        mahlzeit_auswahl.content();
     }
 
     @Override
@@ -142,29 +117,18 @@ public class Mahlzeit_Bearbeiten implements ActionListener {
             int fat = (int) fat_input.getValue();
             int kalorien = (carb * 4) + (protein * 4) + (fat * 9);
 
-            int id = 0;
-            try {
-                resultSet = statement.executeQuery("SELECT id FROM benutzer WHERE Benutzername = '" + benutzername + "'");
-                while (resultSet.next()){
-                    id = resultSet.getInt("id");
-                }
-
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            new DBConnect("UPDATE mahlzeit SET Name = '" + name + "', kalorien = '" + kalorien + "', carb = '" + carb_input.getValue() + "', protein = '" + protein_input.getValue() + "', fat = '" + fat_input.getValue() + "' WHERE Name = '" + mahl_name + "' AND ben = " + id + "", " ", 1);
-
-            neues_fenster();
+            DBConnect dbConnect = new DBConnect("UPDATE mahlzeit SET Name = '" + name + "', kalorien = '" + kalorien + "', carb = '" + carb_input.getValue() + "', protein = '" + protein_input.getValue() + "', fat = '" + fat_input.getValue() + "' WHERE Name = '" + mahl_name + "' AND ben = " + id + "");
+            dbConnect.con();
+            newFrame();
         }
         if (e.getSource() == loeschen){
-            DBConnect id = new DBConnect("SELECT id FROM benutzer WHERE Benutzername = '" + benutzername + "'", "id", 0);
+            DBConnect dbConnect = new DBConnect("DELETE FROM mahlzeit WHERE ben = " + id + " AND Name = '" + mahl_name + "'");
+            dbConnect.con();
 
-            new DBConnect("DELETE FROM mahlzeit WHERE ben = " + id.getResult() + " AND Name = '" + mahl_name + "'", "", 1);
-
-            neues_fenster();
+            newFrame();
         }
         if (e.getSource() == zuruck){
-            neues_fenster();
+            newFrame();
         }
     }
 }
