@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.sql.*;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class Einstellungen extends Global implements ActionListener {
     private JPanel panel;
@@ -65,8 +64,6 @@ public class Einstellungen extends Global implements ActionListener {
     private JRadioButton gew_zuh;
     private JRadioButton gew_halt;
     private JRadioButton gew_ver;
-    private JLabel Sprache_Label;
-    private JComboBox<String> sprachW;
 
     private int new_loeschen_check;
     private int new_name_check;
@@ -77,38 +74,9 @@ public class Einstellungen extends Global implements ActionListener {
     private int new_pas_check2;
 
     //Arrays mit Sprachen
-    String[] sprachen = {"Deutsch","English"};
-    String [] zuruck_list = {"Zurück","Back"};
-    String [] benutzername_list = {"Benutzername:", "Username:"};
-    String [] loeschen_list = {"Account löschen","Delete account"};
-    String [] new_benutzername_list = {"Neuer Benutzername:", "New username:"};
-    String [] gender_list = {"Geschlecht:","Gender:"};
-    String [] age_list = {"Alter:", "Age:"};
-    String [] new_age_list = {"Neues Alter:", "New age:"};
-    String [] einstellungen_list = {"Einstellungen","Settings"};
-    String [] Sprache_list = {"Sprache:","Language:"};
-    String [] andern_list = {"Ändern","Change"};
-    String [] groesse_list = {"Körpergrösse(Cm):","Height (Cm):"};
-    String [] new_groesse_list = {"Neue Körpergrösse(Cm):","New Height(Cm):"};
-    String [] gewicht_list = {"Gewicht(Kg):","Weight(Kg):"};
-    String [] new_gewicht_list = {"Neues Gewicht(Kg):","New weight(Kg):"};
-    String [] password_list = {"Passwort:","Password:"};
-    String [] old_password_list = {"Altes Passwort:","Old password:"};
-    String [] new_password_list = {"Neues Passwort:","New password:"};
-    String [] conf_password_list = {"Neues Passwort bestätigen:","Confirm New password:"};
-    String [] eingeb_password_list = {"Passwort eingeben:","Enter password:"};
-    String [] muskeln_list = {"Muskel Aufbauen","Build muscle"};
-    String [] bestaetigen_list = {"Bestätigen","Confirm"};
-    String [] darkmode_list = {"Darkmode", "Darkmode"};
-    String [] logout_list = {"Logout", "Logout"};
 
     private final JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best, pas_andern_button, old_pas_best, new_pas_best};
-    private final JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label, muskel_aufbau_label, Sprache_Label};
-
-    //Array mit allen Sprachen Arrays
-    String[][] spracharr = {einstellungen_list, Sprache_list, benutzername_list, new_benutzername_list, gender_list, age_list, new_age_list, groesse_list, new_groesse_list, gewicht_list, new_gewicht_list, password_list, old_password_list, new_password_list, conf_password_list, muskeln_list, darkmode_list, eingeb_password_list, zuruck_list, andern_list, andern_list, andern_list, andern_list, andern_list ,andern_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, bestaetigen_list, logout_list, loeschen_list, bestaetigen_list};
-    JLabel[] lab_lang = {einstellungen_label, Sprache_Label, benutzername_label, new_name_label, gender_label, age_label, new_alter_label, groesse_label, new_groesse_label, gewicht_label, new_gewicht_label, pas_label, old_pas_label, new_pas_label, new_pas_best_label, muskel_aufbau_label, darkmode_label, pass_eingeben};
-    JButton[] but_lang = {zuruck, name_andern_button, gender_andern_button, age_andern_button, groesse_andern_button, gewicht_ander_button, pas_andern_button, new_name_best, new_alter_best, new_groesse_best, new_gewicht_best, old_pas_best, new_pas_best, logout, loeschen, bestaetigen};
+    private final JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label, muskel_aufbau_label};
 
     JButton[] un_vis_but = {new_name_best, new_alter_best, new_groesse_best, new_gewicht_best, old_pas_best, new_pas_best, new_pas_best, bestaetigen};
     JLabel[] un_vis_lab = {new_name_label, new_alter_label, new_groesse_label, new_gewicht_label, old_pas_label, new_pas_label, new_pas_best_label, pass_eingeben};
@@ -154,12 +122,6 @@ public class Einstellungen extends Global implements ActionListener {
         //Error Message wird zurückgesetzt
         error_message.setText("");
 
-        for (String nam : sprachen) {
-            sprachW.addItem(nam);
-        }
-        //Es wird geschaut welche sprache ausgewählt ist
-        sprachW.setSelectedIndex(sprache);
-
         //Alles erhält einen Action Listener
         for (JButton but : all_buttons){
             but.addActionListener(this);
@@ -168,10 +130,8 @@ public class Einstellungen extends Global implements ActionListener {
         gew_zuh.addActionListener(this);
         gew_halt.addActionListener(this);
         gew_ver.addActionListener(this);
-        sprachW.addActionListener(this);
 
         //Methoden werden ausgeführt
-        sprach();
         ben();
         gend();
         age();
@@ -180,20 +140,6 @@ public class Einstellungen extends Global implements ActionListener {
         musk();
         bulk();
         dark();
-    }
-    public void sprach(){
-        int len = lab_lang.length + but_lang.length;
-        int ii;
-        //Sprache im Programm für die gewünschte Sprache anpassen
-        for (int i = 0; len > i; i++){
-            if (lab_lang.length > i){
-                lab_lang[i].setText(spracharr[i][sprache]);
-            }
-            else {
-                ii = i - lab_lang.length;
-                but_lang[ii].setText(spracharr[i][sprache]);
-            }
-        }
     }
     public void ben(){
         benutzername.setText(username);
@@ -375,12 +321,11 @@ public class Einstellungen extends Global implements ActionListener {
         if (e.getSource() == dark){
             if (darkmode){
                 upd("dark", "0");
-                darkmode = false;
             }
             else {
                 upd("dark", "1");
-                darkmode = true;
             }
+            darkmode = !darkmode;
             dark();
         }
         if (e.getSource() == zuruck){
@@ -626,17 +571,6 @@ public class Einstellungen extends Global implements ActionListener {
             gew_zuh.setSelected(false);
             bulk = 2;
             bulk();
-        }
-        if (e.getSource() == sprachW){
-            String wahl = (String) sprachW.getSelectedItem();
-            if (Objects.equals(wahl, "Deutsch")){
-                new DBConnect("UPDATE benutzer SET sprache = 0 WHERE id = " + id + "");
-            }
-            if (Objects.equals(wahl, "English")){
-                new DBConnect("UPDATE benutzer SET sprache = 1 WHERE id = " + id + "");
-            }
-            sprach();
-            gend();
         }
     }
 }
