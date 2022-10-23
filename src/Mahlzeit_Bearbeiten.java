@@ -8,16 +8,12 @@ public class Mahlzeit_Bearbeiten extends Global implements ActionListener {
     private JPanel panel;
     private JButton bearbeiten;
     private JTextField name_input;
-    private JLabel name_label;
-    private JLabel carb_label;
     SpinnerNumberModel carb_model = new SpinnerNumberModel(1, 0, 100000, 1);
     private JSpinner carb_input;
     SpinnerNumberModel protein_model = new SpinnerNumberModel(1, 0, 100000, 1);
     private JSpinner protein_input;
     SpinnerNumberModel fat_model = new SpinnerNumberModel(1, 0, 100000, 1);
     private JSpinner fat_input;
-    private JLabel fat_label;
-    private JLabel protein_label;
     private JButton zuruck;
     private JButton loeschen;
 
@@ -27,19 +23,7 @@ public class Mahlzeit_Bearbeiten extends Global implements ActionListener {
     private final int protein;
     private final int fat;
 
-    //Arrays mit Sprachen
-    String[] carb_list = {"Kohlenhydrate:","Carbohydrates:"};
-    String [] name_list={"Name:","Name:"};
-    String [] protein_list={"Protein:","Protein:"};
-    String [] fat_list={"Fett:","Fat:"};
-    String [] zuruck_list = {"Zurück","Back"};
-    String [] loeschen_list = {"Löschen","Delete"};
-    String [] bearbeiten_list = {"Bearbeiten","Edit"};
     JButton[] all_buttons = {bearbeiten, zuruck, loeschen};
-    JLabel[] all_labels = {name_label, carb_label, fat_label, protein_label,};
-
-    //2 Dimensionaler Array mit allen Sprachen Arrays
-    String [][] spracharr = {name_list, carb_list, fat_list, protein_list, bearbeiten_list, zuruck_list, loeschen_list};
 
     public Mahlzeit_Bearbeiten(String mahl, String mahl_name, int carb, int protein, int fat){
         this.mahl = mahl;
@@ -57,20 +41,6 @@ public class Mahlzeit_Bearbeiten extends Global implements ActionListener {
         }
         loeschen.addActionListener(this);
         content();
-        sprach();
-    }
-    public void sprach(){
-        int len = all_labels.length + all_buttons.length;
-        int ii;
-        for (int i = 0; len > i; i++){
-            if (all_labels.length > i){
-                all_labels[i].setText(spracharr[i][sprache]);
-            }
-            else {
-                ii = i - all_labels.length;
-                all_buttons[ii].setText(spracharr[i][sprache]);
-            }
-        }
     }
     public void content(){
         //Labels werden angeschrieben
@@ -82,21 +52,6 @@ public class Mahlzeit_Bearbeiten extends Global implements ActionListener {
         carb_input.setModel(carb_model);
         protein_input.setModel(protein_model);
         fat_input.setModel(fat_model);
-
-        new Darkmode(all_buttons, all_labels);
-        if (darkmode){
-            panel.setBackground(Color.DARK_GRAY);
-            loeschen.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    loeschen.setForeground(Color.RED);
-                    loeschen.setBackground(Color.LIGHT_GRAY);
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    loeschen.setForeground(Color.RED);
-                    loeschen.setBackground(Color.GRAY);
-                }
-            });
-        }
     }
 
     public void newFrame() {

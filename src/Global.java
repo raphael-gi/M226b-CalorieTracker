@@ -1,21 +1,28 @@
 import javax.swing.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Date;
 
-public class Global {
+public class Global extends JFrame {
     public static JFrame frame;
 
-    public static int id;
-    public static String username;
-    public static Date date;
-    public static int gender;
-    public static int age;
-    public static double gewicht;
-    public static double groesse;
-    public static int muskel;
-    public static int bulk;
-    public static int sprache;
-    public static boolean darkmode;
-    public static String password;
+    static Connection connection = null;
+    static Statement statement = null;
+    static ResultSet resultSet = null;
+
+    static int id;
+    static String username;
+    static Date date;
+    static int gender;
+    static int age;
+    static double gewicht;
+    static double groesse;
+    static int muskel;
+    static int bulk;
+    static int sprache;
+    static boolean darkmode;
+    static String password;
 
     public void newPanel(JPanel panel) {
         frame.add(panel);

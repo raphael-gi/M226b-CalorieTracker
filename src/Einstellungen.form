@@ -16,7 +16,7 @@
           <grid row="44" column="1" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="61352" class="javax.swing.JLabel" binding="benutzername_label">
+      <component id="61352" class="javax.swing.JLabel">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -52,7 +52,7 @@
           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="9f984" class="javax.swing.JLabel" binding="darkmode_label">
+      <component id="9f984" class="javax.swing.JLabel">
         <constraints>
           <grid row="32" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -155,7 +155,7 @@
           <grid row="34" column="1" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="cf703" class="javax.swing.JLabel" binding="gender_label">
+      <component id="cf703" class="javax.swing.JLabel">
         <constraints>
           <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -171,7 +171,7 @@
           <text value=""/>
         </properties>
       </component>
-      <component id="eb5f3" class="javax.swing.JLabel" binding="age_label">
+      <component id="eb5f3" class="javax.swing.JLabel">
         <constraints>
           <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -287,7 +287,7 @@
           <grid row="17" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="70077" class="javax.swing.JLabel" binding="groesse_label">
+      <component id="70077" class="javax.swing.JLabel">
         <constraints>
           <grid row="14" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -343,7 +343,7 @@
           <grid row="21" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="c2a36" class="javax.swing.JLabel" binding="gewicht_label">
+      <component id="c2a36" class="javax.swing.JLabel">
         <constraints>
           <grid row="18" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -410,7 +410,7 @@
           <text value="Einstellungen"/>
         </properties>
       </component>
-      <component id="be72a" class="javax.swing.JLabel" binding="pas_label">
+      <component id="be72a" class="javax.swing.JLabel">
         <constraints>
           <grid row="22" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -423,7 +423,7 @@
           <grid row="23" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="89e7a" class="javax.swing.JLabel" binding="pas_no_input">
+      <component id="89e7a" class="javax.swing.JLabel">
         <constraints>
           <grid row="22" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -508,7 +508,7 @@
           <text value="Bestätigen"/>
         </properties>
       </component>
-      <component id="ad899" class="javax.swing.JLabel" binding="muskel_aufbau_label">
+      <component id="ad899" class="javax.swing.JLabel">
         <constraints>
           <grid row="28" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>

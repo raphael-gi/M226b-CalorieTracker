@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.sql.*;
 import java.util.Arrays;
 
@@ -10,8 +9,6 @@ public class Einstellungen extends Global implements ActionListener {
     private JPanel panel;
     private JLabel benutzername;
     private JButton dark;
-    private JLabel darkmode_label;
-    private JLabel benutzername_label;
     private JButton zuruck;
     private JButton loeschen;
     private JPasswordField passwort_feld;
@@ -21,8 +18,6 @@ public class Einstellungen extends Global implements ActionListener {
     private JButton logout;
     private JLabel gender;
     private JLabel age;
-    private JLabel age_label;
-    private JLabel gender_label;
     private JButton name_andern_button;
     private JButton gender_andern_button;
     private JButton age_andern_button;
@@ -34,13 +29,11 @@ public class Einstellungen extends Global implements ActionListener {
     private JLabel new_alter_label;
     private JButton new_alter_best;
     private JLabel groesse;
-    private JLabel groesse_label;
     private JButton groesse_andern_button;
     private JLabel new_groesse_label;
     private JButton new_groesse_best;
     SpinnerNumberModel groesse_model = new SpinnerNumberModel(180, 0.00, 1000.00, 1);
     private JSpinner new_groesse;
-    private JLabel gewicht_label;
     private JButton gewicht_ander_button;
     SpinnerNumberModel gewicht_model = new SpinnerNumberModel(80, 0.00, 1000.00, 1);
     private JSpinner new_gewicht;
@@ -49,8 +42,6 @@ public class Einstellungen extends Global implements ActionListener {
     private JButton new_gewicht_best;
     private JLabel einstellungen_label;
     private JButton pas_andern_button;
-    private JLabel pas_label;
-    private JLabel pas_no_input;
     private JLabel old_pas_label;
     private JPasswordField old_pas_input;
     private JButton old_pas_best;
@@ -59,7 +50,6 @@ public class Einstellungen extends Global implements ActionListener {
     private JPasswordField new_pas_best_input;
     private JLabel new_pas_best_label;
     private JButton new_pas_best;
-    private JLabel muskel_aufbau_label;
     private JCheckBox muskel_aufbau;
     private JRadioButton gew_zuh;
     private JRadioButton gew_halt;
@@ -73,10 +63,7 @@ public class Einstellungen extends Global implements ActionListener {
     private int new_pas_check;
     private int new_pas_check2;
 
-    //Arrays mit Sprachen
-
     private final JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best, pas_andern_button, old_pas_best, new_pas_best};
-    private final JLabel[] all_labels = {benutzername, darkmode_label, benutzername_label, pass_eingeben, gender, age, age_label, gender_label, new_name_label, new_alter_label, groesse_label, groesse, new_groesse_label, gewicht, gewicht_label, new_gewicht_label, einstellungen_label, pas_label, pas_no_input, old_pas_label, new_pas_label, new_pas_best_label, muskel_aufbau_label};
 
     JButton[] un_vis_but = {new_name_best, new_alter_best, new_groesse_best, new_gewicht_best, old_pas_best, new_pas_best, new_pas_best, bestaetigen};
     JLabel[] un_vis_lab = {new_name_label, new_alter_label, new_groesse_label, new_gewicht_label, old_pas_label, new_pas_label, new_pas_best_label, pass_eingeben};
@@ -84,17 +71,7 @@ public class Einstellungen extends Global implements ActionListener {
     JPasswordField[] un_vis_pas = {old_pas_input, new_pas_input, new_pas_best_input, passwort_feld};
     JRadioButton[] radios = {gew_halt, gew_zuh, gew_ver};
 
-    Connection connection = null;
-    Statement statement = null;
-
     public Einstellungen(){
-        //Verbindung zu Datenbank wird aufgebaut
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            statement = connection.createStatement();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
 
         newPanel(panel);
 
@@ -139,7 +116,7 @@ public class Einstellungen extends Global implements ActionListener {
         gew();
         musk();
         bulk();
-        dark();
+        //dark();
     }
     public void ben(){
         benutzername.setText(username);
@@ -188,65 +165,7 @@ public class Einstellungen extends Global implements ActionListener {
         }
     }
     public void dark(){
-        new Darkmode(all_buttons, all_labels);
-        if (!darkmode){
-            String[] aus = {"Aus","Off"};
-            dark.setText(aus[sprache]);
-            panel.setBackground(Color.WHITE);
-            muskel_aufbau.setBackground(Color.WHITE);
-            muskel_aufbau.setForeground(Color.BLACK);
 
-            //Radio Buttons erhalten die richtige Farbe
-            for (JRadioButton rad : radios){
-                rad.setBackground(Color.WHITE);
-                rad.setForeground(Color.BLACK);
-            }
-        }
-        else {
-            String[] an = {"An","On"};
-            dark.setText(an[sprache]);
-
-            panel.setBackground(Color.DARK_GRAY);
-
-            passwort_feld.setBackground(Color.LIGHT_GRAY);
-
-            muskel_aufbau.setBackground(Color.DARK_GRAY);
-            muskel_aufbau.setForeground(Color.WHITE);
-
-            for (JRadioButton rad : radios){
-                rad.setBackground(Color.DARK_GRAY);
-                rad.setForeground(Color.WHITE);
-            }
-
-            logout.setForeground(Color.CYAN);
-            loeschen.setForeground(Color.RED);
-            bestaetigen.setForeground(Color.RED);
-
-            logout.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    logout.setForeground(Color.CYAN);
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    logout.setForeground(Color.CYAN);
-                }
-            });
-            loeschen.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    loeschen.setForeground(Color.RED);
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    loeschen.setForeground(Color.RED);
-                }
-            });
-            bestaetigen.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    bestaetigen.setForeground(Color.RED);
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    bestaetigen.setForeground(Color.RED);
-                }
-            });
-        }
     }
 
     public void upd(String what, String to){
@@ -319,12 +238,9 @@ public class Einstellungen extends Global implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == dark){
-            if (darkmode){
-                upd("dark", "0");
-            }
-            else {
-                upd("dark", "1");
-            }
+            if (darkmode) upd("dark", "0");
+            if (!darkmode) upd("dark", "1");
+
             darkmode = !darkmode;
             dark();
         }
@@ -384,32 +300,29 @@ public class Einstellungen extends Global implements ActionListener {
         if (e.getSource() == new_name_best){
             if (new_name.getText().isEmpty()){
                 error_message.setText("Benutzername darf nicht Leer sein!");
+                return;
             }
-            else {
-                if (new_name.getText().equals(username)){
-                    error_message.setText("Benutzername darf nicht gleich wie der Alte sein!");
-                }
-                else {
-                    DBConnect check = new DBConnect("SELECT Benutzername FROM Benutzer WHERE Benutzername = '" + new_name.getText() + "'");
-                    check.setSql_get("Benutzername");
-                    check.con();
-                    if (check.getResult() != null){
-                        error_message.setText("Benutzername wird bereits verwendet!");
-                    }
-                    else {
-                        upd("Benutzername", new_name.getText());
+            if (new_name.getText().equals(username)){
+                error_message.setText("Benutzername darf nicht gleich wie der Alte sein!");
+                return;
+            }
+            DBConnect check = new DBConnect("SELECT Benutzername FROM Benutzer WHERE Benutzername = '" + new_name.getText() + "'");
+            check.setSql_get("Benutzername");
+            check.con();
+            if (check.getResult() != null){
+                error_message.setText("Benutzername wird bereits verwendet!");
+                return;
+            }
 
-                        username = new_name.getText();
-                        new_name.setVisible(false);
-                        new_name_best.setVisible(false);
-                        new_name_label.setVisible(false);
-                        new_name_check = 0;
-                        new_name.setText("");
-                        error_message.setText("");
-                        ben();
-                    }
-                }
-            }
+            upd("Benutzername", new_name.getText());
+            username = new_name.getText();
+            new_name.setVisible(false);
+            new_name_best.setVisible(false);
+            new_name_label.setVisible(false);
+            new_name_check = 0;
+            new_name.setText("");
+            error_message.setText("");
+            ben();
         }
         if (e.getSource() == age_andern_button){
             set_vis(new_age_check, 1, new_alter, new_alter_label, new_alter_best, age);
@@ -505,38 +418,35 @@ public class Einstellungen extends Global implements ActionListener {
             error_message.setText("");
             if (!Arrays.equals(pas, pas_best)){
                 error_message.setText("Die Passwörter überstimmen nicht ein");
+                return;
             }
-            else {
-                if (pas.length < 8){
-                    error_message.setText("Das Passwort ist zu kurz!");
-                }
-                else {
-                    if (pas.length > 90){
-                        error_message.setText("Das Passwort ist zu lange!");
-                    }
-                    else {
+            if (pas.length < 8){
+                error_message.setText("Das Passwort ist zu kurz!");
+                return;
+            }
+            if (pas.length > 90){
+                error_message.setText("Das Passwort ist zu lange!");
+                return;
+            }
 
-                        if (hash.getHash().equals(password)){
-                            error_message.setText("Das neue Passwort darf nicht das gleiche wie das alte sein!");
-                        }
-                        else {
-                            upd("Passwort", hash.getHash());
-                            password = hash.getHash();
-                            //Felder werden unsichtbar gemacht
-                            new_pas_label.setVisible(false);
-                            new_pas_best_label.setVisible(false);
-                            new_pas_input.setVisible(false);
-                            new_pas_best_input.setVisible(false);
-                            new_pas_best.setVisible(false);
-                            //Input Felder werden reseted
-                            new_pas_input.setText("");
-                            new_pas_best_input.setText("");
-                            new_pas_check = 0;
-                            new_pas_check2 = 0;
-                        }
-                    }
-                }
+            if (hash.getHash().equals(password)){
+                error_message.setText("Das neue Passwort darf nicht das gleiche wie das alte sein!");
+                return;
             }
+
+            upd("Passwort", hash.getHash());
+            password = hash.getHash();
+            //Felder werden unsichtbar gemacht
+            new_pas_label.setVisible(false);
+            new_pas_best_label.setVisible(false);
+            new_pas_input.setVisible(false);
+            new_pas_best_input.setVisible(false);
+            new_pas_best.setVisible(false);
+            //Input Felder werden reseted
+            new_pas_input.setText("");
+            new_pas_best_input.setText("");
+            new_pas_check = 0;
+            new_pas_check2 = 0;
         }
         if (e.getSource() == muskel_aufbau){
             int muskel = Global.muskel;

@@ -3,7 +3,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class DBConnect {
+public class DBConnect extends Global{
     private final String sql_statement;
     private String sql_get;
     private String result;
@@ -34,8 +34,6 @@ public class DBConnect {
             else {
                 statement.execute(this.sql_statement);
             }
-            //connection.close();
-            //statement.close();
         }
         catch (Exception e){
             e.printStackTrace();

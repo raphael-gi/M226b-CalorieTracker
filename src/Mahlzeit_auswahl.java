@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
@@ -21,12 +20,6 @@ public class Mahlzeit_auswahl extends Global implements ActionListener {
     private JSpinner portion;
     private JButton hidden;
     private JButton bearbeiten;
-    private JLabel kalorien_label;
-    private JLabel carb_label;
-    private JLabel protein_label;
-    private JLabel fat_label;
-    private JLabel mahlzeit_label;
-    private JLabel portionen_label;
 
     private final String mahlzeit;
     private double anz_portionen;
@@ -37,48 +30,16 @@ public class Mahlzeit_auswahl extends Global implements ActionListener {
 
     SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
 
-    //Arrays mit Sprachen
-    String [] mahlzeit_list = {"Mahlzeit","Meal"};
-    String [] cal_list={"Kohlenhydrate:","Carbohydrates:"};
-    String [] kal_list={"Kalorien:","Calories:"};
-    String [] protein_list={"Protein","Protein"};
-    String [] fat_list={"Fett:","Fat:"};
-    String [] portion_list = {"Anzahl Portionen","Amount of portions"};
-    String [] zuruck_list = {"Zurück","Back"};
-    String [] Erstellen_list = {"Erstellen","Create"};
-    String [] bearbeiten_list = {"Bearbeiten","Edit"};
-    String [] Eat_SP = {"Hinzufügen", "Add"};
-
-    //Array mit allen Sprachen Arrays
-    String [][] spracharr = {kal_list, cal_list, protein_list, fat_list, mahlzeit_list, portion_list, Erstellen_list, zuruck_list, Eat_SP, bearbeiten_list};
-    JLabel [] lab_lang = {kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
-    JButton [] but_lang = {erstellen, zuruck, hinzufugen,bearbeiten};
-
-    private final JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten, hidden};
-    private final JLabel[] all_labels = {mahl, anz_kalorien, anz_carbs, anz_protein, anz_fat, kalorien_label, carb_label, protein_label, fat_label, mahlzeit_label, portionen_label};
-
-    Connection connection = null;
-    Statement statement = null;
-    ResultSet resultSet = null;
-
-
     public Mahlzeit_auswahl(String mahlzeit) {
-        //Verbindung wird aufgebaut
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        frame.add(panel);
-        frame.revalidate();
-        frame.repaint();
+
+        newPanel(panel);
 
         this.mahlzeit = mahlzeit;
 
 
         hidden.setVisible(false);
 
+        JButton[] all_buttons = {erstellen, zuruck, confirm, hinzufugen, hidden, bearbeiten, hidden};
         for (JButton but : all_buttons){
             but.addActionListener(this);
         }
@@ -89,23 +50,8 @@ public class Mahlzeit_auswahl extends Global implements ActionListener {
             anz_portionen = (double) portion.getValue();
             hidden.doClick();
         });
-        sprach();
     }
-    public void sprach() {
-        //Ausgewählte Sprache des Benutzers wird angepasst
-        int len = lab_lang.length + but_lang.length;
-        int ii;
-        //Alle Labels und Buttons werden auf die gewünschte Sprache übersetzt
-        for (int i = 0; len > i; i++) {
-            if (lab_lang.length > i) {
-                lab_lang[i].setText(spracharr[i][sprache]);
-            } else {
-                ii = i - lab_lang.length;
-                but_lang[ii].setText(spracharr[i][sprache]);
-            }
-        }
-    }
-    public void set_data(String what, JLabel name) throws SQLException {
+    public void setData(String what, JLabel name) throws SQLException {
         if (dropname.getSelectedItem() == null){
             name.setText("");
             error_message.setText("Erstellen sie eine Mahlzeit!");
@@ -113,7 +59,7 @@ public class Mahlzeit_auswahl extends Global implements ActionListener {
         else {
             String mahl_name = String.valueOf(dropname.getSelectedItem());
             try {
-                DBConnect get_mahl = new DBConnect("SELECT * FROM mahlzeit WHERE Name = '" + mahl_name + "'");
+                DBConnect get_mahl = new DBConnect("SELECT carb, protein, fat FROM mahlzeit WHERE Name = '" + mahl_name + "'");
                 get_mahl.setSql_get(what);
                 get_mahl.con();
                 String mahl = get_mahl.getResult();
@@ -129,16 +75,12 @@ public class Mahlzeit_auswahl extends Global implements ActionListener {
         }
     }
     public void content(){
-        new Darkmode(all_buttons, all_labels);
-        if (darkmode) {
-            panel.setBackground(Color.DARK_GRAY);
-        }
 
         mahl.setText(this.mahlzeit);
         this.anz_portionen = (double)portion.getValue();
 
         try{
-            resultSet = statement.executeQuery("SELECT * FROM mahlzeit WHERE ben = " + id + " ORDER BY Name");
+            resultSet = statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + id + " ORDER BY Name");
             while (resultSet.next()) {
                 String benutzernamen = resultSet.getString("Name");
                 dropname.addItem(benutzernamen);
@@ -149,9 +91,9 @@ public class Mahlzeit_auswahl extends Global implements ActionListener {
             System.out.println("verbindung zu Name ist Fehlgeschlagen");
         }
         try {
-            set_data("carb", this.anz_carbs);
-            set_data("protein", this.anz_protein);
-            set_data("fat", this.anz_fat);
+            setData("carb", this.anz_carbs);
+            setData("protein", this.anz_protein);
+            setData("fat", this.anz_fat);
 
             if (this.anz_carbs.getText().equals("") || this.anz_protein.getText().equals("") || this.anz_fat.getText().equals("")){
                 error_message.setText("Erstellen sie eine Mahlzeit!");
@@ -199,9 +141,9 @@ public class Mahlzeit_auswahl extends Global implements ActionListener {
 
                 if (error_message.getText().isEmpty()) {
                     while (resultSet.next()){
-                        set_data("carb", this.anz_carbs);
-                        set_data("protein", this.anz_protein);
-                        set_data("fat", this.anz_fat);
+                        setData("carb", this.anz_carbs);
+                        setData("protein", this.anz_protein);
+                        setData("fat", this.anz_fat);
                         double carb_double = Double.parseDouble(this.anz_carbs.getText());
                         double protein_double = Double.parseDouble(this.anz_protein.getText());
                         double fat_double = Double.parseDouble(this.anz_fat.getText());

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="syntheticaDark">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/library/flatlaf-2.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -13,19 +13,9 @@ public class Login extends Global implements ActionListener {
     private JButton Registrieren;
     private JLabel error_message;
 
-    private final java.util.Date date = new Date();
-
-    Connection connection = null;
-    Statement statement = null;
-    ResultSet resultSet = null;
+    private final Date date = new Date();
 
     public Login() {
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            statement = connection.createStatement();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
         newPanel(panel);
 
         Login.addActionListener(this);
@@ -53,7 +43,7 @@ public class Login extends Global implements ActionListener {
             gewicht = groesse = 0;
 
             try{
-                resultSet = statement.executeQuery("SELECT * FROM benutzer WHERE Benutzername = '" + benutzer + "' AND Passwort = '" + hash.getHash() + "'");
+                resultSet = statement.executeQuery("SELECT id, Benutzername, gender, age, gewicht, groesse, muskel, bulk, sprache, dark, Passwort FROM benutzer WHERE Benutzername = '" + benutzer + "' AND Passwort = '" + hash.getHash() + "'");
                 while (resultSet.next()) {
                     id = resultSet.getInt("id");
                     username = resultSet.getString("Benutzername");

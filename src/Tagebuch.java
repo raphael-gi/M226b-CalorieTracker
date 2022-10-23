@@ -86,18 +86,7 @@ public class Tagebuch extends Global implements ActionListener {
     private final JButton[] edit = {fruh_bearbeiten, mit_bearbeiten, abend_bearbeiten, snack_bearbeiten};
     private final JButton[] delete = {fruh_delete, mit_delete, abend_delete, snack_delete};
 
-    Connection connection = null;
-    Statement statement = null;
-    ResultSet resultSet = null;
-
     public Tagebuch() {
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kalorien", "root", "");
-            statement = connection.createStatement();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
         newPanel(panel);
 
         fruh_label.setText(Fruh_SP[sprache]);
@@ -109,16 +98,6 @@ public class Tagebuch extends Global implements ActionListener {
         spater.setPreferredSize(time);
 
         JButton[] all_buttons = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen, fruher, spater};
-        JLabel[] all_labels = {kalorien_count, fruh_label, mit_label, abend_label, abend_label, snack_label, fruh_kalorien, mit_kalorien, abend_kalorien, snack_kalorien, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label, kalorien_anz, verb_kalorien, minus, gleich, datum_label, protein_ziel_label, konsumierte_protein_label, verbleibende_protein_label, protein_ziel, protein_anz, verb_protein, minus2, gleich2};
-        new Darkmode(all_buttons, all_labels);
-        if (darkmode) {
-            panel.setBackground(Color.DARK_GRAY);
-            var all_lists = new JList[]{fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
-            for (var list : all_lists){
-                list.setForeground(Color.white);
-                list.setBackground(Color.gray);
-            }
-        }
 
         Font label_font = new Font("Arial", Font.BOLD, 15);
         JLabel[] big_labs = {fruh_label, mit_label, abend_label, snack_label, kalorien_count, kalorien_anz, verb_kalorien, protein_ziel, protein_anz, verb_protein, minus, minus2, gleich, gleich2};
@@ -201,21 +180,11 @@ public class Tagebuch extends Global implements ActionListener {
         Date fruh = c.getTime();
         c.add(Calendar.DATE, 2);
         Date spat = c.getTime();
-        if (ft.format(date_now).equals(ft.format(date))){
-            String [] heute_list = {"Heute","Today"};
-            datum_label.setText(heute_list[sprache]);
-        }
-        else {
-            datum_label.setText(format.format(date));
-        }
-        if (ft.format(fruh.getTime()).equals(ft.format(date))){
-            String [] gestern_list = {"Gestern","Yesterday"};
-            datum_label.setText(gestern_list[sprache]);
-        }
-        if (ft.format(spat.getTime()).equals(ft.format(date))){
-            String [] morgen_list = {"Morgen","Tomorrow"};
-            datum_label.setText(morgen_list[sprache]);
-        }
+        String datumText = format.format(date);
+        if (ft.format(date_now).equals(ft.format(date))) datumText = "Heute";
+        if (ft.format(fruh.getTime()).equals(ft.format(date))) datumText = "Gestern";
+        if (ft.format(spat.getTime()).equals(ft.format(date))) datumText = "Morgen";
+        datum_label.setText(datumText);
         c.setTime(date);
     }
     //Abrufen der Daten die an dem Ausgewählten Datum gespeichert wurden
@@ -223,7 +192,7 @@ public class Tagebuch extends Global implements ActionListener {
         ArrayList<Integer> kalories = new ArrayList<>();
         ArrayList<Integer> proteins = new ArrayList<>();
         try {
-            resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + id + "' AND datum = '" + ft.format(date) + "'");
+            resultSet = statement.executeQuery("SELECT kalorien, protein FROM mmm WHERE ben = '" + id + "' AND datum = '" + ft.format(date) + "'");
             while (resultSet.next()){
                 int kalorien = resultSet.getInt("kalorien");
                 kalories.add(kalorien);
@@ -231,6 +200,7 @@ public class Tagebuch extends Global implements ActionListener {
                 int prot = (int) Math.round(protein);
                 proteins.add(prot);
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -242,7 +212,6 @@ public class Tagebuch extends Global implements ActionListener {
 
     //Die Daten des Benutzers abrufen
     public void content(){
-
         if (muskel == 0){
             protein_ziel_label.setVisible(false);
             konsumierte_protein_label.setVisible(false);
@@ -325,6 +294,7 @@ public class Tagebuch extends Global implements ActionListener {
                 int kalorien = resultSet.getInt("kalorien");
                 kalories.add(kalorien);
             }
+            resultSet.close();
             for (Integer kalory : kalories) {
                 anz_kalorien = anz_kalorien + kalory;
             }
@@ -342,6 +312,7 @@ public class Tagebuch extends Global implements ActionListener {
             String mahl_name = resultSet.getString("Name");
             names.add(mahl_name);
         }
+        resultSet.close();
         for (String s : names) {
             name.addElement(s);
         }
@@ -360,6 +331,7 @@ public class Tagebuch extends Global implements ActionListener {
                 int mahl_id = resultSet.getInt("id");
                 also_same_id.add(mahl_id);
             }
+            resultSet.close();
             name.getSelectedIndex();
             ArrayList<Integer> indexes = new ArrayList<>();
             for (int i = 0; name.getModel().getSize() > i; i++){
@@ -390,7 +362,7 @@ public class Tagebuch extends Global implements ActionListener {
 
     public void on_edit(JList<String> name, int mahlzeit_id) {
         on_button(name, mahlzeit_id);
-        DBConnect get_mahl = new DBConnect("SELECT mahl FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "");
+        DBConnect get_mahl = new DBConnect("SELECT mahl, port FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "");
         get_mahl.setSql_get("mahl");
         get_mahl.con();
         String mahl = get_mahl.getResult();
@@ -406,12 +378,12 @@ public class Tagebuch extends Global implements ActionListener {
         String port = get_port.getResult();
 
         frame.remove(panel);
-        Bearbeiten bearbeiten = new Bearbeiten(mahl_name ,port, correct_id);
+        Bearbeiten bearbeiten = new Bearbeiten(correct_id);
         bearbeiten.content();
     }
 
-    @Override
     //Sprache Anpassen für die Überschriften für die Bearbeiten seite
+    @Override
     public void actionPerformed(ActionEvent e) {
         for (int i = 0; i < 4; i++) {
             JList<String> list = this.list[i];

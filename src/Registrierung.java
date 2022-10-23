@@ -43,74 +43,57 @@ public class Registrierung extends Global implements ActionListener {
         if (e.getSource() == Registrieren) {
             String benutzer = Benutzer.getText();
             char[] passwort = Passwort.getPassword();
-            char[] passwort_best = Passwort_Best.getPassword();
+            char[] passwortBest = Passwort_Best.getPassword();
 
             int alter = (int)this.alter.getValue();
-            int gender;
-            if (mann.isSelected()){
-                gender = 1;
-            }
-            else {
-                gender = 2;
-            }
+            int gender = 1;
+            if (weib.isSelected()) gender = 2;
             double gewicht = (double) this.gewicht.getValue();
             double groesse = (double) this.groesse.getValue();
             //Error handling
             error_message.setText("");
-            if (benutzer.isEmpty() || passwort == null || passwort_best == null){
+            if (benutzer.isEmpty() || passwort == null || passwortBest == null){
                 error_message.setText("Füllen sie alle Felder aus!");
+                return;
             }
-            else {
-                if (!Arrays.equals(passwort, passwort_best)){
-                    error_message.setText("Die Passwörter sind nicht gleich!");
-                }
-                else {
-                    if (passwort.length < 8){
-                        error_message.setText("Passwort zu kurz!");
-                    }
-                    else {
-                        if (alter < 0 || alter > 150){
-                            error_message.setText("Geben sie ihr richtiges Alter an!");
-                        }
-                        else {
-                            if (!mann.isSelected() && !weib.isSelected()){
-                                error_message.setText("Wählen eines der Gender aus!");
-                            }
-                            else {
-                                DBConnect check = new DBConnect("SELECT Benutzername FROM benutzer WHERE Benutzername = '" + benutzer + "'");
-                                check.setSql_get("Benutzername");
-                                check.con();
-                                if (check.getResult() != null) {
-                                    error_message.setText("Benutzername wird bereits verwendet");
-                                } else {
-                                    Hash p = new Hash(passwort);
-                                    new DBConnect("INSERT INTO benutzer (Benutzername, Passwort, gender, age, gewicht, groesse) VALUES ('" + benutzer + "', '" + p.getHash() + "', " + gender + ", " + alter + ", " + gewicht + ", " + groesse + ")");
-                                    sendLogin();
-                                }
-                            }
-                        }
-                    }
-                }
+            if (!Arrays.equals(passwort, passwortBest)){
+                error_message.setText("Die Passwörter sind nicht gleich!");
+                return;
             }
+            if (passwort.length < 8){
+                error_message.setText("Passwort zu kurz!");
+                return;
+            }
+            if (alter < 0 || alter > 150){
+                error_message.setText("Geben sie ihr richtiges Alter an!");
+                return;
+            }
+            if (!mann.isSelected() && !weib.isSelected()){
+                error_message.setText("Wählen eines der Gender aus!");
+                return;
+            }
+            DBConnect check = new DBConnect("SELECT Benutzername FROM benutzer WHERE Benutzername = '" + benutzer + "'");
+            check.setSql_get("Benutzername");
+            check.con();
+            if (check.getResult() != null) {
+                error_message.setText("Benutzername wird bereits verwendet");
+                return;
+            }
+            Hash p = new Hash(passwort);
+            DBConnect dbConnect = new DBConnect("INSERT INTO benutzer (Benutzername, Passwort, gender, age, gewicht, groesse) VALUES ('" + benutzer + "', '" + p.getHash() + "', " + gender + ", " + alter + ", " + gewicht + ", " + groesse + ")");
+            dbConnect.con();
+            sendLogin();
         }
         if (e.getSource() == Login) {
             sendLogin();
         }
         if (e.getSource() == mann){
-            if (weib.isSelected()){
-                weib.setSelected(false);
-            }
-            else {
-                mann.setSelected(true);
-            }
+            weib.setSelected(false);
+            mann.setSelected(true);
         }
         if (e.getSource() == weib){
-            if (mann.isSelected()){
-                mann.setSelected(false);
-            }
-            else {
-                weib.setSelected(true);
-            }
+            mann.setSelected(false);
+            weib.setSelected(true);
         }
     }
 }
