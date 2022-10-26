@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
@@ -24,9 +23,9 @@ public class Bearbeiten extends Global implements ActionListener {
     private float carb;
     private float protein;
     private float fat;
-    private float port;
+    private float portion;
 
-    private double anz_portionen;
+    private float anz_portionen;
 
     JButton[] all_buttons = {bearbeiten, confirm, zuruck, hidden};
 
@@ -41,18 +40,18 @@ public class Bearbeiten extends Global implements ActionListener {
         for (JButton but : all_buttons){
             but.addActionListener(this);
         }
-        SpinnerNumberModel model = new SpinnerNumberModel(1, 0.0, 100000.0, 1);
+        SpinnerNumberModel model = new SpinnerNumberModel(1.0, 0.0, 100000.0, 1.0);
         portionen.setModel(model);
         portionen.addChangeListener(e -> {
-            anz_portionen = (double) portionen.getValue();
-            hidden.doClick();
+            String portionString = String.valueOf(portionen.getValue());
+            portion = Float.parseFloat(portionString);
+            setData();
         });
 
         try {
-            resultSet = statement.executeQuery("SELECT mmm.port, mmm.carb, mmm.protein, mmm.fat FROM mmm, mahlzeit WHERE mmm.id = '" + mmm_id + "' AND mahlzeit.id = mmm.id");
+            resultSet = statement.executeQuery("SELECT mmm.port, mahlzeit.carb, mahlzeit.protein, mahlzeit.fat FROM mmm, mahlzeit WHERE mmm.id = " + mmm_id + " AND mmm.mahl = mahlzeit.id");
             while (resultSet.next()){
-                this.name = resultSet.getString("Name");
-                this.port = resultSet.getFloat("port");
+                this.portion = resultSet.getFloat("port");
                 this.carb = resultSet.getFloat("carb");
                 this.protein = resultSet.getFloat("protein");
                 this.fat = resultSet.getFloat("fat");
@@ -60,26 +59,19 @@ public class Bearbeiten extends Global implements ActionListener {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        setData();
     }
-    public void set_data(String what, JLabel name) {
-        String mahl_name = String.valueOf(dropname.getSelectedItem());
-        try {
-            DBConnect get_mahl = new DBConnect("SELECT carb, protein, fat FROM mahlzeit WHERE Name = '" + mahl_name + "'");
-            get_mahl.setSql_get(what);
-            get_mahl.con();
-            String mahl = get_mahl.getResult();
-            int mahl_int = Integer.parseInt(mahl);
-            double mahl_double = mahl_int * this.anz_portionen;
-            double mahl_round = Math.round(mahl_double * 10d) / 10d;
-            String mahl_final = String.valueOf(mahl_round);
-            name.setText(mahl_final);
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
+    public String getMeal(float meal) {
+        return String.valueOf(Math.round((meal * this.portion) * 10) / 10);
+    }
+    public void setData() {
+        anz_carbs.setText(getMeal(carb));
+        anz_protein.setText(getMeal(protein));
+        anz_fat.setText(getMeal(fat));
+        anz_kalorien.setText(String.valueOf(((carb * portion) * 4) + ((protein * portion) * 4) + ((fat * portion) * 9)));
     }
     public void content(){
-        portionen.setValue(port);
+        portionen.setValue(portion);
         try{
             resultSet = statement.executeQuery("SELECT Name FROM mahlzeit WHERE ben = " + id + " ORDER BY Name");
             while (resultSet.next()){
@@ -105,29 +97,6 @@ public class Bearbeiten extends Global implements ActionListener {
         }
         if (e.getSource() == dropname) {
             String mahlName = String.valueOf(dropname.getSelectedItem());
-        }
-        if (e.getSource() == dropname || e.getSource() == confirm || e.getSource() == hidden){
-            error_message.setText("");
-            try {
-                this.anz_portionen = (double)portionen.getValue();
-            }
-            catch (Exception E){
-                error_message.setText("Geben sie eine Zahl als Portion an!");
-                return;
-            }
-
-            set_data("carb", anz_carbs);
-            set_data("protein", anz_protein);
-            set_data("fat", anz_fat);
-
-            double anz_carbs = Double.parseDouble(this.anz_carbs.getText()) * 4;
-            double anz_protein = Double.parseDouble(this.anz_protein.getText()) * 4;
-            double anz_fat = Double.parseDouble(this.anz_fat.getText()) * 9;
-
-            double kalorien_double = anz_carbs + anz_protein + anz_fat;
-            long kalorien_long = Math.round(kalorien_double);
-            String kalorien_final = String.valueOf(kalorien_long);
-            this.anz_kalorien.setText(kalorien_final);
         }
         if (e.getSource() == bearbeiten) {
             String drop_selected = (String)dropname.getSelectedItem();
