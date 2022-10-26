@@ -100,7 +100,7 @@ public class Bearbeiten extends Global implements ActionListener {
         }
         if (e.getSource() == bearbeiten) {
             String drop_selected = (String)dropname.getSelectedItem();
-            int kalorien = Integer.parseInt(anz_kalorien.getText());
+            float kalorien = Float.parseFloat(anz_kalorien.getText());
             float carb = Float.parseFloat(anz_carbs.getText());
             float protein = Float.parseFloat(anz_protein.getText());
             float fat = Float.parseFloat(anz_fat.getText());
