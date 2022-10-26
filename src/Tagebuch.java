@@ -30,19 +30,16 @@ public class Tagebuch extends Global implements ActionListener {
     private JButton abend_delete;
     private JButton snack_bearbeiten;
     private JButton snack_delete;
-    private JLabel fruh_label;
-    private JLabel mit_label;
-    private JLabel abend_label;
-    private JLabel snack_label;
+    private JLabel fruhLabel;
+    private JLabel mitLabel;
+    private JLabel abendLabel;
+    private JLabel snackLabel;
     private JLabel fruh_kalorien;
     private JLabel mit_kalorien;
     private JLabel abend_kalorien;
     private JLabel snack_kalorien;
     private JButton einstellungen;
     private JLabel kalorien_anz;
-    private JLabel kalorien_ziel_label;
-    private JLabel kons_kalorien_label;
-    private JLabel verb_kalorien_label;
     private JLabel verb_kalorien;
     private JLabel minus;
     private JLabel gleich;
@@ -63,25 +60,10 @@ public class Tagebuch extends Global implements ActionListener {
     private final java.util.Date date_now = new Date();
     private final Calendar c = Calendar.getInstance();
 
-    //Arrays mit Sprachen
-    String[] Eat_SP = {"Mahlzeit hinzufügen", "Add meal"};
-    String[] Fruh_SP = {"Frühstück", "Breakfast"};
-    String[] Abend_SP = {"Abendessen", "Dinner"};
-    String[] Mitt_SP = {"Mittagessen", "Lunch"};
-    String[] Snack_SP = {"Imbiss", "Snack"};
-    String[] kalorien_ziel_list = {"Kalorien Ziel:", "Calories target:"};
-    String[] kons_kalorien_list = {"Konsumierte Kalorien:", "Calories consumed:"};
-    String[] verb_kalorien_list = {"Verbleibbende Kalorien:", "Remaining calories:"};
-    String[] loeschen_list = {"Löschen", "Delete"};
-    String[] bearbeiten_list = {"Bearbeiten", "Edit"};
-
     //Array mit allen Sprachen Arrays
-    String[][] spracharr = {Fruh_SP, Mitt_SP, Abend_SP, Snack_SP, kalorien_ziel_list, kons_kalorien_list, verb_kalorien_list, Eat_SP, Eat_SP, Eat_SP, Eat_SP, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list, bearbeiten_list, loeschen_list};
-    JLabel[] lab_lang = {fruh_label, mit_label, abend_label, snack_label, kalorien_ziel_label, kons_kalorien_label, verb_kalorien_label};
-    JButton[] but_lang = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete};
+    JLabel[] mealLabels = {fruhLabel, mitLabel, abendLabel, snackLabel};
 
     private final JButton[] add = {Fruhstuck, Mittagessen, Abendessen, Snacks};
-    private final String[][] meals = {Fruh_SP, Mitt_SP, Abend_SP, Snack_SP};
     private final JList[] list = {fruhstuck_list, mittagessen_list, abendessen_list, snacks_list};
     private final JButton[] edit = {fruh_bearbeiten, mit_bearbeiten, abend_bearbeiten, snack_bearbeiten};
     private final JButton[] delete = {fruh_delete, mit_delete, abend_delete, snack_delete};
@@ -89,7 +71,6 @@ public class Tagebuch extends Global implements ActionListener {
     public Tagebuch() {
         newPanel(panel);
 
-        fruh_label.setText(Fruh_SP[sprache]);
         Dimension ein = new Dimension(40,40);
         einstellungen.setPreferredSize(ein);
 
@@ -100,7 +81,7 @@ public class Tagebuch extends Global implements ActionListener {
         JButton[] all_buttons = {Fruhstuck, Mittagessen, Abendessen, Snacks, fruh_bearbeiten, fruh_delete, mit_bearbeiten, mit_delete, abend_bearbeiten, abend_delete, snack_bearbeiten, snack_delete, einstellungen, fruher, spater};
 
         Font label_font = new Font("Arial", Font.BOLD, 15);
-        JLabel[] big_labs = {fruh_label, mit_label, abend_label, snack_label, kalorien_count, kalorien_anz, verb_kalorien, protein_ziel, protein_anz, verb_protein, minus, minus2, gleich, gleich2};
+        JLabel[] big_labs = {fruhLabel, mitLabel, abendLabel, snackLabel, kalorien_count, kalorien_anz, verb_kalorien, protein_ziel, protein_anz, verb_protein, minus, minus2, gleich, gleich2};
         for (JLabel lab : big_labs){
             lab.setFont(label_font);
         }
@@ -114,17 +95,6 @@ public class Tagebuch extends Global implements ActionListener {
         save(mit_bearbeiten, mit_delete, mittagessen_list);
         save(abend_bearbeiten, abend_delete, abendessen_list);
         save(snack_bearbeiten, snack_delete, snacks_list);
-
-        int len = lab_lang.length + but_lang.length;
-        int ii;
-        for (int i = 0; len > i; i++) {
-            if (lab_lang.length > i) {
-                lab_lang[i].setText(spracharr[i][sprache]);
-            } else {
-                ii = i - lab_lang.length;
-                but_lang[ii].setText(spracharr[i][sprache]);
-            }
-        }
         dat();
     }
 
@@ -288,7 +258,7 @@ public class Tagebuch extends Global implements ActionListener {
     public int get_meal_cal(int mahlzeit_id) {
         int anz_kalorien = 0;
         try {
-            resultSet = statement.executeQuery("SELECT * FROM mmm WHERE ben = '" + id + "' AND datum = '" + ft.format(date) + "' AND mahlzeit = " + mahlzeit_id + "");
+            resultSet = statement.executeQuery("SELECT kalorien FROM mmm WHERE ben = '" + id + "' AND datum = '" + ft.format(date) + "' AND mahlzeit = " + mahlzeit_id + "");
             ArrayList<Integer> kalories = new ArrayList<>();
             while (resultSet.next()){
                 int kalorien = resultSet.getInt("kalorien");
@@ -306,7 +276,7 @@ public class Tagebuch extends Global implements ActionListener {
 
     public void get_select(JList<String> list_name , DefaultListModel<String> name, int mahlzeit_id) throws SQLException {
         name.clear();
-        resultSet = statement.executeQuery("SELECT * FROM mahlzeit,mmm WHERE mmm.ben = " + id + " AND mahlzeit.ben = " + id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
+        resultSet = statement.executeQuery("SELECT Name FROM mahlzeit,mmm WHERE mmm.ben = " + id + " AND mahlzeit.ben = " + id + " AND mmm.mahl = mahlzeit.id AND mmm.datum = '" + ft.format(date) + "' AND mmm.mahlzeit = " + mahlzeit_id + "");
         ArrayList<String> names = new ArrayList<>();
         while (resultSet.next()){
             String mahl_name = resultSet.getString("Name");
@@ -318,8 +288,7 @@ public class Tagebuch extends Global implements ActionListener {
         }
         list_name.setModel(name);
     }
-    int correct_id = 0;
-    public void on_button(JList<String> name, int mahlzeit_id){
+    public int on_button(JList<String> name, int mahlzeit_id){
         String right_name = name.getSelectedValue();
         try {
             DBConnect fruh_select = new DBConnect("SELECT id FROM mahlzeit WHERE Name = '" + right_name + "'");
@@ -347,21 +316,22 @@ public class Tagebuch extends Global implements ActionListener {
                     right_id = i;
                 }
             }
-            correct_id = also_same_id.get(right_id);
+            return also_same_id.get(right_id);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        return 0;
     }
 
     public void on_delete(JList<String> name, int mahlzeit_id) {
-        on_button(name,mahlzeit_id);
+        int correct_id = on_button(name,mahlzeit_id);
         DBConnect dbConnect = new DBConnect("DELETE FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "");
         dbConnect.con();
         content();
     }
 
     public void on_edit(JList<String> name, int mahlzeit_id) {
-        on_button(name, mahlzeit_id);
+        int correct_id = on_button(name, mahlzeit_id);
         DBConnect get_mahl = new DBConnect("SELECT mahl, port FROM mmm WHERE id = " + correct_id + " AND mahlzeit = " + mahlzeit_id + "");
         get_mahl.setSql_get("mahl");
         get_mahl.con();
@@ -388,12 +358,8 @@ public class Tagebuch extends Global implements ActionListener {
         for (int i = 0; i < 4; i++) {
             JList<String> list = this.list[i];
             if (e.getSource() == this.add[i]) {
-                String mahl_name = this.meals[i][0];
-                if (sprache == 1) {
-                    mahl_name = this.meals[i][1];
-                }
                 frame.remove(panel);
-                Mahlzeit_auswahl mahlzeit_auswahl = new Mahlzeit_auswahl(mahl_name);
+                Mahlzeit_auswahl mahlzeit_auswahl = new Mahlzeit_auswahl(mealLabels[i].getText());
                 mahlzeit_auswahl.content();
             }
             if (e.getSource() == this.delete[i]) {

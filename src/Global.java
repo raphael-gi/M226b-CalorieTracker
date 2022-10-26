@@ -21,7 +21,6 @@ public class Global extends JFrame {
     static int muskel;
     static int bulk;
     static int sprache;
-    static boolean darkmode;
     static String password;
 
     public void newPanel(JPanel panel) {

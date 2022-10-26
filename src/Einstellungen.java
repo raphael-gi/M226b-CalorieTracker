@@ -8,7 +8,6 @@ import java.util.Arrays;
 public class Einstellungen extends Global implements ActionListener {
     private JPanel panel;
     private JLabel benutzername;
-    private JButton dark;
     private JButton zuruck;
     private JButton loeschen;
     private JPasswordField passwort_feld;
@@ -63,7 +62,7 @@ public class Einstellungen extends Global implements ActionListener {
     private int new_pas_check;
     private int new_pas_check2;
 
-    private final JButton[] all_buttons = {dark, zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best, pas_andern_button, old_pas_best, new_pas_best};
+    private final JButton[] all_buttons = {zuruck, loeschen, bestaetigen, logout, name_andern_button, gender_andern_button, age_andern_button, new_name_best, new_alter_best, groesse_andern_button, new_groesse_best, gewicht_ander_button, new_gewicht_best, pas_andern_button, old_pas_best, new_pas_best};
 
     JButton[] un_vis_but = {new_name_best, new_alter_best, new_groesse_best, new_gewicht_best, old_pas_best, new_pas_best, new_pas_best, bestaetigen};
     JLabel[] un_vis_lab = {new_name_label, new_alter_label, new_groesse_label, new_gewicht_label, old_pas_label, new_pas_label, new_pas_best_label, pass_eingeben};
@@ -237,13 +236,6 @@ public class Einstellungen extends Global implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == dark){
-            if (darkmode) upd("dark", "0");
-            if (!darkmode) upd("dark", "1");
-
-            darkmode = !darkmode;
-            dark();
-        }
         if (e.getSource() == zuruck){
             frame.remove(panel);
             Tagebuch tagebuch = new Tagebuch();
